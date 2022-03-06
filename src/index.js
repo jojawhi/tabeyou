@@ -70,4 +70,3 @@ const generatePageElements = () => {
     pageContainer.appendChild(createNav());
 };
 generatePageElements();
-//# sourceMappingURL=index.js.map

@@ -84,4 +84,3 @@ const createNav = () => {
     return navContainer;
 };
 export default createNav;
-//# sourceMappingURL=nav.js.map
