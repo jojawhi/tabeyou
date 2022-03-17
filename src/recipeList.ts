@@ -1,5 +1,6 @@
 import getRecipeArray from './recipe';
 import { RecipeInterface } from './recipe';
+import displayRecipeModal from './recipeModal';
 
 const recipeArray: RecipeInterface[] = getRecipeArray();
 
@@ -51,6 +52,9 @@ const generateList = (recipeArray: RecipeInterface[]) => {
 		const listItem = document.createElement('li');
 		listItem.classList.add('grocery-list-item');
 		const listButton = document.createElement('button');
+		listButton.addEventListener('click', () => {
+			displayRecipeModal(recipeArray[i]);
+		});
 		listItem.appendChild(listButton);
 		listButton.textContent = recipeArray[i].name;
 		recipeList.appendChild(listItem);
@@ -94,4 +98,6 @@ export default displayRecipeList;
 To do:
 
 - add eventListener to newRecipeButton to bring up new recipe modal with inputs
+- add search functionality
+- add sort A-Z/Z-A functionality
 */

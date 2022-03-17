@@ -1,4 +1,5 @@
 import getRecipeArray from './recipe';
+import displayRecipeModal from './recipeModal';
 const recipeArray = getRecipeArray();
 const generatePageSubheading = (string) => {
     const pageSubheading = document.createElement('h3');
@@ -32,6 +33,9 @@ const generateList = (recipeArray) => {
         const listItem = document.createElement('li');
         listItem.classList.add('grocery-list-item');
         const listButton = document.createElement('button');
+        listButton.addEventListener('click', () => {
+            displayRecipeModal(recipeArray[i]);
+        });
         listItem.appendChild(listButton);
         listButton.textContent = recipeArray[i].name;
         recipeList.appendChild(listItem);

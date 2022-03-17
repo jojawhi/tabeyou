@@ -346,7 +346,8 @@ button {
 	font-size: var(--step--1);
 }
 
-.grocery-list-text-container input {
+.grocery-list-text-container input,
+.recipe-ingredient-container input {
 	font-size: var(--step--1);
 	color: var(--font-color-1);
 	background-color: transparent;
@@ -536,9 +537,22 @@ button {
 
 .recipe-ingredient-container {
 	display: grid;
-	grid-template-columns: 20% 80%;
+	grid-template-columns: 15% 20% 65%;
+	font-size: var(--step-0);
 }
 
 .recipe-instructions-container {
 	padding: 1rem;
+}
+
+.ingredient-amount {
+	text-align: right;
+}
+
+.ingredient-unit {
+	text-align: left;
+}
+
+.ingredient-name {
+	padding-left: 0.25rem;
 }

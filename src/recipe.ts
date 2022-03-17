@@ -85,7 +85,7 @@ const getRecipeArray = () => {
 };
 
 export default getRecipeArray;
-export { RecipeInterface };
+export { RecipeInterface, IngredientInterface };
 
 /*
 const ingredientFactory = () => {

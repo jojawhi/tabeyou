@@ -35,7 +35,6 @@ const generateCheckbox = () => {
 
 	const checkboxInput = document.createElement('input');
 	checkboxInput.setAttribute('type', 'checkbox');
-	/*checkboxInput.setAttribute('checked', 'false');*/
 
 	const checkmark = document.createElement('span');
 	checkmark.classList.add('checkmark');
