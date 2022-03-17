@@ -1,119 +1,180 @@
+import sectionFactory from './section';
+import displayGroceryList from './groceryList';
+import displayRecipeList from './recipeList';
 
 const createMealPlansButton = () => {
-    const mealPlansButton = document.createElement('button');
-    mealPlansButton.classList.add('nav-button');
-    mealPlansButton.setAttribute('id', 'meal-plans-button');
-    mealPlansButton.textContent = 'Meal Plans';
+	const mealPlansButton = document.createElement('button');
+	mealPlansButton.classList.add('nav-button');
+	mealPlansButton.setAttribute('id', 'meal-plans-button');
 
-    const mealPlansArrow = document.createElement('i');
-    mealPlansArrow.classList.add('fa-solid', 'fa-angle-down', 'arrow');
+	const mealPlansButtonText = document.createElement('p');
+	mealPlansButtonText.textContent = 'Meal Plans';
 
-    mealPlansButton.appendChild(mealPlansArrow);
+	const mealPlansArrow = document.createElement('i');
+	mealPlansArrow.classList.add('fa-solid', 'fa-angle-down', 'arrow');
+	mealPlansArrow.setAttribute('id', 'meal-plans-arrow');
 
-    return mealPlansButton;
-}
+	mealPlansButton.addEventListener('click', () => {
+		/*This would not work without the solution on this page: https://fontawesome.com/v5/docs/web/use-with/jquery */
+		mealPlansArrow.classList.toggle('vertical-flip');
+	});
+
+	mealPlansButton.appendChild(mealPlansButtonText);
+	mealPlansButton.appendChild(mealPlansArrow);
+
+	return mealPlansButton;
+};
 
 const createMealPlansSubnav = () => {
-    const mealPlansSubnav = document.createElement('div');
-    mealPlansSubnav.classList.add('subnav');
+	const mealPlansSubnav = document.createElement('div');
+	mealPlansSubnav.classList.add('subnav', 'hidden');
 
-    const weekSubnavLink = document.createElement('a');
-    weekSubnavLink.classList.add('subnav-link');
-    weekSubnavLink.setAttribute('href', '');
-    weekSubnavLink.textContent = 'This week';
+	const weekSubnavButton = document.createElement('button');
+	weekSubnavButton.classList.add('subnav-button');
+	weekSubnavButton.textContent = 'This week';
 
-    const historySubnavLink = document.createElement('a');
-    historySubnavLink.classList.add('subnav-link');
-    historySubnavLink.setAttribute('href', '');
-    historySubnavLink.textContent = 'History';
+	weekSubnavButton.addEventListener('click', () => {
+		const section = document.getElementById('content-section');
+		if (section) {
+			sectionFactory().clearSection(section);
+		}
+	});
 
-    mealPlansSubnav.appendChild(weekSubnavLink);
-    mealPlansSubnav.appendChild(historySubnavLink);
+	const historySubnavButton = document.createElement('button');
+	historySubnavButton.classList.add('subnav-button');
+	historySubnavButton.textContent = 'History';
 
-    return mealPlansSubnav;
-}
+	mealPlansSubnav.appendChild(weekSubnavButton);
+	mealPlansSubnav.appendChild(historySubnavButton);
+
+	return mealPlansSubnav;
+};
 
 const createMealPlansNav = () => {
-    const mealPlansNav = document.createElement('div');
-    mealPlansNav.classList.add('nav', 'meal-plans-nav');
+	const mealPlansNav = document.createElement('div');
+	mealPlansNav.classList.add('nav', 'meal-plans-nav');
 
-    mealPlansNav.appendChild(createMealPlansButton());
-    mealPlansNav.appendChild(createMealPlansSubnav());
+	const mealPlansButton = createMealPlansButton();
+	const mealPlansSubnav = createMealPlansSubnav();
 
-    return mealPlansNav;
-}
+	mealPlansNav.appendChild(mealPlansButton);
+	mealPlansNav.appendChild(mealPlansSubnav);
+
+	mealPlansButton.addEventListener('click', () => {
+		mealPlansSubnav.classList.toggle('hidden');
+	});
+
+	return mealPlansNav;
+};
 
 const createGroceryListButton = () => {
-    const groceryListButton = document.createElement('button');
-    groceryListButton.classList.add('nav-button');
-    groceryListButton.setAttribute('id', 'grocery-list-button');
-    groceryListButton.textContent = 'Grocery List';
+	const groceryListButton = document.createElement('button');
+	groceryListButton.classList.add('nav-button');
+	groceryListButton.setAttribute('id', 'grocery-list-button');
 
-    const groceryListArrow = document.createElement('i');
-    groceryListArrow.classList.add('fa-solid', 'fa-angle-down', 'arrow');
+	const groceryListButtonText = document.createElement('p');
+	groceryListButtonText.textContent = 'Grocery List';
 
-    groceryListButton.appendChild(groceryListArrow);
+	const groceryListArrow = document.createElement('i');
+	groceryListArrow.classList.add('fa-solid', 'fa-angle-down', 'arrow');
+	groceryListArrow.setAttribute('id', 'grocery-list-arrow');
 
-    return groceryListButton;
-}
+	groceryListButton.addEventListener('click', () => {
+		groceryListArrow.classList.toggle('vertical-flip');
+	});
+
+	groceryListButton.appendChild(groceryListButtonText);
+	groceryListButton.appendChild(groceryListArrow);
+
+	return groceryListButton;
+};
 
 const createGroceryListSubnav = () => {
-    const groceryListSubnav = document.createElement('div');
-    groceryListSubnav.classList.add('subnav');
+	const groceryListSubnav = document.createElement('div');
+	groceryListSubnav.classList.add('subnav', 'hidden');
 
-    const weekSubnavLink = document.createElement('a');
-    weekSubnavLink.classList.add('subnav-link');
-    weekSubnavLink.setAttribute('href', '');
-    weekSubnavLink.textContent = 'This week';
+	const weekSubnavButton = document.createElement('button');
+	weekSubnavButton.classList.add('subnav-button');
+	weekSubnavButton.textContent = 'This week';
 
-    const historySubnavLink = document.createElement('a');
-    historySubnavLink.classList.add('subnav-link');
-    historySubnavLink.setAttribute('href', '');
-    historySubnavLink.textContent = 'History';
+	weekSubnavButton.addEventListener('click', () => {
+		const section = document.getElementById('content-section');
+		if (section) {
+			sectionFactory().clearSection(section);
+			displayGroceryList(section);
+		}
+	});
 
-    groceryListSubnav.appendChild(weekSubnavLink);
-    groceryListSubnav.appendChild(historySubnavLink);
+	const historySubnavButton = document.createElement('button');
+	historySubnavButton.classList.add('subnav-button');
+	historySubnavButton.textContent = 'History';
 
-    return groceryListSubnav;
-}
+	groceryListSubnav.appendChild(weekSubnavButton);
+	groceryListSubnav.appendChild(historySubnavButton);
+
+	return groceryListSubnav;
+};
 
 const createGroceryListNav = () => {
-    const groceryListNav = document.createElement('div');
-    groceryListNav.classList.add('nav', 'grocery-list-nav');
+	const groceryListNav = document.createElement('div');
+	groceryListNav.classList.add('nav', 'grocery-list-nav');
 
-    groceryListNav.appendChild(createGroceryListButton());
-    groceryListNav.appendChild(createGroceryListSubnav());
+	const groceryListButton = createGroceryListButton();
+	const groceryListSubnav = createGroceryListSubnav();
 
-    return groceryListNav;
-}
+	groceryListNav.appendChild(groceryListButton);
+	groceryListNav.appendChild(groceryListSubnav);
+
+	groceryListButton.addEventListener('click', () => {
+		groceryListSubnav.classList.toggle('hidden');
+	});
+
+	return groceryListNav;
+};
 
 const createRecipesButton = () => {
-    const recipesButton = document.createElement('button');
-    recipesButton.classList.add('nav-button');
-    recipesButton.setAttribute('id', 'recipes-button');
-    recipesButton.textContent = 'Recipes';
+	const recipesButton = document.createElement('button');
+	recipesButton.classList.add('nav-button');
+	recipesButton.setAttribute('id', 'recipes-button');
+	recipesButton.textContent = 'Recipes';
 
-    return recipesButton;
-}
+	recipesButton.addEventListener('click', () => {
+		const section = document.getElementById('content-section');
+		if (section) {
+			sectionFactory().clearSection(section);
+			displayRecipeList(section);
+		}
+	});
+
+	return recipesButton;
+};
 
 const createRecipesNav = () => {
-    const recipesNav = document.createElement('div');
-    recipesNav.classList.add('nav', 'recipes-nav');
+	const recipesNav = document.createElement('div');
+	recipesNav.classList.add('nav', 'recipes-nav');
 
-    recipesNav.appendChild(createRecipesButton());
+	recipesNav.appendChild(createRecipesButton());
 
-    return recipesNav;
-}
+	return recipesNav;
+};
 
 const createNav = () => {
-    const navContainer = document.createElement('nav');
-    navContainer.classList.add('nav-container');
-    
-    navContainer.appendChild(createMealPlansNav());
-    navContainer.appendChild(createGroceryListNav());
-    navContainer.appendChild(createRecipesNav());
+	const navContainer = document.createElement('nav');
+	navContainer.classList.add('nav-container');
 
-    return navContainer;
-}
+	navContainer.appendChild(createMealPlansNav());
+	navContainer.appendChild(createGroceryListNav());
+	navContainer.appendChild(createRecipesNav());
+
+	return navContainer;
+};
 
 export default createNav;
+
+/*
+To-do:
+
+- Find CSS animation for slide/grow reveal of subnav
+- Import page generation functions and attach to This Week and History buttons
+
+*/
