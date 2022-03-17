@@ -6,6 +6,7 @@
 	--font-color-1: hsl(50, 20%, 95%);
 	--background-1: hsl(0, 0%, 17%);
 	--background-2: hsl(0 0% 17% / 0.5);
+	--background-3: hsl(0 0% 50% / 0.5);
 	--red-1: hsl(22, 95%, 45%);
 	--red-2: hsl(22, 60%, 70%);
 	--green-1: hsl(104, 35%, 70%);
@@ -337,6 +338,14 @@ button {
 	border-bottom: solid 1px var(--font-color-1);
 }
 
+.grocery-list-item button {
+	transition: all 300ms;
+}
+
+.grocery-list-item button:hover {
+	color: var(--green-1);
+}
+
 .grocery-list-text-container {
 	display: grid;
 	grid-template-columns: 76% 12% 12%;
@@ -464,6 +473,17 @@ button {
 	color: var(--red-1);
 }
 
+.recipe-filter-container button {
+	padding: 0.125rem;
+	font-size: var(--step-0);
+	border-radius: 50%;
+	transition: all 300ms;
+}
+
+.recipe-filter-container button:hover {
+	background-color: var(--background-3);
+}
+
 .search-container {
 	display: flex;
 	width: 60%;
@@ -526,8 +546,18 @@ button {
 	position: absolute;
 	top: 0;
 	right: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 0.3125rem;
 	font-size: var(--step-0);
 	color: var(--red-1);
+	border-radius: 50%;
+	transition: all 300ms;
+}
+
+.recipe-modal-close-button:hover {
+	background-color: var(--background-3);
 }
 
 .ingredient-list-container {

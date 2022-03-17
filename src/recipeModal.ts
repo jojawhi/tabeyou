@@ -23,12 +23,6 @@ const generateRecipeCloseButton = (): HTMLElement => {
 
 const generateRecipeImage = () => {};
 
-/*
-Need to access recipe properties here
-
-Can access recipe properties by including parameters in each function that can be passed down from display function
-
-*/
 const generateRecipeModalHeading = (recipe: RecipeInterface): HTMLElement => {
 	const recipeModalHeading = document.createElement('h3');
 	recipeModalHeading.classList.add('page-subheading');
@@ -115,7 +109,9 @@ export default displayRecipeModal;
 /*
 To do:
 
+- figure out how to accept uploaded images
 - figure out how to make the ingredients and the instructions display on a slider/carousel/separate pages
--
+- add edit/save function to recipe modals
+- add functionality to close recipeModal on click outside the modal
 
 */

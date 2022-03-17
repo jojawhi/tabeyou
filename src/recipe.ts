@@ -110,6 +110,6 @@ const instructionFactory = () => {
 To do:
 
 - figure out how to get recipeArray from stored user info
-- figure out how to accept uploaded images
+
 
 */
