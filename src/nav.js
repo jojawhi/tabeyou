@@ -1,6 +1,7 @@
 import sectionFactory from './section';
 import displayGroceryList from './groceryList';
 import displayRecipeList from './recipeList';
+import displayMealPlan from './mealPlan';
 const createMealPlansButton = () => {
     const mealPlansButton = document.createElement('button');
     mealPlansButton.classList.add('nav-button');
@@ -27,6 +28,7 @@ const createMealPlansSubnav = () => {
         const section = document.getElementById('content-section');
         if (section) {
             sectionFactory().clearSection(section);
+            displayMealPlan(section);
         }
     });
     const historySubnavButton = document.createElement('button');
