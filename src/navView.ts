@@ -1,7 +1,7 @@
 import sectionFactory from './section';
-import displayGroceryList from './groceryList';
-import displayRecipeList from './recipeList';
-import displayMealPlan from './mealPlan';
+import displayGroceryList from './groceryListView';
+import displayRecipeList from './recipeListView';
+import displayMealPlan from './mealPlanView';
 
 const createMealPlansButton = () => {
 	const mealPlansButton = document.createElement('button');

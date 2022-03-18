@@ -1,4 +1,4 @@
-import { RecipeInterface, IngredientInterface } from './recipe';
+import { RecipeInterface, IngredientInterface } from './recipeModel';
 
 /*Header*/
 const generateRecipeCloseButton = (): HTMLElement => {

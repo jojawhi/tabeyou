@@ -1,5 +1,5 @@
 import './style.css';
-import createNav from './nav';
+import createNav from './navView';
 import sectionFactory from './section';
 import createHeader from './header';
 import createFooter from './footer';

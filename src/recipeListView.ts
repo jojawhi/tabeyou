@@ -1,6 +1,6 @@
-import getRecipeArray from './recipe';
-import { RecipeInterface } from './recipe';
-import displayRecipeModal from './recipeModal';
+import getRecipeArray from './recipeModel';
+import { RecipeInterface } from './recipeModel';
+import displayRecipeModal from './recipeModalView';
 
 const recipeArray: RecipeInterface[] = getRecipeArray();
 

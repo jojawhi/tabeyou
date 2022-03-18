@@ -1,5 +1,5 @@
-import getRecipeArray from './recipe';
-import displayRecipeModal from './recipeModal';
+import getRecipeArray from './recipeModel';
+import displayRecipeModal from './recipeModalView';
 const recipeArray = getRecipeArray();
 const generatePageSubheading = (string) => {
     const pageSubheading = document.createElement('h3');
