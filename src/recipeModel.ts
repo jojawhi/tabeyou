@@ -75,8 +75,6 @@ const addToRecipeArray = (recipe: RecipeInterface) => {
 
 	recipeArray.push(recipe);
 
-	console.log(recipeArray);
-
 	return recipeArray;
 };
 
@@ -110,6 +108,6 @@ const instructionFactory = () => {
 To do:
 
 - figure out how to get recipeArray from stored user info
-
+- add servings function or field for increasing amounts
 
 */

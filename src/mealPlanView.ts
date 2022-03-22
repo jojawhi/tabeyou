@@ -71,5 +71,5 @@ const displayMealPlan = (section: HTMLElement) => {
 export default displayMealPlan;
 
 /*
-
+- add dates to mealPlan headers using Date.prototype.toLocaleDateString()
 */

@@ -46,7 +46,6 @@ const recipeFactory = (name) => {
 const addToRecipeArray = (recipe) => {
     let recipeArray = [];
     recipeArray.push(recipe);
-    console.log(recipeArray);
     return recipeArray;
 };
 const getRecipeArray = () => {

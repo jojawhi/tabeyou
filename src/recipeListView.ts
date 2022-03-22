@@ -1,6 +1,7 @@
 import getRecipeArray from './recipeModel';
 import { RecipeInterface } from './recipeModel';
 import displayRecipeModal from './recipeModalView';
+import { collection, getDocs, doc, setDoc } from '../node_modules/firebase/firestore';
 
 const recipeArray: RecipeInterface[] = getRecipeArray();
 

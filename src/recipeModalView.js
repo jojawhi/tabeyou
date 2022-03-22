@@ -12,7 +12,12 @@ const generateRecipeCloseButton = () => {
     });
     return recipeCloseButton;
 };
-const generateRecipeImage = () => { };
+const generateRecipeImage = () => {
+    const recipeImage = document.createElement('img');
+    recipeImage.classList.add('recipe-img');
+    recipeImage.setAttribute('src', '../src/images/kimchi-rice.jpg');
+    return recipeImage;
+};
 const generateRecipeModalHeading = (recipe) => {
     const recipeModalHeading = document.createElement('h3');
     recipeModalHeading.classList.add('page-subheading');
@@ -23,6 +28,7 @@ const generateRecipeHeader = (recipe) => {
     const headerContainer = document.createElement('div');
     headerContainer.classList.add('recipe-header-container');
     headerContainer.appendChild(generateRecipeCloseButton());
+    headerContainer.appendChild(generateRecipeImage());
     headerContainer.appendChild(generateRecipeModalHeading(recipe));
     return headerContainer;
 };
