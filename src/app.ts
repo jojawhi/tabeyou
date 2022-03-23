@@ -1,12 +1,5 @@
 import { initializeApp } from '../node_modules/firebase/app';
-import {
-	getAuth,
-	onAuthStateChanged,
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
-	EmailAuthProvider,
-	GoogleAuthProvider,
-} from '../node_modules/firebase/auth';
+import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
 import {
 	getFirestore,
 	collection,
@@ -22,6 +15,8 @@ import sectionFactory from './section';
 import createHeader from './header';
 import createFooter from './footer';
 import generateLandingPage from './landing';
+
+// import { getUserDocByID } from './userModel';
 
 // tsc --watch filename to watch for file changes
 
@@ -41,39 +36,23 @@ const auth = getAuth(app);
 /*Global state attribute passed to page generating functions to determine which page elements to render*/
 let loggedIn: boolean = false;
 
-/*Firebase observer function that detects when auth state changes, configured to update loggedIn state and re-render the page*/
+/* Global state variable declaring the active user, will be used for making data read/write calls */
+let activeUser: string | null = null;
+
+/*Firebase observer function that detects when auth state changes, configured to update loggedIn and user state and re-render the page*/
 onAuthStateChanged(auth, (user) => {
 	if (user != null) {
-		console.log('logged in!');
-		console.log(user);
 		loggedIn = true;
+		activeUser = user.uid;
+		console.log(`${activeUser} logged in!`);
 		displayMainUserPage(loggedIn);
 	} else {
-		console.log('No user');
 		loggedIn = false;
+		activeUser = null;
+		console.log(`Logged in = ${loggedIn}; Active User = ${activeUser}`);
 		displayLandingPage(loggedIn);
 	}
 });
-
-/*
-const db = getFirestore(app);
-
-const docRef = doc(db, 'users', 'jojawhi');
-const docSnap = await getDoc(docRef);
-
-//These two document and collection retrievals work
-
-if (docSnap.exists()) {
-	console.log('Document data:', docSnap.data());
-} else {
-	console.log('No such document!');
-}
-
-const querySnapshot = await getDocs(collection(db, 'users/jojawhi/recipes'));
-querySnapshot.forEach((doc) => {
-	console.log(doc.id, ' => ', doc.data());
-});
-*/
 
 const createPageContainer = () => {
 	const pageContainer = document.createElement('div');
@@ -103,6 +82,12 @@ const displayMainUserPage = (state: boolean) => {
 /*
 
 To-do:
-- figure out how to change 'Log in' button to 'Log out' button
 
+*/
+
+// getUserByID('whijo');
+// checkForUserByEmail('asuka.endo@gmail.com');
+
+/*
+makeUser('whijo', 'whijo.whnan@gmail.com', 'testpass');
 */

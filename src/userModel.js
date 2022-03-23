@@ -1,6 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, } from '../node_modules/firebase/auth';
-import { getFirestore } from '../node_modules/firebase/firestore';
+import { getFirestore, collection, getDoc, doc, setDoc, } from '../node_modules/firebase/firestore';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -12,27 +12,61 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const signIn = (email, password) => {
+export const getUserWebID = (state) => {
     const auth = getAuth(app);
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-    })
-        .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+    if (state === true) {
+        const user = auth.currentUser;
+        if (user) {
+            const uid = user.uid;
+            return uid;
+        }
+    }
+};
+export const getUserDocByID = async (uid) => {
+    const userRef = doc(db, 'users', uid);
+    const userSnapshot = await getDoc(userRef);
+    if (userSnapshot.exists()) {
+        console.log('UID already in use.');
+    }
+    else {
+        console.log('UID is available');
+    }
+};
+export const addUserToDB = async (uid, email, password) => {
+    const usersRef = collection(db, 'users');
+    const newUser = await setDoc(doc(usersRef, uid), {
+        email: email,
+        password: password,
+        settings: {
+            darkMode: true,
+            shoppingDay: 'sun',
+        },
+    }).then((newUser) => {
+        console.log(`User ${uid} added to database.`);
     });
 };
-const createNewUser = (email, password) => {
+export const createNewUser = (email, password) => {
     const auth = getAuth(app);
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
         const user = userCredential.user;
+        addUserToDB(user.uid, email, password);
     })
         .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.log(`${errorCode}: ${errorMessage}`);
     });
 };
-export default signIn;
+export const signIn = (email, password) => {
+    const auth = getAuth(app);
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+        const user = userCredential.user;
+    })
+        .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(`${errorCode}: ${errorMessage}`);
+    });
+};

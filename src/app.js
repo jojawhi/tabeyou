@@ -18,16 +18,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 let loggedIn = false;
+let activeUser = null;
 onAuthStateChanged(auth, (user) => {
     if (user != null) {
-        console.log('logged in!');
-        console.log(user);
         loggedIn = true;
+        activeUser = user.uid;
+        console.log(`${activeUser} logged in!`);
         displayMainUserPage(loggedIn);
     }
     else {
-        console.log('No user');
         loggedIn = false;
+        activeUser = null;
+        console.log(`Logged in = ${loggedIn}; Active User = ${activeUser}`);
         displayLandingPage(loggedIn);
     }
 });

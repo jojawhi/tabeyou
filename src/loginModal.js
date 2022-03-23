@@ -1,5 +1,11 @@
 import generateSignUpModal from './signUpModal';
-import signIn from './userModel';
+import { signIn } from './userModel';
+export const closeModal = (modalID) => {
+    const modal = document.getElementById(modalID);
+    if (modal) {
+        modal.remove();
+    }
+};
 const generateLoginCloseButton = () => {
     const loginCloseButton = document.createElement('button');
     loginCloseButton.classList.add('recipe-modal-close-button');
@@ -7,10 +13,7 @@ const generateLoginCloseButton = () => {
     closeIcon.classList.add('fa-solid', 'fa-xmark');
     loginCloseButton.appendChild(closeIcon);
     loginCloseButton.addEventListener('click', () => {
-        const loginModal = document.getElementById('login-modal');
-        if (loginModal) {
-            loginModal.remove();
-        }
+        closeModal('login-modal');
     });
     return loginCloseButton;
 };
@@ -32,17 +35,10 @@ const generateLoginButton = () => {
         const password = document.getElementById('login-password').value;
         if (email && password) {
             signIn(email, password);
-            console.log('Logged in!');
-            const loginModal = document.getElementById('login-modal');
-            if (loginModal) {
-                loginModal.remove();
-            }
+            closeModal('login-modal');
         }
         else {
-            const loginModal = document.getElementById('login-modal');
-            if (loginModal) {
-                loginModal.remove();
-            }
+            closeModal('login-modal');
         }
     });
     return loginButton;
@@ -53,7 +49,7 @@ const generateLoginForm = () => {
     const usernameInputLabel = document.createElement('label');
     usernameInputLabel.classList.add('login-input-label');
     usernameInputLabel.setAttribute('for', 'username');
-    usernameInputLabel.textContent = 'Username:';
+    usernameInputLabel.textContent = 'Email:';
     const usernameInput = document.createElement('input');
     usernameInput.classList.add('login-input');
     usernameInput.setAttribute('name', 'username');
@@ -89,10 +85,7 @@ const generateSignUpButton = () => {
     signUpButton.setAttribute('id', 'signup-modal-button');
     signUpButton.textContent = 'Sign up';
     signUpButton.addEventListener('click', () => {
-        const loginModal = document.getElementById('login-modal');
-        if (loginModal) {
-            loginModal.remove();
-        }
+        closeModal('login-modal');
         generateSignUpModal();
     });
     return signUpButton;

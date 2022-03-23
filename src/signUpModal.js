@@ -1,3 +1,5 @@
+import { closeModal } from './loginModal';
+import { createNewUser } from './userModel';
 const generateSignUpCloseButton = () => {
     const signUpCloseButton = document.createElement('button');
     signUpCloseButton.classList.add('recipe-modal-close-button');
@@ -5,10 +7,7 @@ const generateSignUpCloseButton = () => {
     closeIcon.classList.add('fa-solid', 'fa-xmark');
     signUpCloseButton.appendChild(closeIcon);
     signUpCloseButton.addEventListener('click', () => {
-        const signUpModal = document.getElementById('signup-modal');
-        if (signUpModal) {
-            signUpModal.remove();
-        }
+        closeModal('signup-modal');
     });
     return signUpCloseButton;
 };
@@ -26,6 +25,12 @@ const generateSignUpButton = () => {
     signUpButton.textContent = 'Create account';
     signUpButton.addEventListener('click', (e) => {
         e.preventDefault();
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+        if (password === confirmPassword) {
+            createNewUser(email, password);
+        }
     });
     return signUpButton;
 };
@@ -38,6 +43,7 @@ const generateSignUpForm = () => {
     emailInputLabel.textContent = 'Email:';
     const emailInput = document.createElement('input');
     emailInput.classList.add('login-input');
+    emailInput.setAttribute('id', 'signup-email');
     emailInput.setAttribute('type', 'email');
     emailInput.setAttribute('name', 'email');
     emailInput.setAttribute('autocomplete', 'email');
@@ -47,6 +53,7 @@ const generateSignUpForm = () => {
     passwordInputLabel.textContent = 'Choose a password:';
     const passwordInput = document.createElement('input');
     passwordInput.classList.add('login-input');
+    passwordInput.setAttribute('id', 'signup-password');
     passwordInput.setAttribute('type', 'password');
     passwordInput.setAttribute('autocomplete', 'new-password');
     passwordInput.setAttribute('name', 'password');
@@ -56,6 +63,7 @@ const generateSignUpForm = () => {
     confirmPasswordInputLabel.textContent = 'Confirm password:';
     const confirmPasswordInput = document.createElement('input');
     confirmPasswordInput.classList.add('login-input');
+    confirmPasswordInput.setAttribute('id', 'signup-confirm-password');
     confirmPasswordInput.setAttribute('type', 'password');
     confirmPasswordInput.setAttribute('autocomplete', 'new-password');
     confirmPasswordInput.setAttribute('name', 'confirm-password');

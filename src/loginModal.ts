@@ -1,5 +1,13 @@
 import generateSignUpModal from './signUpModal';
-import signIn from './userModel';
+import { signIn } from './userModel';
+
+export const closeModal = (modalID: string) => {
+	const modal: HTMLElement | null = document.getElementById(modalID);
+
+	if (modal) {
+		modal.remove();
+	}
+};
 
 const generateLoginCloseButton = (): HTMLElement => {
 	const loginCloseButton: HTMLElement = document.createElement('button');
@@ -11,11 +19,7 @@ const generateLoginCloseButton = (): HTMLElement => {
 	loginCloseButton.appendChild(closeIcon);
 
 	loginCloseButton.addEventListener('click', () => {
-		const loginModal: HTMLElement | null = document.getElementById('login-modal');
-
-		if (loginModal) {
-			loginModal.remove();
-		}
+		closeModal('login-modal');
 	});
 
 	return loginCloseButton;
@@ -45,18 +49,9 @@ const generateLoginButton = () => {
 
 		if (email && password) {
 			signIn(email, password);
-			console.log('Logged in!');
-			const loginModal: HTMLElement | null = document.getElementById('login-modal');
-
-			if (loginModal) {
-				loginModal.remove();
-			}
+			closeModal('login-modal');
 		} else {
-			const loginModal: HTMLElement | null = document.getElementById('login-modal');
-
-			if (loginModal) {
-				loginModal.remove();
-			}
+			closeModal('login-modal');
 		}
 	});
 
@@ -70,7 +65,7 @@ const generateLoginForm = () => {
 	const usernameInputLabel = document.createElement('label');
 	usernameInputLabel.classList.add('login-input-label');
 	usernameInputLabel.setAttribute('for', 'username');
-	usernameInputLabel.textContent = 'Username:';
+	usernameInputLabel.textContent = 'Email:';
 
 	const usernameInput = document.createElement('input');
 	usernameInput.classList.add('login-input');
@@ -115,11 +110,7 @@ const generateSignUpButton = () => {
 	signUpButton.textContent = 'Sign up';
 
 	signUpButton.addEventListener('click', () => {
-		const loginModal: HTMLElement | null = document.getElementById('login-modal');
-
-		if (loginModal) {
-			loginModal.remove();
-		}
+		closeModal('login-modal');
 		generateSignUpModal();
 	});
 

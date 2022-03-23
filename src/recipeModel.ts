@@ -1,3 +1,46 @@
+import { initializeApp } from '../node_modules/firebase/app';
+
+import {
+	getFirestore,
+	collection,
+	getDocs,
+	doc,
+	setDoc,
+	getDoc,
+} from '../node_modules/firebase/firestore';
+
+const firebaseConfig = {
+	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
+	authDomain: 'tabeyou-e0c1f.firebaseapp.com',
+	projectId: 'tabeyou-e0c1f',
+	storageBucket: 'tabeyou-e0c1f.appspot.com',
+	messagingSenderId: '806206176016',
+	appId: '1:806206176016:web:74513f352b4a3305c04395',
+	measurementId: 'G-VFQ5CJKGB3',
+};
+
+const app = initializeApp(firebaseConfig);
+
+/*
+const db = getFirestore(app);
+
+const docRef = doc(db, 'users', 'jojawhi');
+const docSnap = await getDoc(docRef);
+
+//These two document and collection retrievals work
+
+if (docSnap.exists()) {
+	console.log('Document data:', docSnap.data());
+} else {
+	console.log('No such document!');
+}
+
+const querySnapshot = await getDocs(collection(db, 'users/jojawhi/recipes'));
+querySnapshot.forEach((doc) => {
+	console.log(doc.id, ' => ', doc.data());
+});
+*/
+
 const sampleRecipe: RecipeInterface = {
 	name: `Roy Choi's Aglio e Olio`,
 	ingredientList: [
