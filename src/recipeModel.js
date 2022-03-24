@@ -1,4 +1,5 @@
 import { initializeApp } from '../node_modules/firebase/app';
+import { getFirestore, collection, getDocs, } from '../node_modules/firebase/firestore';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -9,6 +10,7 @@ const firebaseConfig = {
     measurementId: 'G-VFQ5CJKGB3',
 };
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const sampleRecipe = {
     name: `Roy Choi's Aglio e Olio`,
     ingredientList: [
@@ -38,28 +40,54 @@ const sampleRecipe = {
         `Serve immediately.`,
     ],
 };
-const recipeFactory = (name) => {
-    let recipeName = name;
-    let ingredients = [];
-    let instructions = [];
-    const generateIngredientList = (ingredient) => {
-        let ingredientsList = [];
-        ingredientsList.push(ingredient);
-        return ingredientsList;
-    };
-    const getInstructionsFromInput = (instruction) => {
-        let instructionsArray = [];
-        instructionsArray.push(instruction);
-        return instructionsArray;
-    };
-    return { getInstructionsFromInput };
+class Recipe {
+    name;
+    ingredientList;
+    instructions;
+    constructor(name, ingredientList, instructions) {
+        (this.name = name),
+            (this.ingredientList = ingredientList),
+            (this.instructions = instructions);
+    }
+}
+const recipeConverter = {
+    toFirestore: (recipe) => {
+        return {
+            name: recipe.name,
+            ingredientList: recipe.ingredientList,
+            instructions: recipe.instructions,
+        };
+    },
+    fromFirestore: (snapshot) => {
+        const recipe = snapshot.data();
+        if (recipe) {
+            return new Recipe(recipe.name, recipe.ingredientList, recipe.instructions);
+        }
+    },
+};
+const addRecipeToDB = (user, recipe) => { };
+export const getRecipesFromDB = async (user) => {
+    const recipesRef = collection(db, `users/${user}/recipes`);
+    await getDocs(recipesRef).then((recipesSnap) => {
+        makeRecipeArray(recipesSnap);
+    });
+};
+const makeRecipeArray = (snapshot) => {
+    let recipesArray = [];
+    snapshot.forEach((recipe) => {
+        const recipeObject = recipeConverter.fromFirestore(recipe);
+        if (recipeObject) {
+            recipesArray.push(recipeObject);
+        }
+    });
+    console.log(recipesArray);
+    return recipesArray;
 };
 const addToRecipeArray = (recipe) => {
     let recipeArray = [];
     recipeArray.push(recipe);
     return recipeArray;
 };
-const getRecipeArray = () => {
+export const getRecipeArray = () => {
     return addToRecipeArray(sampleRecipe);
 };
-export default getRecipeArray;

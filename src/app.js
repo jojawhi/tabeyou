@@ -1,5 +1,5 @@
 import { initializeApp } from '../node_modules/firebase/app';
-import { getAuth, onAuthStateChanged, } from '../node_modules/firebase/auth';
+import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
 import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';

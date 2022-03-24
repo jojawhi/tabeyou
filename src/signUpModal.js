@@ -1,16 +1,5 @@
-import { closeModal } from './loginModal';
+import { generateCloseButton } from './components';
 import { createNewUser } from './userModel';
-const generateSignUpCloseButton = () => {
-    const signUpCloseButton = document.createElement('button');
-    signUpCloseButton.classList.add('recipe-modal-close-button');
-    const closeIcon = document.createElement('i');
-    closeIcon.classList.add('fa-solid', 'fa-xmark');
-    signUpCloseButton.appendChild(closeIcon);
-    signUpCloseButton.addEventListener('click', () => {
-        closeModal('signup-modal');
-    });
-    return signUpCloseButton;
-};
 const generateSignUpHeading = () => {
     const signUpHeading = document.createElement('h2');
     signUpHeading.classList.add('page-subheading');
@@ -80,7 +69,7 @@ const generateSignUpModalSection = () => {
     const loginModalSection = document.createElement('section');
     loginModalSection.classList.add('login-ui-container');
     loginModalSection.setAttribute('id', 'signup-modal');
-    loginModalSection.appendChild(generateSignUpCloseButton());
+    loginModalSection.appendChild(generateCloseButton('signup-modal'));
     loginModalSection.appendChild(generateSignUpHeading());
     loginModalSection.appendChild(generateSignUpForm());
     return loginModalSection;

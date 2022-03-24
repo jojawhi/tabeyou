@@ -10,7 +10,7 @@ import {
 	getAuth,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
-	getIdToken,
+	sendEmailVerification,
 } from '../node_modules/firebase/auth';
 
 import {
@@ -134,51 +134,8 @@ export const signIn = (email: string, password: string) => {
 };
 
 /*
-const getUserByEmail = async (collection: CollectionReference, email: string) => {
-	const db = getFirestore(app);
+	To do:
 
-	const userRef = doc(db, 'users', email);
-	const userSnapshot = await getDoc(userRef);
-
-	if (userSnapshot.exists()) {
-		console.log('User data: ', userSnapshot.data());
-		return true;
-	} else {
-		return false;
-	}
-};
-
-const getAllUsers = (): CollectionReference => {
-	const db = getFirestore(app);
-	const usersRef: CollectionReference = collection(db, 'users');
-
-	return usersRef;
-};
-
-const getUserByID = async (collection: CollectionReference, userName: string) => {
-	const db = getFirestore(app);
-
-	const userRef = doc(db, 'users', userName);
-	const userSnapshot = await getDoc(userRef);
-
-	if (userSnapshot.exists()) {
-		console.log('User data: ', userSnapshot.data());
-		return true;
-	} else {
-		return false;
-	}
-};
-
-
-
-
-*/
-
-/*
-	create new user
-	add user to database users collection
-	get user info from database
-	use database credentials to confirm if user exists
-	sign in existing user
+	- add functionality for email verification
 
 */

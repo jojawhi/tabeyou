@@ -1,6 +1,6 @@
-import getRecipeArray from './recipeModel';
-import { RecipeInterface } from './recipeModel';
+import { RecipeInterface, getRecipeArray } from './recipeModel';
 import displayRecipeModal from './recipeModalView';
+import displayNewRecipeModal from './newRecipeModal';
 import { collection, getDocs, doc, setDoc } from '../node_modules/firebase/firestore';
 
 const recipeArray: RecipeInterface[] = getRecipeArray();
@@ -83,6 +83,10 @@ const generateNewRecipeButton = () => {
 	newRecipeButton.classList.add('button');
 	newRecipeButton.setAttribute('id', 'new-recipe-button');
 	newRecipeButton.textContent = `New Recipe`;
+
+	newRecipeButton.addEventListener('click', () => {
+		displayNewRecipeModal();
+	});
 
 	return newRecipeButton;
 };

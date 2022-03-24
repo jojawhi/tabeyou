@@ -1,5 +1,6 @@
-import getRecipeArray from './recipeModel';
+import { getRecipeArray } from './recipeModel';
 import displayRecipeModal from './recipeModalView';
+import displayNewRecipeModal from './newRecipeModal';
 const recipeArray = getRecipeArray();
 const generatePageSubheading = (string) => {
     const pageSubheading = document.createElement('h3');
@@ -54,6 +55,9 @@ const generateNewRecipeButton = () => {
     newRecipeButton.classList.add('button');
     newRecipeButton.setAttribute('id', 'new-recipe-button');
     newRecipeButton.textContent = `New Recipe`;
+    newRecipeButton.addEventListener('click', () => {
+        displayNewRecipeModal();
+    });
     return newRecipeButton;
 };
 const displayRecipeList = (section) => {

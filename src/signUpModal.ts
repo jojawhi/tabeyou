@@ -1,21 +1,5 @@
-import { closeModal } from './loginModal';
+import { closeModal, generateCloseButton } from './components';
 import { createNewUser, signIn } from './userModel';
-
-const generateSignUpCloseButton = (): HTMLElement => {
-	const signUpCloseButton: HTMLElement = document.createElement('button');
-	signUpCloseButton.classList.add('recipe-modal-close-button');
-
-	const closeIcon: HTMLElement = document.createElement('i');
-	closeIcon.classList.add('fa-solid', 'fa-xmark');
-
-	signUpCloseButton.appendChild(closeIcon);
-
-	signUpCloseButton.addEventListener('click', () => {
-		closeModal('signup-modal');
-	});
-
-	return signUpCloseButton;
-};
 
 const generateSignUpHeading = () => {
 	const signUpHeading = document.createElement('h2');
@@ -34,7 +18,6 @@ const generateSignUpButton = () => {
 
 	signUpButton.addEventListener('click', (e) => {
 		e.preventDefault();
-		//const userName = (document.getElementById('signup-username') as HTMLInputElement).value;
 		const email = (document.getElementById('signup-email') as HTMLInputElement).value;
 		const password = (document.getElementById('signup-password') as HTMLInputElement).value;
 		const confirmPassword = (
@@ -54,18 +37,6 @@ const generateSignUpForm = () => {
 	const formContainer = document.createElement('form');
 	formContainer.classList.add('form-container');
 
-	/*
-	const userNameInputLabel = document.createElement('label');
-	userNameInputLabel.classList.add('login-input-label');
-	userNameInputLabel.setAttribute('for', 'userName');
-	userNameInputLabel.textContent = 'Choose a Username:';
-
-	const userNameInput = document.createElement('input');
-	userNameInput.classList.add('login-input');
-	userNameInput.setAttribute('id', 'signup-username');
-	userNameInput.setAttribute('name', 'userName');
-	userNameInput.setAttribute('autocomplete', 'new-username');
-*/
 	const emailInputLabel = document.createElement('label');
 	emailInputLabel.classList.add('login-input-label');
 	emailInputLabel.setAttribute('for', 'email');
@@ -102,8 +73,6 @@ const generateSignUpForm = () => {
 	confirmPasswordInput.setAttribute('autocomplete', 'new-password');
 	confirmPasswordInput.setAttribute('name', 'confirm-password');
 
-	// formContainer.appendChild(userNameInputLabel);
-	// formContainer.appendChild(userNameInput);
 	formContainer.appendChild(emailInputLabel);
 	formContainer.appendChild(emailInput);
 	formContainer.appendChild(passwordInputLabel);
@@ -120,7 +89,7 @@ const generateSignUpModalSection = () => {
 	loginModalSection.classList.add('login-ui-container');
 	loginModalSection.setAttribute('id', 'signup-modal');
 
-	loginModalSection.appendChild(generateSignUpCloseButton());
+	loginModalSection.appendChild(generateCloseButton('signup-modal'));
 	loginModalSection.appendChild(generateSignUpHeading());
 	loginModalSection.appendChild(generateSignUpForm());
 
@@ -131,4 +100,10 @@ const generateSignUpModal = () => {
 	document.body.appendChild(generateSignUpModalSection());
 };
 
+//Make this into an imported component
 export default generateSignUpModal;
+
+/*
+To do:
+- creeate error message div
+*/

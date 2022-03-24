@@ -1,29 +1,6 @@
 import generateSignUpModal from './signUpModal';
 import { signIn } from './userModel';
-
-export const closeModal = (modalID: string) => {
-	const modal: HTMLElement | null = document.getElementById(modalID);
-
-	if (modal) {
-		modal.remove();
-	}
-};
-
-const generateLoginCloseButton = (): HTMLElement => {
-	const loginCloseButton: HTMLElement = document.createElement('button');
-	loginCloseButton.classList.add('recipe-modal-close-button');
-
-	const closeIcon: HTMLElement = document.createElement('i');
-	closeIcon.classList.add('fa-solid', 'fa-xmark');
-
-	loginCloseButton.appendChild(closeIcon);
-
-	loginCloseButton.addEventListener('click', () => {
-		closeModal('login-modal');
-	});
-
-	return loginCloseButton;
-};
+import { generateCloseButton, closeModal } from './components';
 
 const generateLoginHeading = () => {
 	const loginHeading = document.createElement('h2');
@@ -136,7 +113,7 @@ const generateLoginModalSection = () => {
 	loginModalSection.classList.add('login-ui-container');
 	loginModalSection.setAttribute('id', 'login-modal');
 
-	loginModalSection.appendChild(generateLoginCloseButton());
+	loginModalSection.appendChild(generateCloseButton('login-modal'));
 	loginModalSection.appendChild(generateLoginHeading());
 	loginModalSection.appendChild(generateLoginForm());
 	loginModalSection.appendChild(generateRetrievePasswordButton());

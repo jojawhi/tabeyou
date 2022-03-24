@@ -7,6 +7,9 @@ import {
 	doc,
 	setDoc,
 	getDoc,
+	CollectionReference,
+	DocumentSnapshot,
+	QuerySnapshot,
 } from '../node_modules/firebase/firestore';
 
 const firebaseConfig = {
@@ -21,9 +24,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-/*
 const db = getFirestore(app);
-
+/*
 const docRef = doc(db, 'users', 'jojawhi');
 const docSnap = await getDoc(docRef);
 
@@ -71,6 +73,91 @@ const sampleRecipe: RecipeInterface = {
 	],
 };
 
+interface IngredientInterface {
+	name: string;
+	amount: number;
+	unit: string;
+}
+
+interface RecipeInterface {
+	name: string;
+	ingredientList: IngredientInterface[];
+	instructions?: string[];
+}
+
+class Recipe {
+	name: string;
+	ingredientList: IngredientInterface[];
+	instructions?: string[];
+
+	constructor(
+		name: string,
+		ingredientList: IngredientInterface[],
+		instructions: string[] | undefined
+	) {
+		(this.name = name),
+			(this.ingredientList = ingredientList),
+			(this.instructions = instructions);
+	}
+}
+
+const recipeConverter = {
+	toFirestore: (recipe: Recipe) => {
+		return {
+			name: recipe.name,
+			ingredientList: recipe.ingredientList,
+			instructions: recipe.instructions,
+		};
+	},
+	fromFirestore: (snapshot: DocumentSnapshot) => {
+		const recipe = snapshot.data();
+		if (recipe) {
+			return new Recipe(recipe.name, recipe.ingredientList, recipe.instructions);
+		}
+	},
+};
+
+const addRecipeToDB = (user: string, recipe: RecipeInterface) => {};
+
+// This retrieves recipe collection and returns as an array of objects when passing it the active user ID
+export const getRecipesFromDB = async (user: string) => {
+	const recipesRef = collection(db, `users/${user}/recipes`);
+	await getDocs(recipesRef).then((recipesSnap) => {
+		makeRecipeArray(recipesSnap);
+	});
+};
+
+const makeRecipeArray = (snapshot: QuerySnapshot) => {
+	let recipesArray: RecipeInterface[] = [];
+
+	snapshot.forEach((recipe) => {
+		const recipeObject = recipeConverter.fromFirestore(recipe);
+		if (recipeObject) {
+			recipesArray.push(recipeObject);
+		}
+	});
+
+	console.log(recipesArray);
+
+	return recipesArray;
+};
+
+const addToRecipeArray = (recipe: RecipeInterface) => {
+	/*Push all recipes to array and return the array*/
+	let recipeArray: RecipeInterface[] = [];
+
+	recipeArray.push(recipe);
+
+	return recipeArray;
+};
+
+export const getRecipeArray = () => {
+	return addToRecipeArray(sampleRecipe);
+};
+
+export { RecipeInterface, IngredientInterface };
+
+/*
 const recipeFactory = (name: string): {} => {
 	let recipeName: string = name;
 	let ingredients: IngredientInterface[] = [];
@@ -90,43 +177,10 @@ const recipeFactory = (name: string): {} => {
 		return instructionsArray;
 	};
 
-	/*
-    const generateRecipe = (name: string, ingredientsList: {}[], instructions: string[]): {} {
 
-
-
-    }
-    */
 	return { getInstructionsFromInput };
 };
-
-interface IngredientInterface {
-	name: string;
-	amount: number;
-	unit: string;
-}
-
-interface RecipeInterface {
-	name: string;
-	ingredientList: IngredientInterface[];
-	instructions?: string[];
-}
-
-const addToRecipeArray = (recipe: RecipeInterface) => {
-	/*Push all recipes to array and return the array*/
-	let recipeArray: RecipeInterface[] = [];
-
-	recipeArray.push(recipe);
-
-	return recipeArray;
-};
-
-const getRecipeArray = () => {
-	return addToRecipeArray(sampleRecipe);
-};
-
-export default getRecipeArray;
-export { RecipeInterface, IngredientInterface };
+*/
 
 /*
 const ingredientFactory = () => {
@@ -151,6 +205,7 @@ const instructionFactory = () => {
 To do:
 
 - figure out how to get recipeArray from stored user info
+- make newRecipeModal
 - add servings function or field for increasing amounts
 
 */

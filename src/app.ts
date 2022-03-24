@@ -9,6 +9,7 @@ import {
 	setDoc,
 	query,
 } from '../node_modules/firebase/firestore';
+import { getRecipesFromDB } from './recipeModel';
 import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';

@@ -1,25 +1,7 @@
 import { RecipeInterface, IngredientInterface } from './recipeModel';
+import { generateCloseButton, closeModal } from './components';
 
 /*Header*/
-const generateRecipeCloseButton = (): HTMLElement => {
-	const recipeCloseButton: HTMLElement = document.createElement('button');
-	recipeCloseButton.classList.add('recipe-modal-close-button');
-
-	const closeIcon: HTMLElement = document.createElement('i');
-	closeIcon.classList.add('fa-solid', 'fa-xmark');
-
-	recipeCloseButton.appendChild(closeIcon);
-
-	recipeCloseButton.addEventListener('click', () => {
-		const recipeModal: HTMLElement | null = document.getElementById('recipe-modal');
-
-		if (recipeModal) {
-			recipeModal.remove();
-		}
-	});
-
-	return recipeCloseButton;
-};
 
 const generateRecipeImage = () => {
 	const recipeImage = document.createElement('img');
@@ -41,7 +23,6 @@ const generateRecipeHeader = (recipe: RecipeInterface) => {
 	const headerContainer = document.createElement('div');
 	headerContainer.classList.add('recipe-header-container');
 
-	headerContainer.appendChild(generateRecipeCloseButton());
 	headerContainer.appendChild(generateRecipeImage());
 	headerContainer.appendChild(generateRecipeModalHeading(recipe));
 
@@ -101,6 +82,7 @@ const generateRecipeModalSection = (recipe: RecipeInterface) => {
 	recipeModalSection.classList.add('recipe-modal');
 	recipeModalSection.setAttribute('id', 'recipe-modal');
 
+	recipeModalSection.appendChild(generateCloseButton('recipe-modal'));
 	recipeModalSection.appendChild(generateRecipeHeader(recipe));
 	recipeModalSection.appendChild(generateModalIngredientListContainer(recipe));
 

@@ -1,3 +1,4 @@
+import { generateDeleteButton } from './components';
 const groceryListSample = [
     {
         name: 'apples',
@@ -36,14 +37,6 @@ const generateCheckbox = () => {
     checkbox.appendChild(checkboxInput);
     checkbox.appendChild(checkmark);
     return checkbox;
-};
-const generateDeleteButton = () => {
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('grocery-list-delete-button');
-    const deleteIcon = document.createElement('i');
-    deleteIcon.classList.add('fa-solid', 'fa-circle-minus', 'fa-xs');
-    deleteButton.appendChild(deleteIcon);
-    return deleteButton;
 };
 const generateListItemText = (name, amount, unit) => {
     const groceryListTextContainer = document.createElement('div');
