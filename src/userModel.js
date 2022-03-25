@@ -12,6 +12,17 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+export const checkForCurrentUser = () => {
+    const auth = getAuth(app);
+    if (auth.currentUser) {
+        console.log('Current User check successful.');
+        return true;
+    }
+    else {
+        console.log('No current user');
+        return false;
+    }
+};
 export const getUserWebID = (state) => {
     const auth = getAuth(app);
     if (state === true) {

@@ -1,5 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
-import { getFirestore, collection, getDocs, } from '../node_modules/firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, } from '../node_modules/firebase/firestore';
+import { getUserWebID, checkForCurrentUser } from './userModel';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -11,35 +12,6 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const sampleRecipe = {
-    name: `Roy Choi's Aglio e Olio`,
-    ingredientList: [
-        { name: 'parmesan cheese', amount: 0.5, unit: 'C' },
-        { name: 'lemon', amount: 1, unit: 'pc' },
-        { name: 'parsley', amount: 1, unit: 'bunch' },
-        { name: 'garlic', amount: 10, unit: 'cloves' },
-        { name: 'olive oil', amount: 1, unit: 'C' },
-        { name: 'spaghetti', amount: 450, unit: 'g' },
-        { name: 'chili flakes', amount: 1, unit: 'tbsp' },
-        { name: 'salt', amount: 1, unit: 'tbsp' },
-    ],
-    instructions: [
-        `Bring a pot of water to a boil, and add 1-2 tsp of salt and 1 tbsp of olive oil.`,
-        `Wash and de-stem the parsley. Chop the parsley with a rough chiffonade.`,
-        `Peel garlic and slice into thin discs.`,
-        `Add the spaghetti to the boiling water and cook until al dente or to desired doneness (~10 minutes).`,
-        `Drain the pasta and set aside, saving about 1 cup of the pasta water and also setting this aside.`,
-        `In a heavy-bottomed skillet over medium heat, add about ½ cup of olive oil (or enough to coat the bottom of the pan and cover all the garlic).`,
-        `Add garlic to the pan and cook until fragrant and just browning, about 3 minutes.`,
-        `Add chili flakes and all but 2-3 tbsps of the chopped parsley to the pan and cook for another 30 seconds or so.`,
-        `Add the cooked pasta and stir it into the oil and garlic. Then, add the saved cup of pasta water.`,
-        `Allow everything to heat and incorporate, then remove from the heat.`,
-        `Add 1-2 tbsp of butter to the pasta and the juice of a lemon and stir.`,
-        `Use a large fork to twist the spaghetti onto your plates.`,
-        `Top with some of the garlicky oil from the pan, grated parmesan cheese, and some of the leftover chopped parsley.`,
-        `Serve immediately.`,
-    ],
-};
 class Recipe {
     name;
     ingredientList;
@@ -65,14 +37,13 @@ const recipeConverter = {
         }
     },
 };
-const addRecipeToDB = (user, recipe) => { };
 export const getRecipesFromDB = async (user) => {
     const recipesRef = collection(db, `users/${user}/recipes`);
     await getDocs(recipesRef).then((recipesSnap) => {
-        makeRecipeArray(recipesSnap);
+        makeDatabaseRecipeArray(recipesSnap);
     });
 };
-const makeRecipeArray = (snapshot) => {
+const makeDatabaseRecipeArray = (snapshot) => {
     let recipesArray = [];
     snapshot.forEach((recipe) => {
         const recipeObject = recipeConverter.fromFirestore(recipe);
@@ -83,11 +54,38 @@ const makeRecipeArray = (snapshot) => {
     console.log(recipesArray);
     return recipesArray;
 };
-const addToRecipeArray = (recipe) => {
-    let recipeArray = [];
-    recipeArray.push(recipe);
-    return recipeArray;
+const addRecipeToDB = async (user, recipe) => {
+    const newRecipeRef = await addDoc(collection(db, `users/${user}/recipes`), recipeConverter.toFirestore(recipe));
+    console.log(`Recipe ID: ${newRecipeRef.id} written to User: ${user}`);
 };
-export const getRecipeArray = () => {
-    return addToRecipeArray(sampleRecipe);
+const makeRecipeObject = (recipeName, ingredientList, instructions) => {
+    const recipeObject = new Recipe(recipeName, ingredientList, instructions);
+    return recipeObject;
+};
+const makeIngredientObject = (ingredientName, ingredientAmount, ingredientUnit) => {
+    const ingredient = {
+        name: ingredientName,
+        amount: ingredientAmount,
+        unit: ingredientUnit,
+    };
+    return ingredient;
+};
+const makeIngredientListFromFormData = (ingredientsArray, amountsArray, unitsArray) => {
+    const ingredientList = [];
+    for (let i = 0; i < ingredientsArray.length; i++) {
+        ingredientList.push(makeIngredientObject(ingredientsArray[i], amountsArray[i], unitsArray[i]));
+    }
+    return ingredientList;
+};
+export const getFormData = (formID) => {
+    const form = document.getElementById(formID);
+    if (form) {
+        const formData = new FormData(form);
+        const recipeName = formData.get('name-input');
+        const ingredientNamesArray = formData.getAll('ingredient-name-input');
+        const ingredientAmountsArray = formData.getAll('ingredient-amount-input');
+        const ingredientUnitsArray = formData.getAll('ingredient-unit-input');
+        const instructionsArray = formData.getAll('instruction-input');
+        addRecipeToDB(getUserWebID(checkForCurrentUser()), makeRecipeObject(recipeName, makeIngredientListFromFormData(ingredientNamesArray, ingredientAmountsArray.map((item) => Number(item)), ingredientUnitsArray), instructionsArray));
+    }
 };

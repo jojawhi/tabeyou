@@ -1,6 +1,7 @@
 import { closeModal, generateCloseButton } from './components';
 import { createNewUser, signIn } from './userModel';
 
+// move to UI components, add string parameter, and import
 const generateSignUpHeading = () => {
 	const signUpHeading = document.createElement('h2');
 	signUpHeading.classList.add('page-subheading');

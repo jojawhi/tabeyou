@@ -63,12 +63,23 @@ const userConverter = {
 };
 */
 
-export const getUserWebID = (state: boolean) => {
+export const checkForCurrentUser = () => {
+	const auth = getAuth(app);
+	if (auth.currentUser) {
+		console.log('Current User check successful.');
+		return true;
+	} else {
+		console.log('No current user');
+		return false;
+	}
+};
+
+export const getUserWebID = (state: boolean): string | undefined => {
 	const auth = getAuth(app);
 	if (state === true) {
 		const user = auth.currentUser;
 		if (user) {
-			const uid = user.uid;
+			const uid: string = user.uid;
 			return uid;
 		}
 	}

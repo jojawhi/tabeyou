@@ -1,7 +1,6 @@
-import { getRecipeArray } from './recipeModel';
 import displayRecipeModal from './recipeModalView';
 import displayNewRecipeModal from './newRecipeModal';
-const recipeArray = getRecipeArray();
+const recipeArray = [];
 const generatePageSubheading = (string) => {
     const pageSubheading = document.createElement('h3');
     pageSubheading.classList.add('page-subheading');

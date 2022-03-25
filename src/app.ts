@@ -1,5 +1,5 @@
 import { initializeApp } from '../node_modules/firebase/app';
-import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
+import { getAuth, onAuthStateChanged, User } from '../node_modules/firebase/auth';
 import {
 	getFirestore,
 	collection,

@@ -1,9 +1,9 @@
-import { RecipeInterface, getRecipeArray } from './recipeModel';
+import { RecipeInterface } from './recipeModel';
 import displayRecipeModal from './recipeModalView';
 import displayNewRecipeModal from './newRecipeModal';
 import { collection, getDocs, doc, setDoc } from '../node_modules/firebase/firestore';
 
-const recipeArray: RecipeInterface[] = getRecipeArray();
+const recipeArray: RecipeInterface[] = [];
 
 const generatePageSubheading = (string: string) => {
 	const pageSubheading = document.createElement('h3');

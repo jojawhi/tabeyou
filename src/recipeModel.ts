@@ -5,12 +5,17 @@ import {
 	collection,
 	getDocs,
 	doc,
+	addDoc,
 	setDoc,
 	getDoc,
 	CollectionReference,
 	DocumentSnapshot,
 	QuerySnapshot,
 } from '../node_modules/firebase/firestore';
+
+import { getAuth } from '../node_modules/firebase/auth';
+
+import { getUserWebID, checkForCurrentUser } from './userModel';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -23,7 +28,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
+//const auth = getAuth(app);
 const db = getFirestore(app);
 /*
 const docRef = doc(db, 'users', 'jojawhi');
@@ -43,6 +48,7 @@ querySnapshot.forEach((doc) => {
 });
 */
 
+/*
 const sampleRecipe: RecipeInterface = {
 	name: `Roy Choi's Aglio e Olio`,
 	ingredientList: [
@@ -72,6 +78,7 @@ const sampleRecipe: RecipeInterface = {
 		`Serve immediately.`,
 	],
 };
+*/
 
 interface IngredientInterface {
 	name: string;
@@ -117,17 +124,15 @@ const recipeConverter = {
 	},
 };
 
-const addRecipeToDB = (user: string, recipe: RecipeInterface) => {};
-
 // This retrieves recipe collection and returns as an array of objects when passing it the active user ID
 export const getRecipesFromDB = async (user: string) => {
 	const recipesRef = collection(db, `users/${user}/recipes`);
 	await getDocs(recipesRef).then((recipesSnap) => {
-		makeRecipeArray(recipesSnap);
+		makeDatabaseRecipeArray(recipesSnap);
 	});
 };
 
-const makeRecipeArray = (snapshot: QuerySnapshot) => {
+const makeDatabaseRecipeArray = (snapshot: QuerySnapshot) => {
 	let recipesArray: RecipeInterface[] = [];
 
 	snapshot.forEach((recipe) => {
@@ -142,17 +147,79 @@ const makeRecipeArray = (snapshot: QuerySnapshot) => {
 	return recipesArray;
 };
 
-const addToRecipeArray = (recipe: RecipeInterface) => {
-	/*Push all recipes to array and return the array*/
-	let recipeArray: RecipeInterface[] = [];
+const addRecipeToDB = async (user: string | undefined, recipe: Recipe) => {
+	const newRecipeRef = await addDoc(
+		collection(db, `users/${user}/recipes`),
+		recipeConverter.toFirestore(recipe)
+	);
 
-	recipeArray.push(recipe);
-
-	return recipeArray;
+	console.log(`Recipe ID: ${newRecipeRef.id} written to User: ${user}`);
 };
 
-export const getRecipeArray = () => {
-	return addToRecipeArray(sampleRecipe);
+const makeRecipeObject = (
+	recipeName: string,
+	ingredientList: IngredientInterface[],
+	instructions: string[]
+) => {
+	const recipeObject = new Recipe(recipeName, ingredientList, instructions);
+
+	return recipeObject;
+};
+
+const makeIngredientObject = (
+	ingredientName: string,
+	ingredientAmount: number,
+	ingredientUnit: string
+) => {
+	const ingredient: IngredientInterface = {
+		name: ingredientName,
+		amount: ingredientAmount,
+		unit: ingredientUnit,
+	};
+
+	return ingredient;
+};
+
+const makeIngredientListFromFormData = (
+	ingredientsArray: string[],
+	amountsArray: number[],
+	unitsArray: string[]
+) => {
+	const ingredientList: IngredientInterface[] = [];
+
+	for (let i = 0; i < ingredientsArray.length; i++) {
+		ingredientList.push(
+			makeIngredientObject(ingredientsArray[i], amountsArray[i], unitsArray[i])
+		);
+	}
+	return ingredientList;
+};
+
+export const getFormData = (formID: string) => {
+	const form: HTMLFormElement = document.getElementById(formID) as HTMLFormElement;
+
+	if (form) {
+		const formData = new FormData(form);
+		const recipeName = formData.get('name-input') as string;
+		const ingredientNamesArray = formData.getAll('ingredient-name-input') as string[];
+		const ingredientAmountsArray = formData.getAll('ingredient-amount-input');
+		const ingredientUnitsArray = formData.getAll('ingredient-unit-input') as string[];
+
+		const instructionsArray = formData.getAll('instruction-input') as string[];
+
+		addRecipeToDB(
+			getUserWebID(checkForCurrentUser()),
+			makeRecipeObject(
+				recipeName,
+				makeIngredientListFromFormData(
+					ingredientNamesArray,
+					ingredientAmountsArray.map((item) => Number(item)),
+					ingredientUnitsArray
+				),
+				instructionsArray
+			)
+		);
+	}
 };
 
 export { RecipeInterface, IngredientInterface };
