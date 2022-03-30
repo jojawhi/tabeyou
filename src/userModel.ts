@@ -81,7 +81,22 @@ export const getUserWebID = (state: boolean): string | undefined => {
 		if (user) {
 			const uid: string = user.uid;
 			return uid;
+		} else {
+			console.log('Could not get User ID');
 		}
+	}
+};
+
+export const getUserShoppingDay = async (uid: any) => {
+	const userRef = doc(db, 'users', uid);
+	const userSnapshot = await getDoc(userRef);
+
+	if (userSnapshot.exists()) {
+		const shoppingDay: string = userSnapshot.data().settings.shoppingDay;
+		console.log(`User: ${uid}'s shopping day is `, shoppingDay);
+		return shoppingDay;
+	} else {
+		console.log('Could not find user.');
 	}
 };
 

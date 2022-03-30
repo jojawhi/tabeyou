@@ -1,15 +1,7 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged, User } from '../node_modules/firebase/auth';
-import {
-	getFirestore,
-	collection,
-	getDoc,
-	getDocs,
-	doc,
-	setDoc,
-	query,
-} from '../node_modules/firebase/firestore';
 import { getRecipesFromDB } from './recipeModel';
+import { setShoppingDay } from './mealPlanModel';
 import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';
@@ -46,6 +38,8 @@ onAuthStateChanged(auth, (user) => {
 		loggedIn = true;
 		activeUser = user.uid;
 		console.log(`${activeUser} logged in!`);
+		setShoppingDay();
+		//set dark or light mode
 		displayMainUserPage(loggedIn);
 	} else {
 		loggedIn = false;

@@ -318,25 +318,30 @@ button {
 
 .meal-plan-container {
 	display: grid;
-	grid-template-rows: 35% 65%;
-	grid-template-columns: repeat(7, 1fr);
-	margin: 2rem auto;
+	grid-template-rows: repeat(7, 1fr);
+	grid-gap: 0.25rem;
+	margin: 1rem auto;
 	text-align: center;
 	font-size: var(--step--2);
 	border-radius: 20px;
-	background-image: linear-gradient(to right, var(--green-2), var(--yellow-2), var(--red-2));
+}
+
+.header-cell-container {
+	display: grid;
+	grid-template-columns: 30% 70%;
+	grid-gap: 0.25rem;
+	border-radius: 15px;
 }
 
 .meal-plan-header {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 1rem 0;
-	border-bottom: solid 1px var(--font-color-1);
-	border-left: solid 1px var(--font-color-1);
-	border-right: solid 1px var(--font-color-1);
-	border-top: solid 2px var(--font-color-1);
+	padding: 0.5rem 0;
+	border: solid 2px var(--font-color-1);
+	border-radius: 15px;
 	color: var(--background-1);
+	background-image: linear-gradient(to right, var(--green-2), var(--yellow-2), var(--red-2));
 }
 
 .meal-plan-cell {
@@ -344,10 +349,8 @@ button {
 	align-items: center;
 	justify-content: center;
 	font-weight: 600;
-	border-bottom: solid 2px var(--font-color-1);
-	border-left: solid 1px var(--font-color-1);
-	border-right: solid 1px var(--font-color-1);
-	border-top: solid 1px var(--font-color-1);
+	border: solid 2px var(--font-color-1);
+	border-radius: 15px;
 	background-color: var(--background-1);
 	color: var(--red-1);
 }
@@ -355,7 +358,7 @@ button {
 .cell-button {
 	height: 100%;
 	width: 100%;
-	padding: 1rem 0.25rem;
+	padding: 0.75rem 0.25rem;
 	font-size: var(--step-0);
 	color: var(--red-1);
 	transition: all 300ms;
@@ -367,22 +370,22 @@ button {
 
 .top-left-corner {
 	border-left: solid 2px var(--font-color-1);
-	border-radius: 20px 0 0 0;
+	border-radius: 15px 0 0 0;
 }
 
 .top-right-corner {
 	border-right: solid 2px var(--font-color-1);
-	border-radius: 0 20px 0 0;
+	border-radius: 0 15px 0 0;
 }
 
 .bottom-left-corner {
 	border-left: solid 2px var(--font-color-1);
-	border-radius: 0 0 0 20px;
+	border-radius: 0 0 0 15px;
 }
 
 .bottom-right-corner {
 	border-right: solid 2px var(--font-color-1);
-	border-radius: 0 0 20px 0;
+	border-radius: 0 0 15px 0;
 }
 
 /*Grocery List*/
@@ -398,8 +401,9 @@ button {
 
 .grocery-list-item {
 	position: relative;
-	display: flex;
-	justify-content: space-evenly;
+	display: grid;
+	grid-template-columns: 10% 80% 10%;
+	justify-content: center;
 	align-items: center;
 	padding: 0.25rem 0;
 	border-bottom: solid 1px var(--font-color-1);
@@ -416,10 +420,8 @@ button {
 
 .grocery-list-text-container {
 	display: grid;
-	grid-template-columns: 76% 12% 12%;
+	grid-template-columns: 70% 15% 15%;
 	justify-content: space-between;
-	width: 100%;
-	padding: 0 2rem 0 0;
 	font-size: var(--step--1);
 }
 
@@ -433,12 +435,16 @@ button {
 }
 
 .grocery-list-text {
-	margin-left: 1rem;
+	margin-left: 0;
 }
 
 .grocery-list-amount {
 	width: 3rem;
 	text-align: center;
+}
+
+.grocery-list-delete-button {
+	text-align: right;
 }
 
 .checkbox {
@@ -531,6 +537,14 @@ button {
 	font-size: inherit;
 	font-weight: 600;
 	color: inherit;
+}
+
+.recipe-list-item {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0.25rem 0;
+	border-bottom: solid 1px var(--font-color-1);
 }
 
 .recipe-filter-container {
@@ -701,4 +715,15 @@ button {
 
 .submit-recipe-button {
 	display: block;
+}
+
+/*Media Queries*/
+
+@media only screen and (min-width: 1000px) {
+	.meal-plan-container {
+		margin: 2rem auto;
+		text-align: center;
+		font-size: var(--step--2);
+		border-radius: 20px;
+	}
 }

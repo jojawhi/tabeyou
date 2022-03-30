@@ -1,4 +1,13 @@
 //Utility function?
+
+export const generatePageSubheading = (string: string) => {
+	const pageSubheading = document.createElement('h3');
+	pageSubheading.classList.add('page-subheading');
+	pageSubheading.textContent = string;
+
+	return pageSubheading;
+};
+
 export const closeModal = (modalID: string) => {
 	const modal: HTMLElement | null = document.getElementById(modalID);
 
@@ -41,4 +50,31 @@ export const generateCloseButton = (parentID: string): HTMLElement => {
 	});
 
 	return closeButton;
+};
+
+export const generateModalSection = (id: string, heading: string, ...children: Node[]) => {
+	const modalSection = document.createElement('section');
+	modalSection.classList.add('recipe-modal');
+	modalSection.setAttribute('id', id);
+
+	modalSection.appendChild(generateCloseButton(id));
+	modalSection.appendChild(generatePageSubheading(heading));
+	if (children) {
+		for (let i = 0; i < children.length; i++) {
+			modalSection.appendChild(children[i]);
+		}
+	}
+
+	return modalSection;
+};
+
+export const generatePageButton = (buttonText: string, buttonID: string, eventListener: any) => {
+	const pageButton = document.createElement('button');
+	pageButton.classList.add('button');
+	pageButton.setAttribute('id', buttonID);
+	pageButton.textContent = buttonText;
+
+	pageButton.addEventListener('click', eventListener);
+
+	return pageButton;
 };

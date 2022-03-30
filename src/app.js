@@ -1,5 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
+import { setShoppingDay } from './mealPlanModel';
 import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';
@@ -24,6 +25,7 @@ onAuthStateChanged(auth, (user) => {
         loggedIn = true;
         activeUser = user.uid;
         console.log(`${activeUser} logged in!`);
+        setShoppingDay();
         displayMainUserPage(loggedIn);
     }
     else {

@@ -39,11 +39,10 @@ const recipeConverter = {
 };
 export const getRecipesFromDB = async (user) => {
     const recipesRef = collection(db, `users/${user}/recipes`);
-    await getDocs(recipesRef).then((recipesSnap) => {
-        makeDatabaseRecipeArray(recipesSnap);
-    });
+    const recipesSnap = await getDocs(recipesRef);
+    return makeDatabaseRecipeArray(recipesSnap);
 };
-const makeDatabaseRecipeArray = (snapshot) => {
+export const makeDatabaseRecipeArray = (snapshot) => {
     let recipesArray = [];
     snapshot.forEach((recipe) => {
         const recipeObject = recipeConverter.fromFirestore(recipe);

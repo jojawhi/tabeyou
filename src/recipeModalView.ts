@@ -101,6 +101,6 @@ To do:
 - figure out how to accept uploaded images
 - figure out how to make the ingredients and the instructions display on a slider/carousel/separate pages
 - add edit/save function to recipe modals
-- add functionality to close recipeModal on click outside the modal?
+- add 'add to meal plan' button
 
 */

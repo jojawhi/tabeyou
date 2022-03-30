@@ -1,6 +1,7 @@
+import { getRecipesFromDB } from './recipeModel';
+import { getUserWebID, checkForCurrentUser } from './userModel';
 import displayRecipeModal from './recipeModalView';
 import displayNewRecipeModal from './newRecipeModal';
-const recipeArray = [];
 const generatePageSubheading = (string) => {
     const pageSubheading = document.createElement('h3');
     pageSubheading.classList.add('page-subheading');
@@ -26,27 +27,29 @@ const generateFilterContainer = () => {
     filterContainer.appendChild(sortButton);
     return filterContainer;
 };
-const generateList = (recipeArray) => {
+const generateList = () => {
     const recipeList = document.createElement('ul');
     recipeList.classList.add('recipe-list');
-    for (let i = 0; i < recipeArray.length; i++) {
-        const listItem = document.createElement('li');
-        listItem.classList.add('grocery-list-item');
-        const listButton = document.createElement('button');
-        listButton.addEventListener('click', () => {
-            displayRecipeModal(recipeArray[i]);
-        });
-        listItem.appendChild(listButton);
-        listButton.textContent = recipeArray[i].name;
-        recipeList.appendChild(listItem);
-    }
+    const recipePromise = getRecipesFromDB(getUserWebID(checkForCurrentUser())).then((recipeArray) => {
+        for (let i = 0; i < recipeArray.length; i++) {
+            const listItem = document.createElement('li');
+            listItem.classList.add('recipe-list-item');
+            const listButton = document.createElement('button');
+            listButton.addEventListener('click', () => {
+                displayRecipeModal(recipeArray[i]);
+            });
+            listItem.appendChild(listButton);
+            listButton.textContent = recipeArray[i].name;
+            recipeList.appendChild(listItem);
+        }
+    });
     return recipeList;
 };
 const generateRecipeListContainer = () => {
     const recipeListContainer = document.createElement('div');
     recipeListContainer.classList.add('grocery-list-container', 'recipe-list-container');
     recipeListContainer.appendChild(generateFilterContainer());
-    recipeListContainer.appendChild(generateList(recipeArray));
+    recipeListContainer.appendChild(generateList());
     return recipeListContainer;
 };
 const generateNewRecipeButton = () => {

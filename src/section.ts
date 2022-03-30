@@ -15,3 +15,5 @@ const sectionFactory = () => {
 };
 
 export default sectionFactory;
+
+// Refactor to simple functions and add to components.ts

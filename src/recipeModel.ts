@@ -125,14 +125,14 @@ const recipeConverter = {
 };
 
 // This retrieves recipe collection and returns as an array of objects when passing it the active user ID
-export const getRecipesFromDB = async (user: string) => {
+export const getRecipesFromDB = async (user: string | undefined) => {
 	const recipesRef = collection(db, `users/${user}/recipes`);
-	await getDocs(recipesRef).then((recipesSnap) => {
-		makeDatabaseRecipeArray(recipesSnap);
-	});
+	const recipesSnap = await getDocs(recipesRef);
+
+	return makeDatabaseRecipeArray(recipesSnap);
 };
 
-const makeDatabaseRecipeArray = (snapshot: QuerySnapshot) => {
+export const makeDatabaseRecipeArray = (snapshot: QuerySnapshot) => {
 	let recipesArray: RecipeInterface[] = [];
 
 	snapshot.forEach((recipe) => {

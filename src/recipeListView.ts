@@ -1,9 +1,8 @@
-import { RecipeInterface } from './recipeModel';
+import { RecipeInterface, getRecipesFromDB, makeDatabaseRecipeArray } from './recipeModel';
+import { getUserWebID, checkForCurrentUser } from './userModel';
 import displayRecipeModal from './recipeModalView';
 import displayNewRecipeModal from './newRecipeModal';
 import { collection, getDocs, doc, setDoc } from '../node_modules/firebase/firestore';
-
-const recipeArray: RecipeInterface[] = [];
 
 const generatePageSubheading = (string: string) => {
 	const pageSubheading = document.createElement('h3');
@@ -40,27 +39,26 @@ const generateFilterContainer = () => {
 	return filterContainer;
 };
 
-const generateList = (recipeArray: RecipeInterface[]) => {
-	/*
-    Iterate over recipe objects and return array of names
-
-    */
-
+const generateList = () => {
 	const recipeList = document.createElement('ul');
 	recipeList.classList.add('recipe-list');
 
-	for (let i = 0; i < recipeArray.length; i++) {
-		const listItem = document.createElement('li');
-		listItem.classList.add('grocery-list-item');
-		const listButton = document.createElement('button');
-		listButton.addEventListener('click', () => {
-			displayRecipeModal(recipeArray[i]);
-		});
-		listItem.appendChild(listButton);
-		listButton.textContent = recipeArray[i].name;
-		recipeList.appendChild(listItem);
-	}
-
+	// Because getRecipesFromDB returns a promise, it has to be followed by .then or it won't run before the rest of the function
+	const recipePromise = getRecipesFromDB(getUserWebID(checkForCurrentUser())).then(
+		(recipeArray) => {
+			for (let i = 0; i < recipeArray.length; i++) {
+				const listItem = document.createElement('li');
+				listItem.classList.add('recipe-list-item');
+				const listButton = document.createElement('button');
+				listButton.addEventListener('click', () => {
+					displayRecipeModal(recipeArray[i]);
+				});
+				listItem.appendChild(listButton);
+				listButton.textContent = recipeArray[i].name;
+				recipeList.appendChild(listItem);
+			}
+		}
+	);
 	return recipeList;
 };
 
@@ -69,11 +67,7 @@ const generateRecipeListContainer = () => {
 	recipeListContainer.classList.add('grocery-list-container', 'recipe-list-container');
 
 	recipeListContainer.appendChild(generateFilterContainer());
-	recipeListContainer.appendChild(generateList(recipeArray));
-
-	/*
-    array.map((item) => recipeListContainer.appendChild(generateList(item)));
-    */
+	recipeListContainer.appendChild(generateList());
 
 	return recipeListContainer;
 };
@@ -102,7 +96,6 @@ export default displayRecipeList;
 /*
 To do:
 
-- add eventListener to newRecipeButton to bring up new recipe modal with inputs
 - add search functionality
 - add sort A-Z/Z-A functionality
 */
