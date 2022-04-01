@@ -108,7 +108,7 @@ class Recipe {
 	}
 }
 
-const recipeConverter = {
+export const recipeConverter = {
 	toFirestore: (recipe: Recipe) => {
 		return {
 			name: recipe.name,

@@ -22,7 +22,7 @@ class Recipe {
             (this.instructions = instructions);
     }
 }
-const recipeConverter = {
+export const recipeConverter = {
     toFirestore: (recipe) => {
         return {
             name: recipe.name,

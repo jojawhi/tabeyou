@@ -15,6 +15,7 @@ import sectionFactory from './section';
 import createHeader from './header';
 import createFooter from './footer';
 import generateLandingPage from './landing';
+import displayMealPlan from './mealPlanView';
 
 // import { getUserDocByID } from './userModel';
 

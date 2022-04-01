@@ -20,7 +20,7 @@ import {
 	Timestamp,
 	updateDoc,
 } from '../node_modules/firebase/firestore';
-import { RecipeInterface } from '../src/recipeModel';
+import { RecipeInterface, recipeConverter } from '../src/recipeModel';
 import { userID, getUserShoppingDay } from './userModel';
 
 const firebaseConfig = {
@@ -259,11 +259,12 @@ export const getMealPlanRecipes = async (uid: string | undefined) => {
 	let recipeArray: any[] = [];
 
 	snapshot.forEach((mealPlan) => {
-		const mealPlanRecipes = mealPlan.data().meals;
+		const mealPlanObject = mealPlanConverter.fromFirestore(mealPlan);
 
-		for (const recipe in mealPlanRecipes) {
-			// objectName[key] is how to to access the recipe key's value
-			recipeArray.push(mealPlanRecipes[recipe]);
+		if (mealPlanObject) {
+			const mealsObject = mealPlanObject.meals;
+			// objectName['key'] with '' is how to to access the recipe key's value in mealPlanView
+			recipeArray = Object.values(mealsObject);
 		}
 	});
 
@@ -274,22 +275,56 @@ export const getMealPlanRecipes = async (uid: string | undefined) => {
 
 export const addRecipeToMealPlan = async (
 	uid: string,
-	dayIndex: string,
+	dayIndex: number,
 	recipe: RecipeInterface
 ) => {
 	const mealPlanID = await getCurrentMealPlanID(uid);
 	const mealPlanRef = doc(db, `users/${uid}/mealPlans/${mealPlanID}`);
 	const mealPlanSnapshot = await getDoc(mealPlanRef);
+	//const dayIndexWithOffset = (dayIndex + shoppingDayOffset) % daysArray.length;
+	console.log(`Number used for key comparison: ${dayIndex}`);
 
 	if (mealPlanSnapshot.exists()) {
+		if (dayIndex + 1 === 7) {
+			await updateDoc(mealPlanRef, {
+				'meals.0': recipeConverter.toFirestore(recipe),
+			});
+		} else if (dayIndex + 1 === 1) {
+			await updateDoc(mealPlanRef, {
+				'meals.1': recipeConverter.toFirestore(recipe),
+			});
+		} else if (dayIndex + 1 === 2) {
+			await updateDoc(mealPlanRef, {
+				'meals.2': recipeConverter.toFirestore(recipe),
+			});
+		} else if (dayIndex + 1 === 3) {
+			await updateDoc(mealPlanRef, {
+				'meals.3': recipeConverter.toFirestore(recipe),
+			});
+		} else if (dayIndex + 1 === 4) {
+			await updateDoc(mealPlanRef, {
+				'meals.4': recipeConverter.toFirestore(recipe),
+			});
+		} else if (dayIndex + 1 === 5) {
+			await updateDoc(mealPlanRef, {
+				'meals.5': recipeConverter.toFirestore(recipe),
+			});
+		} else if (dayIndex + 1 === 6) {
+			await updateDoc(mealPlanRef, {
+				'meals.6': recipeConverter.toFirestore(recipe),
+			});
+		}
+
+		/*
 		const keysArray = Object.keys(mealPlanSnapshot.data().meals);
 		for (const key in keysArray) {
-			if (dayIndex === key) {
+			if (dayString === key) {
 				await updateDoc(mealPlanRef, {
 					'`meals.${dayIndex}`': recipe,
 				});
 			}
 		}
+		*/
 	} else {
 		console.log(`Could not access document`);
 	}

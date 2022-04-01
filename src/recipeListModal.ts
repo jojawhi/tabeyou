@@ -1,7 +1,10 @@
 import { userID } from './userModel';
-import { RecipeInterface, getRecipesFromDB } from './recipeModel';
-import { getMealPlanRecipes, addRecipeToMealPlan } from './mealPlanModel';
+import { getRecipesFromDB } from './recipeModel';
+import { closeModal } from './components';
+import { addRecipeToMealPlan } from './mealPlanModel';
 import displayRecipeModal from './recipeModalView';
+import displayMealPlan from './mealPlanView';
+import sectionFactory from './section';
 
 const generateFilterContainer = () => {
 	const filterContainer = document.createElement('div');
@@ -30,7 +33,7 @@ const generateFilterContainer = () => {
 	return filterContainer;
 };
 
-const generateList = () => {
+const generateList = (index: number) => {
 	const recipeList = document.createElement('ul');
 	recipeList.classList.add('recipe-list');
 
@@ -41,10 +44,16 @@ const generateList = () => {
 			listItem.classList.add('recipe-list-item');
 			const listButton = document.createElement('button');
 			listButton.addEventListener('click', () => {
-				// change event listener to add recipe to meal plan
-				// change textContent of the button that was clicked on to the name of the recipe
-				// add the recipe to the current meal plan
-				displayRecipeModal(recipeArray[i]);
+				// displayRecipeModal(recipeArray[i]);
+				addRecipeToMealPlan(userID(), index, recipeArray[i]).then(() => {
+					// Chaining this with a .then() method waits until the database is updated to re-render
+					const section = document.getElementById('content-section');
+					if (section) {
+						sectionFactory().clearSection(section);
+						displayMealPlan(section);
+					}
+				});
+				closeModal('recipe-list');
 			});
 			listItem.appendChild(listButton);
 			listButton.textContent = recipeArray[i].name;
@@ -54,18 +63,18 @@ const generateList = () => {
 	return recipeList;
 };
 
-const generateRecipeListContainer = () => {
+const generateRecipeListContainer = (index: number) => {
 	const recipeListContainer = document.createElement('div');
 	recipeListContainer.classList.add('grocery-list-container', 'recipe-list-container');
 
 	recipeListContainer.appendChild(generateFilterContainer());
-	recipeListContainer.appendChild(generateList());
+	recipeListContainer.appendChild(generateList(index));
 
 	return recipeListContainer;
 };
 
-const displayRecipeListModal = (section: HTMLElement) => {
-	section.appendChild(generateRecipeListContainer());
+const displayRecipeListModal = (section: HTMLElement, index: number) => {
+	section.appendChild(generateRecipeListContainer(index));
 };
 
 export default displayRecipeListModal;

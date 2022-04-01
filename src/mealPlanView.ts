@@ -1,23 +1,10 @@
-import { userID, getUserShoppingDay } from './userModel';
-import { getMealPlanRecipes, MealPlanInterface, shoppingDayOffset } from './mealPlanModel';
-import { generatePageSubheading, generatePageButton } from './components';
+import { userID } from './userModel';
+import { getMealPlanRecipes, shoppingDayOffset } from './mealPlanModel';
+import { generatePageSubheading } from './components';
 import displayRecipeListModal from './recipeListModal';
 import { generateModalSection } from './components';
 
-/*
-StackOverflow solution for setting shopping day:
-https://stackoverflow.com/questions/28430348/how-to-loop-through-arrays-starting-at-different-index-while-still-looping-throu
-
-
-	for (let i = 0; i < array.length; i++) {
-		let pointer = (i + offset) % array.length;
-	}
-
-*/
-
 const daysArray: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-
-let globalShoppingDay = 'sun';
 
 const generateMealPlanHeader = (day: string) => {
 	const header = document.createElement('div');
@@ -56,7 +43,8 @@ const generateMealPlanCell = (dayIndex: number, recipeName: string | null) => {
 
 	cellButton.addEventListener('click', (e) => {
 		const modal = document.body.appendChild(generateModalSection('recipe-list', 'Recipes'));
-		displayRecipeListModal(modal);
+		const index = dayIndex;
+		displayRecipeListModal(modal, index);
 	});
 
 	cell.appendChild(cellButton);
@@ -79,13 +67,12 @@ const generateHeaderCellContainer = (
 };
 
 // Need to determine shopping day offset for the parameter
-const generateMealPlanContainer = (offset: number) => {
+const generateMealPlanContainer = async (offset: number) => {
 	const mealPlanContainer = document.createElement('div');
 	mealPlanContainer.classList.add('meal-plan-container');
+	mealPlanContainer.setAttribute('id', 'meal-plan-container');
 
-	let testString = '';
-
-	const mealPlanRecipes = getMealPlanRecipes(userID()).then((mealPlanArray) => {
+	const mealPlanRecipes = await getMealPlanRecipes(userID()).then((mealPlanArray) => {
 		// Loop algorithm from Stack Overflow: https://stackoverflow.com/questions/28430348/how-to-loop-through-arrays-starting-at-different-index-while-still-looping-throu
 		// This works because i gives an index reference: https://stackoverflow.com/questions/30574147/how-to-find-the-index-of-a-missing-value-in-an-array
 		for (let i = 0; i < mealPlanArray.length; i++) {
@@ -95,8 +82,14 @@ const generateMealPlanContainer = (offset: number) => {
 				mealPlanContainer.appendChild(
 					generateHeaderCellContainer(dayIndexString, pointer, mealPlanArray[i])
 				);
-			} else {
-				console.log('NOPE! TRY AGAIN!');
+			} else if (mealPlanArray[i] != null) {
+				let pointer = (i + offset) % mealPlanArray.length;
+				const dayIndexString = pointer.toString();
+				// object['stringProperty'] with '' was what i was missing to access the property values
+				const recipeName: string = mealPlanArray[i]['name'];
+				mealPlanContainer.appendChild(
+					generateHeaderCellContainer(dayIndexString, pointer, recipeName)
+				);
 			}
 		}
 		/*

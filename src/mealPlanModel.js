@@ -1,6 +1,7 @@
 require('../node_modules/datejs/index');
 import { initializeApp } from '../node_modules/firebase/app';
 import { getFirestore, collection, getDocs, doc, addDoc, getDoc, query, where, updateDoc, } from '../node_modules/firebase/firestore';
+import { recipeConverter } from '../src/recipeModel';
 import { userID, getUserShoppingDay } from './userModel';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -156,9 +157,10 @@ export const getMealPlanRecipes = async (uid) => {
     const snapshot = await getDocs(mealPlanQuery);
     let recipeArray = [];
     snapshot.forEach((mealPlan) => {
-        const mealPlanRecipes = mealPlan.data().meals;
-        for (const recipe in mealPlanRecipes) {
-            recipeArray.push(mealPlanRecipes[recipe]);
+        const mealPlanObject = mealPlanConverter.fromFirestore(mealPlan);
+        if (mealPlanObject) {
+            const mealsObject = mealPlanObject.meals;
+            recipeArray = Object.values(mealsObject);
         }
     });
     console.log(`Meals: ${recipeArray}`);
@@ -168,14 +170,42 @@ export const addRecipeToMealPlan = async (uid, dayIndex, recipe) => {
     const mealPlanID = await getCurrentMealPlanID(uid);
     const mealPlanRef = doc(db, `users/${uid}/mealPlans/${mealPlanID}`);
     const mealPlanSnapshot = await getDoc(mealPlanRef);
+    console.log(`Number used for key comparison: ${dayIndex}`);
     if (mealPlanSnapshot.exists()) {
-        const keysArray = Object.keys(mealPlanSnapshot.data().meals);
-        for (const key in keysArray) {
-            if (dayIndex === key) {
-                await updateDoc(mealPlanRef, {
-                    '`meals.${dayIndex}`': recipe,
-                });
-            }
+        if (dayIndex + 1 === 7) {
+            await updateDoc(mealPlanRef, {
+                'meals.0': recipeConverter.toFirestore(recipe),
+            });
+        }
+        else if (dayIndex + 1 === 1) {
+            await updateDoc(mealPlanRef, {
+                'meals.1': recipeConverter.toFirestore(recipe),
+            });
+        }
+        else if (dayIndex + 1 === 2) {
+            await updateDoc(mealPlanRef, {
+                'meals.2': recipeConverter.toFirestore(recipe),
+            });
+        }
+        else if (dayIndex + 1 === 3) {
+            await updateDoc(mealPlanRef, {
+                'meals.3': recipeConverter.toFirestore(recipe),
+            });
+        }
+        else if (dayIndex + 1 === 4) {
+            await updateDoc(mealPlanRef, {
+                'meals.4': recipeConverter.toFirestore(recipe),
+            });
+        }
+        else if (dayIndex + 1 === 5) {
+            await updateDoc(mealPlanRef, {
+                'meals.5': recipeConverter.toFirestore(recipe),
+            });
+        }
+        else if (dayIndex + 1 === 6) {
+            await updateDoc(mealPlanRef, {
+                'meals.6': recipeConverter.toFirestore(recipe),
+            });
         }
     }
     else {
