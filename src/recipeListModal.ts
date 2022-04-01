@@ -47,6 +47,7 @@ const generateList = (index: number) => {
 				// displayRecipeModal(recipeArray[i]);
 				addRecipeToMealPlan(userID(), index, recipeArray[i]).then(() => {
 					// Chaining this with a .then() method waits until the database is updated to re-render
+					// Stack Overflow: https://stackoverflow.com/questions/66928193/updating-firestore-from-vue-then-reload-page-to-get-updated-data-not-working
 					const section = document.getElementById('content-section');
 					if (section) {
 						sectionFactory().clearSection(section);

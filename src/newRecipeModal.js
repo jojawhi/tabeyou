@@ -1,4 +1,4 @@
-import { generateDeleteButton, generateCloseButton } from './components';
+import { generateDeleteButton, generateCloseButton, closeModal } from './components';
 import { getFormData } from './recipeModel';
 const generateSubheading = (string) => {
     const subheadingContainer = document.createElement('div');
@@ -130,6 +130,7 @@ const generateNewRecipeForm = () => {
     newRecipeForm.addEventListener('submit', (e) => {
         e.preventDefault();
         getFormData('new-recipe-form');
+        closeModal('recipe-modal');
     });
     return newRecipeForm;
 };

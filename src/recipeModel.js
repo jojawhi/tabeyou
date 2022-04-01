@@ -1,6 +1,8 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getFirestore, collection, getDocs, addDoc, } from '../node_modules/firebase/firestore';
 import { userID } from './userModel';
+import sectionFactory from './section';
+import displayRecipeList from './recipeListView';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -78,6 +80,7 @@ const makeIngredientListFromFormData = (ingredientsArray, amountsArray, unitsArr
 };
 export const getFormData = (formID) => {
     const form = document.getElementById(formID);
+    let error = '';
     if (form) {
         const formData = new FormData(form);
         const recipeName = formData.get('name-input');
@@ -85,6 +88,12 @@ export const getFormData = (formID) => {
         const ingredientAmountsArray = formData.getAll('ingredient-amount-input');
         const ingredientUnitsArray = formData.getAll('ingredient-unit-input');
         const instructionsArray = formData.getAll('instruction-input');
-        addRecipeToDB(userID(), makeRecipeObject(recipeName, makeIngredientListFromFormData(ingredientNamesArray, ingredientAmountsArray.map((item) => Number(item)), ingredientUnitsArray), instructionsArray));
+        addRecipeToDB(userID(), makeRecipeObject(recipeName, makeIngredientListFromFormData(ingredientNamesArray, ingredientAmountsArray.map((item) => Number(item)), ingredientUnitsArray), instructionsArray)).then(() => {
+            const section = document.getElementById('content-section');
+            if (section) {
+                sectionFactory().clearSection(section);
+                displayRecipeList(section);
+            }
+        });
     }
 };

@@ -1,21 +1,15 @@
 import { initializeApp } from '../node_modules/firebase/app';
-
 import {
 	getFirestore,
 	collection,
 	getDocs,
-	doc,
 	addDoc,
-	setDoc,
-	getDoc,
-	CollectionReference,
 	DocumentSnapshot,
 	QuerySnapshot,
 } from '../node_modules/firebase/firestore';
-
-import { getAuth } from '../node_modules/firebase/auth';
-
 import { userID } from './userModel';
+import sectionFactory from './section';
+import displayRecipeList from './recipeListView';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -197,6 +191,7 @@ const makeIngredientListFromFormData = (
 
 export const getFormData = (formID: string) => {
 	const form: HTMLFormElement = document.getElementById(formID) as HTMLFormElement;
+	let error = '';
 
 	if (form) {
 		const formData = new FormData(form);
@@ -218,7 +213,13 @@ export const getFormData = (formID: string) => {
 				),
 				instructionsArray
 			)
-		);
+		).then(() => {
+			const section = document.getElementById('content-section');
+			if (section) {
+				sectionFactory().clearSection(section);
+				displayRecipeList(section);
+			}
+		});
 	}
 };
 

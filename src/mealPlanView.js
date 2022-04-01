@@ -78,32 +78,4 @@ const displayMealPlan = async (section) => {
     section.appendChild(await generateMealPlanContainer(shoppingDayOffset));
     section.appendChild(generateMakeGroceryListButton());
 };
-export const updateMealPlanDisplay = async (offset) => {
-    const oldContainer = document.getElementById('meal-plan-container');
-    if (oldContainer) {
-        oldContainer.remove();
-    }
-    const newContainer = document.createElement('div');
-    newContainer.classList.add('meal-plan-container');
-    newContainer.setAttribute('id', 'meal-plan-container');
-    const mealPlanRecipes = await getMealPlanRecipes(userID()).then((mealPlanArray) => {
-        for (let i = 0; i < mealPlanArray.length; i++) {
-            if (mealPlanArray[i] === null) {
-                let pointer = (i + offset) % mealPlanArray.length;
-                const dayIndexString = pointer.toString();
-                newContainer.appendChild(generateHeaderCellContainer(dayIndexString, pointer, mealPlanArray[i]));
-            }
-            else if (mealPlanArray[i] != null) {
-                let pointer = (i + offset) % mealPlanArray.length;
-                const dayIndexString = pointer.toString();
-                const recipeName = mealPlanArray[i]['name'];
-                newContainer.appendChild(generateHeaderCellContainer(dayIndexString, pointer, recipeName));
-            }
-        }
-    });
-    const section = document.getElementById('content-section');
-    if (section) {
-        section.appendChild(newContainer);
-    }
-};
 export default displayMealPlan;
