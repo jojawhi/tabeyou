@@ -63,7 +63,7 @@ const userConverter = {
 };
 */
 
-export const checkForCurrentUser = () => {
+const checkForCurrentUser = () => {
 	const auth = getAuth(app);
 	if (auth.currentUser) {
 		console.log('Current User check successful.');
@@ -74,7 +74,7 @@ export const checkForCurrentUser = () => {
 	}
 };
 
-export const getUserWebID = (state: boolean): string | undefined => {
+const getUserWebID = (state: boolean): string => {
 	const auth = getAuth(app);
 	if (state === true) {
 		const user = auth.currentUser;
@@ -83,20 +83,31 @@ export const getUserWebID = (state: boolean): string | undefined => {
 			return uid;
 		} else {
 			console.log('Could not get User ID');
+			return 'No user';
 		}
+	} else {
+		return 'Error: Cannot get user ID';
 	}
 };
 
-export const getUserShoppingDay = async (uid: any) => {
-	const userRef = doc(db, 'users', uid);
-	const userSnapshot = await getDoc(userRef);
+//More concise and readable in the other files
+export const userID = () => {
+	return getUserWebID(checkForCurrentUser());
+};
 
-	if (userSnapshot.exists()) {
-		const shoppingDay: string = userSnapshot.data().settings.shoppingDay;
-		console.log(`User: ${uid}'s shopping day is `, shoppingDay);
-		return shoppingDay;
+export const getUserShoppingDay = async (uid: string | undefined) => {
+	if (uid) {
+		const userRef = doc(db, 'users', uid);
+		const userSnapshot = await getDoc(userRef);
+		if (userSnapshot.exists()) {
+			const shoppingDay: string = userSnapshot.data().settings.shoppingDay;
+			console.log(`User: ${uid}'s shopping day is `, shoppingDay);
+			return shoppingDay;
+		} else {
+			console.log('Could not find user.');
+		}
 	} else {
-		console.log('Could not find user.');
+		console.log('Could not get user shopping day: no uid');
 	}
 };
 

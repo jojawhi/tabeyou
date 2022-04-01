@@ -1,6 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getFirestore, collection, getDocs, addDoc, } from '../node_modules/firebase/firestore';
-import { getUserWebID, checkForCurrentUser } from './userModel';
+import { userID } from './userModel';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -37,8 +37,8 @@ const recipeConverter = {
         }
     },
 };
-export const getRecipesFromDB = async (user) => {
-    const recipesRef = collection(db, `users/${user}/recipes`);
+export const getRecipesFromDB = async (uid) => {
+    const recipesRef = collection(db, `users/${uid}/recipes`);
     const recipesSnap = await getDocs(recipesRef);
     return makeDatabaseRecipeArray(recipesSnap);
 };
@@ -85,6 +85,6 @@ export const getFormData = (formID) => {
         const ingredientAmountsArray = formData.getAll('ingredient-amount-input');
         const ingredientUnitsArray = formData.getAll('ingredient-unit-input');
         const instructionsArray = formData.getAll('instruction-input');
-        addRecipeToDB(getUserWebID(checkForCurrentUser()), makeRecipeObject(recipeName, makeIngredientListFromFormData(ingredientNamesArray, ingredientAmountsArray.map((item) => Number(item)), ingredientUnitsArray), instructionsArray));
+        addRecipeToDB(userID(), makeRecipeObject(recipeName, makeIngredientListFromFormData(ingredientNamesArray, ingredientAmountsArray.map((item) => Number(item)), ingredientUnitsArray), instructionsArray));
     }
 };

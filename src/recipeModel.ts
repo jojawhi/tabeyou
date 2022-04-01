@@ -15,7 +15,7 @@ import {
 
 import { getAuth } from '../node_modules/firebase/auth';
 
-import { getUserWebID, checkForCurrentUser } from './userModel';
+import { userID } from './userModel';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -125,8 +125,8 @@ const recipeConverter = {
 };
 
 // This retrieves recipe collection and returns as an array of objects when passing it the active user ID
-export const getRecipesFromDB = async (user: string | undefined) => {
-	const recipesRef = collection(db, `users/${user}/recipes`);
+export const getRecipesFromDB = async (uid: string | undefined) => {
+	const recipesRef = collection(db, `users/${uid}/recipes`);
 	const recipesSnap = await getDocs(recipesRef);
 
 	return makeDatabaseRecipeArray(recipesSnap);
@@ -208,7 +208,7 @@ export const getFormData = (formID: string) => {
 		const instructionsArray = formData.getAll('instruction-input') as string[];
 
 		addRecipeToDB(
-			getUserWebID(checkForCurrentUser()),
+			userID(),
 			makeRecipeObject(
 				recipeName,
 				makeIngredientListFromFormData(

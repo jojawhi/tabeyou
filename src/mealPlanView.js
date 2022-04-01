@@ -1,50 +1,63 @@
-import { createNewMealPlan } from './mealPlanModel';
+import { userID } from './userModel';
+import { getMealPlanRecipes, shoppingDayOffset } from './mealPlanModel';
 import { generatePageSubheading } from './components';
 import displayRecipeListModal from './recipeListModal';
 import { generateModalSection } from './components';
-const daysArray = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-const setShoppingDayOffset = (day) => {
-    let offset = daysArray.indexOf(day);
-    return offset;
-};
+const daysArray = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+let globalShoppingDay = 'sun';
 const generateMealPlanHeader = (day) => {
     const header = document.createElement('div');
     header.classList.add('meal-plan-header');
     const headerText = document.createElement('h2');
     headerText.classList.add('meal-plan-header-text');
-    headerText.textContent = day;
+    headerText.textContent = daysArray[Number(day)].toUpperCase();
     header.appendChild(headerText);
     return header;
 };
-const generateMealPlanCell = (day) => {
+const generateMealPlanCell = (dayIndex, recipeName) => {
     const cell = document.createElement('div');
     cell.classList.add('meal-plan-cell');
+    cell.setAttribute('id', `cell-${dayIndex}`);
     const cellButton = document.createElement('button');
     cellButton.classList.add('cell-button');
-    const cellIcon = document.createElement('i');
-    cellIcon.classList.add('fa-solid', 'fa-circle-plus');
+    if (recipeName != null) {
+        cellButton.textContent = recipeName;
+    }
+    else if (recipeName === null) {
+        const cellIcon = document.createElement('i');
+        cellIcon.classList.add('fa-solid', 'fa-circle-plus');
+        cellButton.appendChild(cellIcon);
+    }
     cellButton.addEventListener('click', (e) => {
         const modal = document.body.appendChild(generateModalSection('recipe-list', 'Recipes'));
         displayRecipeListModal(modal);
-        createNewMealPlan();
     });
-    cellButton.appendChild(cellIcon);
     cell.appendChild(cellButton);
     return cell;
 };
-const generateHeaderCellContainer = (day) => {
+const generateHeaderCellContainer = (dayString, dayIndex, recipeName) => {
     const headerCellContainer = document.createElement('div');
     headerCellContainer.classList.add('header-cell-container');
-    headerCellContainer.appendChild(generateMealPlanHeader(day));
-    headerCellContainer.appendChild(generateMealPlanCell(day));
+    headerCellContainer.appendChild(generateMealPlanHeader(dayString));
+    headerCellContainer.appendChild(generateMealPlanCell(dayIndex, recipeName));
     return headerCellContainer;
 };
-const generateMealPlanContainer = (array, offset) => {
+const generateMealPlanContainer = (offset) => {
     const mealPlanContainer = document.createElement('div');
     mealPlanContainer.classList.add('meal-plan-container');
-    for (const day of array) {
-        mealPlanContainer.appendChild(generateHeaderCellContainer(day));
-    }
+    let testString = '';
+    const mealPlanRecipes = getMealPlanRecipes(userID()).then((mealPlanArray) => {
+        for (let i = 0; i < mealPlanArray.length; i++) {
+            if (mealPlanArray[i] === null) {
+                let pointer = (i + offset) % mealPlanArray.length;
+                const dayIndexString = pointer.toString();
+                mealPlanContainer.appendChild(generateHeaderCellContainer(dayIndexString, pointer, mealPlanArray[i]));
+            }
+            else {
+                console.log('NOPE! TRY AGAIN!');
+            }
+        }
+    });
     return mealPlanContainer;
 };
 const generateMakeGroceryListButton = () => {
@@ -57,9 +70,9 @@ const generateMakeGroceryListButton = () => {
     });
     return pageButton;
 };
-const displayMealPlan = (section) => {
+const displayMealPlan = async (section) => {
     section.appendChild(generatePageSubheading(`This week's meal plan`));
-    section.appendChild(generateMealPlanContainer(daysArray, 0));
+    section.appendChild(await generateMealPlanContainer(shoppingDayOffset));
     section.appendChild(generateMakeGroceryListButton());
 };
 export default displayMealPlan;

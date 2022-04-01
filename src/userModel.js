@@ -12,7 +12,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-export const checkForCurrentUser = () => {
+const checkForCurrentUser = () => {
     const auth = getAuth(app);
     if (auth.currentUser) {
         console.log('Current User check successful.');
@@ -23,7 +23,7 @@ export const checkForCurrentUser = () => {
         return false;
     }
 };
-export const getUserWebID = (state) => {
+const getUserWebID = (state) => {
     const auth = getAuth(app);
     if (state === true) {
         const user = auth.currentUser;
@@ -33,19 +33,31 @@ export const getUserWebID = (state) => {
         }
         else {
             console.log('Could not get User ID');
+            return 'No user';
         }
     }
+    else {
+        return 'Error: Cannot get user ID';
+    }
+};
+export const userID = () => {
+    return getUserWebID(checkForCurrentUser());
 };
 export const getUserShoppingDay = async (uid) => {
-    const userRef = doc(db, 'users', uid);
-    const userSnapshot = await getDoc(userRef);
-    if (userSnapshot.exists()) {
-        const shoppingDay = userSnapshot.data().settings.shoppingDay;
-        console.log(`User: ${uid}'s shopping day is `, shoppingDay);
-        return shoppingDay;
+    if (uid) {
+        const userRef = doc(db, 'users', uid);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+            const shoppingDay = userSnapshot.data().settings.shoppingDay;
+            console.log(`User: ${uid}'s shopping day is `, shoppingDay);
+            return shoppingDay;
+        }
+        else {
+            console.log('Could not find user.');
+        }
     }
     else {
-        console.log('Could not find user.');
+        console.log('Could not get user shopping day: no uid');
     }
 };
 export const getUserDocByID = async (uid) => {

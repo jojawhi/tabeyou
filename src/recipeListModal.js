@@ -1,5 +1,5 @@
+import { userID } from './userModel';
 import { getRecipesFromDB } from './recipeModel';
-import { getUserWebID, checkForCurrentUser } from './userModel';
 import displayRecipeModal from './recipeModalView';
 const generateFilterContainer = () => {
     const filterContainer = document.createElement('div');
@@ -23,7 +23,7 @@ const generateFilterContainer = () => {
 const generateList = () => {
     const recipeList = document.createElement('ul');
     recipeList.classList.add('recipe-list');
-    const recipePromise = getRecipesFromDB(getUserWebID(checkForCurrentUser())).then((recipeArray) => {
+    const recipePromise = getRecipesFromDB(userID()).then((recipeArray) => {
         for (let i = 0; i < recipeArray.length; i++) {
             const listItem = document.createElement('li');
             listItem.classList.add('recipe-list-item');

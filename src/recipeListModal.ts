@@ -1,5 +1,6 @@
-import { RecipeInterface, getRecipesFromDB, makeDatabaseRecipeArray } from './recipeModel';
-import { getUserWebID, checkForCurrentUser } from './userModel';
+import { userID } from './userModel';
+import { RecipeInterface, getRecipesFromDB } from './recipeModel';
+import { getMealPlanRecipes, addRecipeToMealPlan } from './mealPlanModel';
 import displayRecipeModal from './recipeModalView';
 
 const generateFilterContainer = () => {
@@ -34,24 +35,22 @@ const generateList = () => {
 	recipeList.classList.add('recipe-list');
 
 	// Because getRecipesFromDB returns a promise, it has to be followed by .then or it won't run before the rest of the function
-	const recipePromise = getRecipesFromDB(getUserWebID(checkForCurrentUser())).then(
-		(recipeArray) => {
-			for (let i = 0; i < recipeArray.length; i++) {
-				const listItem = document.createElement('li');
-				listItem.classList.add('recipe-list-item');
-				const listButton = document.createElement('button');
-				listButton.addEventListener('click', () => {
-					//change event listener to add recipe to meal plan
-					// change textContent of the button that was clicked on to the name of the recipe
-					// add the recipe to the current meal plan
-					displayRecipeModal(recipeArray[i]);
-				});
-				listItem.appendChild(listButton);
-				listButton.textContent = recipeArray[i].name;
-				recipeList.appendChild(listItem);
-			}
+	const recipePromise = getRecipesFromDB(userID()).then((recipeArray) => {
+		for (let i = 0; i < recipeArray.length; i++) {
+			const listItem = document.createElement('li');
+			listItem.classList.add('recipe-list-item');
+			const listButton = document.createElement('button');
+			listButton.addEventListener('click', () => {
+				// change event listener to add recipe to meal plan
+				// change textContent of the button that was clicked on to the name of the recipe
+				// add the recipe to the current meal plan
+				displayRecipeModal(recipeArray[i]);
+			});
+			listItem.appendChild(listButton);
+			listButton.textContent = recipeArray[i].name;
+			recipeList.appendChild(listItem);
 		}
-	);
+	});
 	return recipeList;
 };
 

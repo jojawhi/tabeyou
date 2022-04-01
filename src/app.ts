@@ -1,7 +1,14 @@
 import { initializeApp } from '../node_modules/firebase/app';
-import { getAuth, onAuthStateChanged, User } from '../node_modules/firebase/auth';
+import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
+import { userID } from './userModel';
 import { getRecipesFromDB } from './recipeModel';
-import { setShoppingDay } from './mealPlanModel';
+import {
+	setShoppingDay,
+	setShoppingDayOffset,
+	checkMealPlanExpiry,
+	replaceMealPlan,
+	compareDates,
+} from './mealPlanModel';
 import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';
@@ -39,7 +46,10 @@ onAuthStateChanged(auth, (user) => {
 		activeUser = user.uid;
 		console.log(`${activeUser} logged in!`);
 		setShoppingDay();
+
 		//set dark or light mode
+		//checkMealPlanExpiry();
+		checkMealPlanExpiry();
 		displayMainUserPage(loggedIn);
 	} else {
 		loggedIn = false;

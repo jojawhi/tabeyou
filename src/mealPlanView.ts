@@ -1,5 +1,5 @@
-import { getUserWebID, checkForCurrentUser, getUserShoppingDay } from './userModel';
-import { MealPlanInterface, MealPlan, createNewMealPlan, setShoppingDay } from './mealPlanModel';
+import { userID, getUserShoppingDay } from './userModel';
+import { getMealPlanRecipes, MealPlanInterface, shoppingDayOffset } from './mealPlanModel';
 import { generatePageSubheading, generatePageButton } from './components';
 import displayRecipeListModal from './recipeListModal';
 import { generateModalSection } from './components';
@@ -15,12 +15,9 @@ https://stackoverflow.com/questions/28430348/how-to-loop-through-arrays-starting
 
 */
 
-const daysArray: string[] = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const daysArray: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
-const setShoppingDayOffset = (day: string) => {
-	let offset = daysArray.indexOf(day);
-	return offset;
-};
+let globalShoppingDay = 'sun';
 
 const generateMealPlanHeader = (day: string) => {
 	const header = document.createElement('div');
@@ -34,58 +31,86 @@ const generateMealPlanHeader = (day: string) => {
 */
 	const headerText = document.createElement('h2');
 	headerText.classList.add('meal-plan-header-text');
-	headerText.textContent = day;
+	headerText.textContent = daysArray[Number(day)].toUpperCase();
 
 	header.appendChild(headerText);
 
 	return header;
 };
 
-const generateMealPlanCell = (day: string) => {
+const generateMealPlanCell = (dayIndex: number, recipeName: string | null) => {
 	const cell = document.createElement('div');
 	cell.classList.add('meal-plan-cell');
-	/*
-	if (daysArray.indexOf(day) === 0) {
-		cell.classList.add('top-right-corner');
-	} else if (daysArray.indexOf(day) === 6) {
-		cell.classList.add('bottom-right-corner');
-	}
-*/
+	cell.setAttribute('id', `cell-${dayIndex}`);
+
 	const cellButton = document.createElement('button');
 	cellButton.classList.add('cell-button');
 
-	const cellIcon = document.createElement('i');
-	cellIcon.classList.add('fa-solid', 'fa-circle-plus');
+	if (recipeName != null) {
+		cellButton.textContent = recipeName;
+	} else if (recipeName === null) {
+		const cellIcon = document.createElement('i');
+		cellIcon.classList.add('fa-solid', 'fa-circle-plus');
+		cellButton.appendChild(cellIcon);
+	}
 
 	cellButton.addEventListener('click', (e) => {
 		const modal = document.body.appendChild(generateModalSection('recipe-list', 'Recipes'));
 		displayRecipeListModal(modal);
-		createNewMealPlan();
 	});
 
-	cellButton.appendChild(cellIcon);
 	cell.appendChild(cellButton);
 
 	return cell;
 };
 
-const generateHeaderCellContainer = (day: string) => {
+const generateHeaderCellContainer = (
+	dayString: string,
+	dayIndex: number,
+	recipeName: string | null
+) => {
 	const headerCellContainer = document.createElement('div');
 	headerCellContainer.classList.add('header-cell-container');
 
-	headerCellContainer.appendChild(generateMealPlanHeader(day));
-	headerCellContainer.appendChild(generateMealPlanCell(day));
+	headerCellContainer.appendChild(generateMealPlanHeader(dayString));
+	headerCellContainer.appendChild(generateMealPlanCell(dayIndex, recipeName));
 
 	return headerCellContainer;
 };
 
-const generateMealPlanContainer = (array: string[], offset: number) => {
+// Need to determine shopping day offset for the parameter
+const generateMealPlanContainer = (offset: number) => {
 	const mealPlanContainer = document.createElement('div');
 	mealPlanContainer.classList.add('meal-plan-container');
 
-	for (const day of array) {
-		mealPlanContainer.appendChild(generateHeaderCellContainer(day));
-	}
+	let testString = '';
+
+	const mealPlanRecipes = getMealPlanRecipes(userID()).then((mealPlanArray) => {
+		// Loop algorithm from Stack Overflow: https://stackoverflow.com/questions/28430348/how-to-loop-through-arrays-starting-at-different-index-while-still-looping-throu
+		// This works because i gives an index reference: https://stackoverflow.com/questions/30574147/how-to-find-the-index-of-a-missing-value-in-an-array
+		for (let i = 0; i < mealPlanArray.length; i++) {
+			if (mealPlanArray[i] === null) {
+				let pointer = (i + offset) % mealPlanArray.length;
+				const dayIndexString = pointer.toString();
+				mealPlanContainer.appendChild(
+					generateHeaderCellContainer(dayIndexString, pointer, mealPlanArray[i])
+				);
+			} else {
+				console.log('NOPE! TRY AGAIN!');
+			}
+		}
+		/*
+		//This did not work because indexOf doesn't work on null array items
+		for (const day of mealPlanArray) {
+			console.log(`Day: ${day}`);
+			const dayIndex = (mealPlanArray.indexOf(day) + offset) % mealPlanArray.length;
+			const dayIndexString = dayIndex.toString();
+			testString += `${dayIndex}, `;
+			console.log(`Test String: ${testString}`);
+			mealPlanContainer.appendChild(generateHeaderCellContainer(dayIndexString, day));
+		}
+		*/
+	});
 
 	return mealPlanContainer;
 };
@@ -103,14 +128,16 @@ const generateMakeGroceryListButton = () => {
 	return pageButton;
 };
 
-const displayMealPlan = (section: HTMLElement) => {
+const displayMealPlan = async (section: HTMLElement) => {
 	section.appendChild(generatePageSubheading(`This week's meal plan`));
-	section.appendChild(generateMealPlanContainer(daysArray, 0));
+	section.appendChild(await generateMealPlanContainer(shoppingDayOffset));
 	section.appendChild(generateMakeGroceryListButton());
 };
 
 export default displayMealPlan;
 
 /*
-- add dates to mealPlan headers using Date.prototype.toLocaleDateString()
+To-do:
+
+-
 */

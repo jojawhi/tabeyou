@@ -1,5 +1,5 @@
 import { RecipeInterface, getRecipesFromDB, makeDatabaseRecipeArray } from './recipeModel';
-import { getUserWebID, checkForCurrentUser } from './userModel';
+import { userID } from './userModel';
 import displayRecipeModal from './recipeModalView';
 import displayNewRecipeModal from './newRecipeModal';
 import { collection, getDocs, doc, setDoc } from '../node_modules/firebase/firestore';
@@ -44,21 +44,19 @@ const generateList = () => {
 	recipeList.classList.add('recipe-list');
 
 	// Because getRecipesFromDB returns a promise, it has to be followed by .then or it won't run before the rest of the function
-	const recipePromise = getRecipesFromDB(getUserWebID(checkForCurrentUser())).then(
-		(recipeArray) => {
-			for (let i = 0; i < recipeArray.length; i++) {
-				const listItem = document.createElement('li');
-				listItem.classList.add('recipe-list-item');
-				const listButton = document.createElement('button');
-				listButton.addEventListener('click', () => {
-					displayRecipeModal(recipeArray[i]);
-				});
-				listItem.appendChild(listButton);
-				listButton.textContent = recipeArray[i].name;
-				recipeList.appendChild(listItem);
-			}
+	const recipePromise = getRecipesFromDB(userID()).then((recipeArray) => {
+		for (let i = 0; i < recipeArray.length; i++) {
+			const listItem = document.createElement('li');
+			listItem.classList.add('recipe-list-item');
+			const listButton = document.createElement('button');
+			listButton.addEventListener('click', () => {
+				displayRecipeModal(recipeArray[i]);
+			});
+			listItem.appendChild(listButton);
+			listButton.textContent = recipeArray[i].name;
+			recipeList.appendChild(listItem);
 		}
-	);
+	});
 	return recipeList;
 };
 
