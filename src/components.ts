@@ -68,13 +68,20 @@ export const generateModalSection = (id: string, heading: string, ...children: N
 	return modalSection;
 };
 
-export const generatePageButton = (buttonText: string, buttonID: string, eventListener: any) => {
+export const generatePageButton = (buttonText: string, buttonID: string) => {
 	const pageButton = document.createElement('button');
 	pageButton.classList.add('button');
 	pageButton.setAttribute('id', buttonID);
 	pageButton.textContent = buttonText;
 
-	pageButton.addEventListener('click', eventListener);
-
 	return pageButton;
+};
+
+export const generateUtilityButton = (buttonText: string, buttonID: string) => {
+	const utilityButton = document.createElement('button');
+	utilityButton.classList.add('utility-button');
+	utilityButton.setAttribute('id', buttonID);
+	utilityButton.textContent = buttonText;
+
+	return utilityButton;
 };

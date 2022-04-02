@@ -1,5 +1,5 @@
 import { RecipeInterface, IngredientInterface } from './recipeModel';
-import { generateCloseButton, closeModal } from './components';
+import { generateCloseButton, generateUtilityButton } from './components';
 
 /*Header*/
 
@@ -75,6 +75,75 @@ const generateModalIngredientListContainer = (recipe: RecipeInterface) => {
 	return modalIngredientListContainer;
 };
 
+const generateModalInstructionContainers = (instruction: string, index: number) => {
+	const modalInstructionContainer = document.createElement('div');
+	modalInstructionContainer.classList.add('recipe-instruction-container');
+
+	const instructionNumeral = document.createElement('p');
+	instructionNumeral.classList.add('instruction-numeral');
+	instructionNumeral.textContent = (index + 1).toString();
+
+	const instructionText = document.createElement('p');
+	instructionText.classList.add('instruction-text');
+	instructionText.textContent = instruction;
+
+	modalInstructionContainer.appendChild(instructionNumeral);
+	modalInstructionContainer.appendChild(instructionText);
+
+	return modalInstructionContainer;
+};
+
+const generateModalInstructionListContainer = (recipe: RecipeInterface) => {
+	const modalInstructionListContainer = document.createElement('div');
+	modalInstructionListContainer.classList.add('instruction-list-container');
+
+	const subheading = document.createElement('h3');
+	subheading.classList.add('recipe-subheading');
+	subheading.textContent = `Instructions`;
+
+	modalInstructionListContainer.appendChild(subheading);
+
+	if (recipe.instructions) {
+		for (const instruction of recipe.instructions) {
+			const index = recipe.instructions.indexOf(instruction);
+			modalInstructionListContainer.appendChild(
+				generateModalInstructionContainers(instruction, index)
+			);
+		}
+	}
+
+	return modalInstructionListContainer;
+};
+
+const generateButtonsContainer = () => {
+	const recipeModalButtonsContainer = document.createElement('div');
+	recipeModalButtonsContainer.classList.add('recipe-buttons-container');
+
+	const addToMealPlanButton = generateUtilityButton('Meal Plan', 'add-to-mp-button');
+	addToMealPlanButton.classList.add('green-hover');
+	const addToMealPlanIcon = document.createElement('i');
+	addToMealPlanIcon.classList.add('fa-solid', 'fa-circle-plus', 'button-icon');
+	addToMealPlanButton.insertBefore(addToMealPlanIcon, addToMealPlanButton.firstChild);
+
+	const editRecipeButton = generateUtilityButton('Edit', 'edit-recipe-button');
+	editRecipeButton.classList.add('green-hover');
+	const editRecipeIcon = document.createElement('i');
+	editRecipeIcon.classList.add('fa-solid', 'fa-pen-to-square', 'button-icon');
+	editRecipeButton.insertBefore(editRecipeIcon, editRecipeButton.firstChild);
+
+	const deleteRecipeButton = generateUtilityButton('Delete', 'delete-recipe-button');
+	deleteRecipeButton.classList.add('grocery-list-delete-button');
+	const deleteRecipeIcon = document.createElement('i');
+	deleteRecipeIcon.classList.add('fa-solid', 'fa-circle-minus', 'button-icon');
+	deleteRecipeButton.insertBefore(deleteRecipeIcon, deleteRecipeButton.firstChild);
+
+	recipeModalButtonsContainer.appendChild(addToMealPlanButton);
+	recipeModalButtonsContainer.appendChild(editRecipeButton);
+	recipeModalButtonsContainer.appendChild(deleteRecipeButton);
+
+	return recipeModalButtonsContainer;
+};
+
 /*Section*/
 
 const generateRecipeModalSection = (recipe: RecipeInterface) => {
@@ -84,7 +153,9 @@ const generateRecipeModalSection = (recipe: RecipeInterface) => {
 
 	recipeModalSection.appendChild(generateCloseButton('recipe-modal'));
 	recipeModalSection.appendChild(generateRecipeHeader(recipe));
+	recipeModalSection.appendChild(generateButtonsContainer());
 	recipeModalSection.appendChild(generateModalIngredientListContainer(recipe));
+	recipeModalSection.appendChild(generateModalInstructionListContainer(recipe));
 
 	return recipeModalSection;
 };
@@ -97,10 +168,20 @@ export default displayRecipeModal;
 
 /*
 To do:
-- add instruction view styles
 - figure out how to accept uploaded images
 - figure out how to make the ingredients and the instructions display on a slider/carousel/separate pages
-- add edit/save function to recipe modals
+- add delete recipe button to recipeModal
+- add edit/save function to recipeModal
+	- Refactor recipeModal to be a readonly form?
+	- edit button onclick
+		- remove readonly attribute from all fields
+	- save button onclick
+		- submit form
+		- run an updateRecipe function to update database
+		- update recipeModal display?
+
 - add 'add to meal plan' button
+
+- set max height on recipeModal with scroll overflow
 
 */

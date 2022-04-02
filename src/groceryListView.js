@@ -1,26 +1,5 @@
-import { generateDeleteButton } from './components';
-const groceryListSample = [
-    {
-        name: 'apples',
-        amount: 5,
-        unit: 'pc',
-    },
-    {
-        name: 'bananas',
-        amount: 3,
-        unit: 'pc',
-    },
-    {
-        name: 'onions',
-        amount: 3,
-        unit: 'pc',
-    },
-    {
-        name: 'milk',
-        amount: 2,
-        unit: 'L',
-    },
-];
+import { generateDeleteButton, generateUtilityButton } from './components';
+import { filterIngredients } from './mealPlanModel';
 const generatePageSubheading = (string) => {
     const pageSubheading = document.createElement('h3');
     pageSubheading.classList.add('page-subheading');
@@ -88,14 +67,31 @@ const generateListItems = (item) => {
     groceryListItem.appendChild(generateDeleteButton());
     return groceryListItem;
 };
+const generateAddListItemButton = () => {
+    const addListItemButton = generateUtilityButton('  Add List Item', 'add-list-item-button');
+    addListItemButton.classList.add('green-hover');
+    const addIcon = document.createElement('i');
+    addIcon.classList.add('fa-solid', 'fa-circle-plus', 'utility-icon');
+    addListItemButton.insertBefore(addIcon, addListItemButton.firstChild);
+    addListItemButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const container = document.getElementById('grocery-list-container');
+        if (container) {
+            container.insertBefore(generateListItems({ name: '', amount: 0, unit: '' }), addListItemButton);
+        }
+    });
+    return addListItemButton;
+};
 const generateGroceryListContainer = (array) => {
     const groceryListContainer = document.createElement('div');
     groceryListContainer.classList.add('grocery-list-container');
+    groceryListContainer.setAttribute('id', 'grocery-list-container');
     array.map((item) => groceryListContainer.appendChild(generateListItems(item)));
+    groceryListContainer.appendChild(generateAddListItemButton());
     return groceryListContainer;
 };
-const displayGroceryList = (section) => {
+const displayGroceryList = async (section) => {
     section.appendChild(generatePageSubheading(`This week's grocery list`));
-    section.appendChild(generateGroceryListContainer(groceryListSample));
+    section.appendChild(generateGroceryListContainer(await filterIngredients()));
 };
 export default displayGroceryList;

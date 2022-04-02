@@ -1,5 +1,5 @@
 import { userID } from './userModel';
-import { getMealPlanRecipes, shoppingDayOffset } from './mealPlanModel';
+import { filterIngredients, getMealPlanRecipes, shoppingDayOffset } from './mealPlanModel';
 import { generatePageSubheading } from './components';
 import displayRecipeListModal from './recipeListModal';
 import { generateModalSection } from './components';
@@ -51,7 +51,7 @@ const generateMealPlanContainer = async (offset) => {
             if (mealPlanArray[i] === null) {
                 let pointer = (i + offset) % mealPlanArray.length;
                 const dayIndexString = pointer.toString();
-                mealPlanContainer.appendChild(generateHeaderCellContainer(dayIndexString, pointer, mealPlanArray[i]));
+                mealPlanContainer.appendChild(generateHeaderCellContainer(dayIndexString, pointer, mealPlanArray[i]['name']));
             }
             else if (mealPlanArray[i] != null) {
                 let pointer = (i + offset) % mealPlanArray.length;
@@ -69,7 +69,7 @@ const generateMakeGroceryListButton = () => {
     pageButton.setAttribute('id', 'make-grocery-list-button');
     pageButton.textContent = 'Make Grocery List';
     pageButton.addEventListener('click', () => {
-        console.log('clicked');
+        filterIngredients();
     });
     return pageButton;
 };

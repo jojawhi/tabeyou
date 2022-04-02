@@ -20,7 +20,7 @@ import {
 	Timestamp,
 	updateDoc,
 } from '../node_modules/firebase/firestore';
-import { RecipeInterface, recipeConverter } from '../src/recipeModel';
+import { RecipeInterface, recipeConverter, IngredientInterface } from '../src/recipeModel';
 import { userID, getUserShoppingDay } from './userModel';
 
 const firebaseConfig = {
@@ -270,7 +270,94 @@ export const getMealPlanRecipes = async (uid: string | undefined) => {
 
 	console.log(`Meals: ${recipeArray}`);
 
-	return recipeArray as [];
+	return recipeArray as RecipeInterface[];
+};
+
+const getMealPlanIngredients = async () => {
+	let ingredientArray: IngredientInterface[] = [];
+
+	const mealPlanRecipes = await getMealPlanRecipes(userID()).then((recipeArray) => {
+		console.log(`Recipes: ${recipeArray}`);
+		for (let i = 0; i < recipeArray.length; i++) {
+			//Loop through the recipeArray
+			for (const ingredient of recipeArray[i].ingredientList) {
+				//And for each ingredient in each recipeArray item's ingredientList
+				ingredientArray.push(ingredient);
+
+				/*
+				for (let j = 0; j <= ingredientArray.length; j++) {
+					console.log(
+						`Ingredient: ${ingredient}; IngredientArray Item: ${ingredientArray[i]}`
+					);
+					//If the ingredient names are the same
+					if (
+						ingredientArray[i] &&
+						ingredient['name'].toLowerCase() ===
+							ingredientArray[i]['name'].toLowerCase()
+					) {
+						//Add the existing amount to the new ingredient
+						ingredient['amount'] += ingredientArray[i]['amount'];
+						//Remove the old ingredient
+						ingredientArray.splice(i, 1);
+						//and push the new ingredient with the higher amount to the array
+						ingredientArray.push(ingredient);
+					} else if (
+						!ingredientArray[i] ||
+						ingredient['name'].toLowerCase() != ingredientArray[i]['name'].toLowerCase()
+					) {
+						//or, if the ingredient name doesn't exist, just add the ingredient
+						ingredientArray.push(ingredient);
+					}
+				}
+				*/
+			}
+		}
+	});
+	return ingredientArray;
+};
+
+export const filterIngredients = async () => {
+	let seen = new Map();
+	let filteredArray: IngredientInterface[] = [];
+
+	const ingredientsPromise = await getMealPlanIngredients()
+		.then((ingredientArray) => {
+			ingredientArray = ingredientArray.filter(function (ingredient) {
+				let previous;
+				//Check if the name exists in the map already
+				if (seen.has(ingredient.name)) {
+					// If it exists, get it from the map
+					previous = seen.get(ingredient.name);
+					console.log(`Previous: ${previous}`);
+					// and add the ingredients value to the array of values already found
+					previous.push(ingredient['amount']);
+					return false;
+				}
+
+				//If we haven't seen it, add it to the map as [name: [amount]] pair
+				//amount needs to be an array so that we can use previous.push() above
+				seen.set(ingredient.name, [ingredient.amount]);
+
+				return true;
+			});
+
+			return ingredientArray;
+		})
+		.then((ingredientArray) => {
+			for (let i = 0; i < ingredientArray.length; i++) {
+				//get the array with the corresponding name key
+				const seenArray: number[] = seen.get(ingredientArray[i].name);
+				console.log(`SeenArray: ${seenArray}`);
+				//sum the numbers in the seenArray and assign the total to the original ingredient's amount
+				ingredientArray[i].amount = seenArray.reduce((previous, current) => {
+					return previous + current;
+				});
+			}
+			//make the accessable array equal to the new array with all the filtered and summed values
+			filteredArray = ingredientArray;
+		});
+
+	return filteredArray;
 };
 
 export const addRecipeToMealPlan = async (

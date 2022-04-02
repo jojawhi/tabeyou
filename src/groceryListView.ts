@@ -1,27 +1,29 @@
-import { generateDeleteButton } from './components';
+import { generateDeleteButton, generateUtilityButton } from './components';
+import { filterIngredients } from './mealPlanModel';
+import { IngredientInterface } from './recipeModel';
 
-const groceryListSample: { name: string; amount: number; unit: string }[] = [
-	{
-		name: 'apples',
-		amount: 5,
-		unit: 'pc',
-	},
-	{
-		name: 'bananas',
-		amount: 3,
-		unit: 'pc',
-	},
-	{
-		name: 'onions',
-		amount: 3,
-		unit: 'pc',
-	},
-	{
-		name: 'milk',
-		amount: 2,
-		unit: 'L',
-	},
-];
+// const groceryListSample: { name: string; amount: number; unit: string }[] = [
+// 	{
+// 		name: 'apples',
+// 		amount: 5,
+// 		unit: 'pc',
+// 	},
+// 	{
+// 		name: 'bananas',
+// 		amount: 3,
+// 		unit: 'pc',
+// 	},
+// 	{
+// 		name: 'onions',
+// 		amount: 3,
+// 		unit: 'pc',
+// 	},
+// 	{
+// 		name: 'milk',
+// 		amount: 2,
+// 		unit: 'L',
+// 	},
+// ];
 
 const generatePageSubheading = (string: string) => {
 	const pageSubheading = document.createElement('h3');
@@ -94,7 +96,7 @@ const generateListItemText = (name: string, amount: number, unit: string) => {
 	return groceryListTextContainer;
 };
 
-const generateListItems = (item: { name: string; amount: number; unit: string }) => {
+const generateListItems = (item: IngredientInterface) => {
 	const groceryListItem = document.createElement('div');
 	groceryListItem.classList.add('grocery-list-item');
 
@@ -107,9 +109,33 @@ const generateListItems = (item: { name: string; amount: number; unit: string })
 	return groceryListItem;
 };
 
-const generateGroceryListContainer = (array: { name: string; amount: number; unit: string }[]) => {
+const generateAddListItemButton = () => {
+	const addListItemButton = generateUtilityButton('  Add List Item', 'add-list-item-button');
+	addListItemButton.classList.add('green-hover');
+
+	const addIcon = document.createElement('i');
+	addIcon.classList.add('fa-solid', 'fa-circle-plus', 'utility-icon');
+
+	addListItemButton.insertBefore(addIcon, addListItemButton.firstChild);
+
+	addListItemButton.addEventListener('click', (e) => {
+		e.preventDefault();
+		const container = document.getElementById('grocery-list-container');
+		if (container) {
+			container.insertBefore(
+				generateListItems({ name: '', amount: 0, unit: '' }),
+				addListItemButton
+			);
+		}
+	});
+
+	return addListItemButton;
+};
+
+const generateGroceryListContainer = (array: IngredientInterface[]) => {
 	const groceryListContainer = document.createElement('div');
 	groceryListContainer.classList.add('grocery-list-container');
+	groceryListContainer.setAttribute('id', 'grocery-list-container');
 
 	/*
 	for (let i = 0; i < array.length; i++) {
@@ -118,15 +144,17 @@ const generateGroceryListContainer = (array: { name: string; amount: number; uni
 */
 	array.map((item) => groceryListContainer.appendChild(generateListItems(item)));
 
+	groceryListContainer.appendChild(generateAddListItemButton());
+
 	return groceryListContainer;
 };
 
 /*const populateGroceryList = (item: {}) => {};*/
 
-const displayGroceryList = (section: HTMLElement) => {
+const displayGroceryList = async (section: HTMLElement) => {
 	section.appendChild(generatePageSubheading(`This week's grocery list`));
 	/*Pass the user-generated recipe ingredients array here after importing*/
-	section.appendChild(generateGroceryListContainer(groceryListSample));
+	section.appendChild(generateGroceryListContainer(await filterIngredients()));
 };
 
 export default displayGroceryList;
@@ -134,7 +162,6 @@ export default displayGroceryList;
 /*
 To-do:
 
-- add delete functionality to deleteButton
 - create "add new item" button
 - create 'completed item' style (crossed through and faded)
 - add JS to apply 'completed item' style when checkbox is checked

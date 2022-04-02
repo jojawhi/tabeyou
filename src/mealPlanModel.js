@@ -166,6 +166,48 @@ export const getMealPlanRecipes = async (uid) => {
     console.log(`Meals: ${recipeArray}`);
     return recipeArray;
 };
+const getMealPlanIngredients = async () => {
+    let ingredientArray = [];
+    const mealPlanRecipes = await getMealPlanRecipes(userID()).then((recipeArray) => {
+        console.log(`Recipes: ${recipeArray}`);
+        for (let i = 0; i < recipeArray.length; i++) {
+            for (const ingredient of recipeArray[i].ingredientList) {
+                ingredientArray.push(ingredient);
+            }
+        }
+    });
+    return ingredientArray;
+};
+export const filterIngredients = async () => {
+    let seen = new Map();
+    let filteredArray = [];
+    const ingredientsPromise = await getMealPlanIngredients()
+        .then((ingredientArray) => {
+        ingredientArray = ingredientArray.filter(function (ingredient) {
+            let previous;
+            if (seen.has(ingredient.name)) {
+                previous = seen.get(ingredient.name);
+                console.log(`Previous: ${previous}`);
+                previous.push(ingredient['amount']);
+                return false;
+            }
+            seen.set(ingredient.name, [ingredient.amount]);
+            return true;
+        });
+        return ingredientArray;
+    })
+        .then((ingredientArray) => {
+        for (let i = 0; i < ingredientArray.length; i++) {
+            const seenArray = seen.get(ingredientArray[i].name);
+            console.log(`SeenArray: ${seenArray}`);
+            ingredientArray[i].amount = seenArray.reduce((previous, current) => {
+                return previous + current;
+            });
+        }
+        filteredArray = ingredientArray;
+    });
+    return filteredArray;
+};
 export const addRecipeToMealPlan = async (uid, dayIndex, recipe) => {
     const mealPlanID = await getCurrentMealPlanID(uid);
     const mealPlanRef = doc(db, `users/${uid}/mealPlans/${mealPlanID}`);
