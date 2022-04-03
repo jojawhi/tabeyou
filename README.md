@@ -1,4 +1,4 @@
-# tabeyou
+# Tabeyou
 
 A web-app to help with weekly meal-planning and grocery shopping. The app is designed to mimic my fmaily's own process for planning our meals and sticking to our grocery list.
 For us, it solves the problem of having to remember what our best dinner recipes are and what we've eaten recently. Sometimes when we sit down to make our plan, we find ourselves thinking, "What did we eat last week?" or, "What do we even know how to make?" With the app, we can look back at what we ate last week, what we bought, and how we scheduled our meals and use that history to help us plan our next week more efficiently.
