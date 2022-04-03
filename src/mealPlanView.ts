@@ -80,7 +80,7 @@ const generateMealPlanContainer = async (offset: number) => {
 				let pointer = (i + offset) % mealPlanArray.length;
 				const dayIndexString = pointer.toString();
 				mealPlanContainer.appendChild(
-					generateHeaderCellContainer(dayIndexString, pointer, mealPlanArray[i]['name'])
+					generateHeaderCellContainer(dayIndexString, pointer, null)
 				);
 			} else if (mealPlanArray[i] != null) {
 				let pointer = (i + offset) % mealPlanArray.length;

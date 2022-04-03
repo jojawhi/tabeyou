@@ -2,28 +2,28 @@ import { generateDeleteButton, generateUtilityButton } from './components';
 import { filterIngredients } from './mealPlanModel';
 import { IngredientInterface } from './recipeModel';
 
-// const groceryListSample: { name: string; amount: number; unit: string }[] = [
-// 	{
-// 		name: 'apples',
-// 		amount: 5,
-// 		unit: 'pc',
-// 	},
-// 	{
-// 		name: 'bananas',
-// 		amount: 3,
-// 		unit: 'pc',
-// 	},
-// 	{
-// 		name: 'onions',
-// 		amount: 3,
-// 		unit: 'pc',
-// 	},
-// 	{
-// 		name: 'milk',
-// 		amount: 2,
-// 		unit: 'L',
-// 	},
-// ];
+const groceryListPlaceHolder: IngredientInterface[] = [
+	{
+		name: 'apples',
+		amount: 5,
+		unit: 'pc',
+	},
+	{
+		name: 'bananas',
+		amount: 3,
+		unit: 'pc',
+	},
+	{
+		name: 'onions',
+		amount: 3,
+		unit: 'pc',
+	},
+	{
+		name: 'milk',
+		amount: 2,
+		unit: 'L',
+	},
+];
 
 const generatePageSubheading = (string: string) => {
 	const pageSubheading = document.createElement('h3');

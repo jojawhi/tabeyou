@@ -1,5 +1,27 @@
 import { generateDeleteButton, generateUtilityButton } from './components';
 import { filterIngredients } from './mealPlanModel';
+const groceryListPlaceHolder = [
+    {
+        name: 'apples',
+        amount: 5,
+        unit: 'pc',
+    },
+    {
+        name: 'bananas',
+        amount: 3,
+        unit: 'pc',
+    },
+    {
+        name: 'onions',
+        amount: 3,
+        unit: 'pc',
+    },
+    {
+        name: 'milk',
+        amount: 2,
+        unit: 'L',
+    },
+];
 const generatePageSubheading = (string) => {
     const pageSubheading = document.createElement('h3');
     pageSubheading.classList.add('page-subheading');

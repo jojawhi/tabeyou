@@ -109,13 +109,13 @@ const setEndDate = (mealPlan, date) => {
 };
 export const createNewMealPlan = async () => {
     const mealPlan = new MealPlan(userID(), undefined, undefined, false, {
-        0: undefined,
-        1: undefined,
-        2: undefined,
-        3: undefined,
-        4: undefined,
-        5: undefined,
-        6: undefined,
+        0: null,
+        1: null,
+        2: null,
+        3: null,
+        4: null,
+        5: null,
+        6: null,
     });
     setStartDate(mealPlan, globalShoppingDay);
     console.log(`New Meal Plan Start Date: ${mealPlan.startDate}`);
@@ -171,8 +171,19 @@ const getMealPlanIngredients = async () => {
     const mealPlanRecipes = await getMealPlanRecipes(userID()).then((recipeArray) => {
         console.log(`Recipes: ${recipeArray}`);
         for (let i = 0; i < recipeArray.length; i++) {
-            for (const ingredient of recipeArray[i].ingredientList) {
-                ingredientArray.push(ingredient);
+            if (recipeArray[i] != null) {
+                for (const ingredient of recipeArray[i].ingredientList) {
+                    ingredientArray.push(ingredient);
+                }
+            }
+            else {
+                ingredientArray = [
+                    {
+                        name: 'Make a meal plan first',
+                        amount: 1,
+                        unit: 'pc',
+                    },
+                ];
             }
         }
     });

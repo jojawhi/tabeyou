@@ -63,13 +63,13 @@ export interface MealPlanInterface {
 	startDate: Date | undefined;
 	endDate: Date | undefined;
 	meals?: {
-		0: RecipeInterface | undefined;
-		1: RecipeInterface | undefined;
-		2: RecipeInterface | undefined;
-		3: RecipeInterface | undefined;
-		4: RecipeInterface | undefined;
-		5: RecipeInterface | undefined;
-		6: RecipeInterface | undefined;
+		0: RecipeInterface | undefined | null;
+		1: RecipeInterface | undefined | null;
+		2: RecipeInterface | undefined | null;
+		3: RecipeInterface | undefined | null;
+		4: RecipeInterface | undefined | null;
+		5: RecipeInterface | undefined | null;
+		6: RecipeInterface | undefined | null;
 	};
 }
 
@@ -79,13 +79,13 @@ export class MealPlan {
 	endDate: Date | undefined;
 	expired: boolean;
 	meals: {
-		0: RecipeInterface | undefined;
-		1: RecipeInterface | undefined;
-		2: RecipeInterface | undefined;
-		3: RecipeInterface | undefined;
-		4: RecipeInterface | undefined;
-		5: RecipeInterface | undefined;
-		6: RecipeInterface | undefined;
+		0: RecipeInterface | undefined | null;
+		1: RecipeInterface | undefined | null;
+		2: RecipeInterface | undefined | null;
+		3: RecipeInterface | undefined | null;
+		4: RecipeInterface | undefined | null;
+		5: RecipeInterface | undefined | null;
+		6: RecipeInterface | undefined | null;
 	};
 
 	constructor(
@@ -94,13 +94,13 @@ export class MealPlan {
 		endDate: Date | undefined,
 		expired: boolean,
 		meals: {
-			0: RecipeInterface | undefined;
-			1: RecipeInterface | undefined;
-			2: RecipeInterface | undefined;
-			3: RecipeInterface | undefined;
-			4: RecipeInterface | undefined;
-			5: RecipeInterface | undefined;
-			6: RecipeInterface | undefined;
+			0: RecipeInterface | undefined | null;
+			1: RecipeInterface | undefined | null;
+			2: RecipeInterface | undefined | null;
+			3: RecipeInterface | undefined | null;
+			4: RecipeInterface | undefined | null;
+			5: RecipeInterface | undefined | null;
+			6: RecipeInterface | undefined | null;
 		}
 	) {
 		(this.author = author),
@@ -190,13 +190,13 @@ const setEndDate = (mealPlan: MealPlan, date: Date | undefined) => {
 //currently working to create meal plan object
 export const createNewMealPlan = async () => {
 	const mealPlan: MealPlan = new MealPlan(userID(), undefined, undefined, false, {
-		0: undefined,
-		1: undefined,
-		2: undefined,
-		3: undefined,
-		4: undefined,
-		5: undefined,
-		6: undefined,
+		0: null,
+		1: null,
+		2: null,
+		3: null,
+		4: null,
+		5: null,
+		6: null,
 	});
 
 	setStartDate(mealPlan, globalShoppingDay);
@@ -280,36 +280,19 @@ const getMealPlanIngredients = async () => {
 		console.log(`Recipes: ${recipeArray}`);
 		for (let i = 0; i < recipeArray.length; i++) {
 			//Loop through the recipeArray
-			for (const ingredient of recipeArray[i].ingredientList) {
-				//And for each ingredient in each recipeArray item's ingredientList
-				ingredientArray.push(ingredient);
-
-				/*
-				for (let j = 0; j <= ingredientArray.length; j++) {
-					console.log(
-						`Ingredient: ${ingredient}; IngredientArray Item: ${ingredientArray[i]}`
-					);
-					//If the ingredient names are the same
-					if (
-						ingredientArray[i] &&
-						ingredient['name'].toLowerCase() ===
-							ingredientArray[i]['name'].toLowerCase()
-					) {
-						//Add the existing amount to the new ingredient
-						ingredient['amount'] += ingredientArray[i]['amount'];
-						//Remove the old ingredient
-						ingredientArray.splice(i, 1);
-						//and push the new ingredient with the higher amount to the array
-						ingredientArray.push(ingredient);
-					} else if (
-						!ingredientArray[i] ||
-						ingredient['name'].toLowerCase() != ingredientArray[i]['name'].toLowerCase()
-					) {
-						//or, if the ingredient name doesn't exist, just add the ingredient
-						ingredientArray.push(ingredient);
-					}
+			if (recipeArray[i] != null) {
+				for (const ingredient of recipeArray[i].ingredientList) {
+					//And for each ingredient in each recipeArray item's ingredientList
+					ingredientArray.push(ingredient);
 				}
-				*/
+			} else {
+				ingredientArray = [
+					{
+						name: 'Make a meal plan first',
+						amount: 1,
+						unit: 'pc',
+					},
+				];
 			}
 		}
 	});
@@ -322,6 +305,7 @@ export const filterIngredients = async () => {
 
 	const ingredientsPromise = await getMealPlanIngredients()
 		.then((ingredientArray) => {
+			// Algorithm from Stack Overflow: https://stackoverflow.com/questions/30025965/merge-duplicate-objects-in-array-of-objects
 			ingredientArray = ingredientArray.filter(function (ingredient) {
 				let previous;
 				//Check if the name exists in the map already
