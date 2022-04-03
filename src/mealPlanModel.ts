@@ -399,31 +399,6 @@ export const addRecipeToMealPlan = async (
 	} else {
 		console.log(`Could not access document`);
 	}
-
-	/*
-	const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
-	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
-	const snapshot = await getDocs(mealPlanQuery);
-
-	snapshot.forEach(async (mealPlan) => {
-		const mealPlanRecipes = mealPlan.data().meals;
-
-		for (const recipe in mealPlanRecipes) {
-			if (recipe === dayIndex) {
-			}
-		}
-	});
-	*/
-};
-
-//
-const updateMealPlanRecipe = async (uid: string, key: string, recipe: RecipeInterface) => {
-	const mealPlanID = await getCurrentMealPlanID(uid);
-	const mealPlanRef = doc(db, `users/${uid}/mealPlans/${mealPlanID}`);
-
-	await updateDoc(mealPlanRef, {
-		'meals.0': recipe,
-	});
 };
 
 export const getCurrentMealPlanFromDB = async (uid: string) => {

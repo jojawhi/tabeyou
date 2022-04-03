@@ -18,7 +18,9 @@ import {
 	Timestamp,
 	updateDoc,
 } from '../node_modules/firebase/firestore';
+import { userID } from './userModel';
 import { IngredientInterface } from './recipeModel';
+import { filterIngredients } from './mealPlanModel';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
