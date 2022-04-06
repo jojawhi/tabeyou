@@ -92,11 +92,17 @@ export const addGroceryListToDB = (uid: string) => {};
 
 export const getGroceryListFromDB = (uid: string) => {};
 
+export const updateGroceryListOnAdd = (uid: string) => {};
+
 /*
 - when MakeGroceryListButton is clicked on Meal Plan page do the following:
+    - check if meal plan is fully populated
+        - if not, throw error
     - run the filterIngredients function to create a filtered and reduced array of ingredients
     - async add the ingredientList to the database
     - assign the same start and end dates as the current meal plan?
     - get the grocery list from the db after it's added
     - use the retrieved grocery list to populate the display
+
+- add logic for updating grocery list when new item is added from display page
 */

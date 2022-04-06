@@ -7,7 +7,6 @@ import {
 	setShoppingDayOffset,
 	checkMealPlanExpiry,
 	replaceMealPlan,
-	compareDates,
 } from './mealPlanModel';
 import './style.css';
 import createNav from './navView';

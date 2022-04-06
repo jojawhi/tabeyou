@@ -443,20 +443,20 @@ export const checkMealPlanExpiry = async () => {
 	}
 };
 
-export const compareDates = async () => {
-	const endDate = await getCurrentMealPlanEndDate(userID());
-	const today: Date = Date.today();
+// export const compareDates = async () => {
+// 	const endDate = await getCurrentMealPlanEndDate(userID());
+// 	const today: Date = Date.today();
 
-	console.log(`Today: ${today}; End Date: ${endDate}`);
+// 	console.log(`Today: ${today}; End Date: ${endDate}`);
 
-	if (today >= endDate) {
-		console.log('True, expired');
-		return true;
-	} else {
-		console.log('False, still good');
-		return false;
-	}
-};
+// 	if (today >= endDate) {
+// 		console.log('True, expired');
+// 		return true;
+// 	} else {
+// 		console.log('False, still good');
+// 		return false;
+// 	}
+// };
 
 const updateCurrentMealPlanExpiry = async (uid: string | undefined) => {
 	// Needed await on the getID call

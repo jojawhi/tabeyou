@@ -265,13 +265,6 @@ export const addRecipeToMealPlan = async (uid, dayIndex, recipe) => {
         console.log(`Could not access document`);
     }
 };
-const updateMealPlanRecipe = async (uid, key, recipe) => {
-    const mealPlanID = await getCurrentMealPlanID(uid);
-    const mealPlanRef = doc(db, `users/${uid}/mealPlans/${mealPlanID}`);
-    await updateDoc(mealPlanRef, {
-        'meals.0': recipe,
-    });
-};
 export const getCurrentMealPlanFromDB = async (uid) => {
     const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
     const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
@@ -304,19 +297,6 @@ export const checkMealPlanExpiry = async () => {
     }
     else {
         console.log('Could not read meal plan expiry');
-        return false;
-    }
-};
-export const compareDates = async () => {
-    const endDate = await getCurrentMealPlanEndDate(userID());
-    const today = Date.today();
-    console.log(`Today: ${today}; End Date: ${endDate}`);
-    if (today >= endDate) {
-        console.log('True, expired');
-        return true;
-    }
-    else {
-        console.log('False, still good');
         return false;
     }
 };
