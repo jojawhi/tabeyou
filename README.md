@@ -36,6 +36,7 @@ The app uses Firebase to implement user authentication and Cloud Firestore's NoS
 -   Add recipe to meal plan from recipe page
 -   Light/Dark mode
 -   Populate current week's meal plan from meal plan history (if wanting to directly replicate a particularly successful/tasty week)
+-   Search and sort recipes
 
 ## Future Features Wishlist
 

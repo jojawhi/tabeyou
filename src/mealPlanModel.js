@@ -33,14 +33,14 @@ export const setShoppingDay = () => {
 };
 export class MealPlan {
     author;
-    startDate;
-    endDate;
+    dateStart;
+    dateEnd;
     expired;
     meals;
-    constructor(author, startDate, endDate, expired, meals) {
+    constructor(author, dateStart, dateEnd, expired, meals) {
         (this.author = author),
-            (this.startDate = startDate),
-            (this.endDate = endDate),
+            (this.dateStart = dateStart),
+            (this.dateEnd = dateEnd),
             (this.expired = expired),
             (this.meals = meals);
     }
@@ -49,8 +49,8 @@ const mealPlanConverter = {
     toFirestore: (mealPlan) => {
         return {
             author: mealPlan.author,
-            startDate: mealPlan.startDate,
-            endDate: mealPlan.endDate,
+            dateStart: mealPlan.dateStart,
+            dateEnd: mealPlan.dateEnd,
             expired: mealPlan.expired,
             meals: mealPlan.meals,
         };
@@ -58,12 +58,12 @@ const mealPlanConverter = {
     fromFirestore: (snapshot) => {
         const mealPlan = snapshot.data();
         if (mealPlan) {
-            return new MealPlan(mealPlan.author, mealPlan.startDate, mealPlan.endDate, mealPlan.expired, mealPlan.meals);
+            return new MealPlan(mealPlan.author, mealPlan.dateStart, mealPlan.dateEnd, mealPlan.expired, mealPlan.meals);
         }
     },
 };
 const setStartDate = (mealPlan, day) => {
-    let startDate;
+    let dateStart;
     const today = Date.today().toString('ddd').toLowerCase();
     const daysArray = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const dayFunctionsArray = [
@@ -76,20 +76,20 @@ const setStartDate = (mealPlan, day) => {
         Date.today().last().sat(),
     ];
     if (day === today) {
-        startDate = Date.today();
+        dateStart = Date.today();
     }
     else if (day != today) {
         for (let i = 0; i < daysArray.length; i++) {
             if (day === daysArray[i]) {
-                startDate = dayFunctionsArray[i];
+                dateStart = dayFunctionsArray[i];
             }
         }
     }
-    mealPlan.startDate = startDate;
+    mealPlan.dateStart = dateStart;
 };
-const setEndDate = (mealPlan, date) => {
-    let endDate;
-    const startDate = date?.toString('ddd').toLowerCase();
+const setDateEnd = (mealPlan, date) => {
+    let dateEnd;
+    const dateStart = date?.toString('ddd').toLowerCase();
     const daysArray = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const dayFunctionsArray = [
         Date.today().next().sun(),
@@ -101,11 +101,11 @@ const setEndDate = (mealPlan, date) => {
         Date.today().next().sat(),
     ];
     for (let i = 0; i < daysArray.length; i++) {
-        if (startDate === daysArray[i]) {
-            endDate = dayFunctionsArray[i];
+        if (dateStart === daysArray[i]) {
+            dateEnd = dayFunctionsArray[i];
         }
     }
-    mealPlan.endDate = endDate;
+    mealPlan.dateEnd = dateEnd;
 };
 export const createNewMealPlan = async () => {
     const mealPlan = new MealPlan(userID(), undefined, undefined, false, {
@@ -118,8 +118,8 @@ export const createNewMealPlan = async () => {
         6: null,
     });
     setStartDate(mealPlan, globalShoppingDay);
-    console.log(`New Meal Plan Start Date: ${mealPlan.startDate}`);
-    setEndDate(mealPlan, mealPlan.startDate);
+    console.log(`New Meal Plan Start Date: ${mealPlan.dateStart}`);
+    setDateEnd(mealPlan, mealPlan.dateStart);
     console.log(mealPlan);
     return mealPlan;
 };
@@ -134,21 +134,18 @@ export const getCurrentMealPlanID = async (uid) => {
     let mealPlanID = '';
     snapshot.forEach((mealPlan) => {
         mealPlanID += mealPlan.id;
-        console.log(`Current Meal Plan: ${mealPlanID}`);
     });
     return mealPlanID;
 };
-export const getCurrentMealPlanEndDate = async (uid) => {
+export const getCurrentMealPlanDateEnd = async (uid) => {
     const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
     const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
     const snapshot = await getDocs(mealPlanQuery);
     let mealPlanArray = [];
     snapshot.forEach((mealPlan) => {
-        const mealPlanEndDate = mealPlan.data().endDate.toDate();
-        console.log(`ID: ${mealPlan.id}; Date: ${mealPlanEndDate}`);
-        mealPlanArray.push(mealPlanEndDate);
+        const mealPlanDateEnd = mealPlan.data().dateEnd.toDate();
+        mealPlanArray.push(mealPlanDateEnd);
     });
-    console.log(`String parsed to date: ${mealPlanArray[0]}`);
     return mealPlanArray[0];
 };
 export const getMealPlanRecipes = async (uid) => {
@@ -163,13 +160,11 @@ export const getMealPlanRecipes = async (uid) => {
             recipeArray = Object.values(mealsObject);
         }
     });
-    console.log(`Meals: ${recipeArray}`);
     return recipeArray;
 };
 const getMealPlanIngredients = async () => {
     let ingredientArray = [];
     const mealPlanRecipes = await getMealPlanRecipes(userID()).then((recipeArray) => {
-        console.log(`Recipes: ${recipeArray}`);
         for (let i = 0; i < recipeArray.length; i++) {
             if (recipeArray[i] != null) {
                 for (const ingredient of recipeArray[i].ingredientList) {
@@ -198,7 +193,6 @@ export const filterIngredients = async () => {
             let previous;
             if (seen.has(ingredient.name)) {
                 previous = seen.get(ingredient.name);
-                console.log(`Previous: ${previous}`);
                 previous.push(ingredient['amount']);
                 return false;
             }
@@ -210,7 +204,6 @@ export const filterIngredients = async () => {
         .then((ingredientArray) => {
         for (let i = 0; i < ingredientArray.length; i++) {
             const seenArray = seen.get(ingredientArray[i].name);
-            console.log(`SeenArray: ${seenArray}`);
             ingredientArray[i].amount = seenArray.reduce((previous, current) => {
                 return previous + current;
             });
@@ -223,7 +216,6 @@ export const addRecipeToMealPlan = async (uid, dayIndex, recipe) => {
     const mealPlanID = await getCurrentMealPlanID(uid);
     const mealPlanRef = doc(db, `users/${uid}/mealPlans/${mealPlanID}`);
     const mealPlanSnapshot = await getDoc(mealPlanRef);
-    console.log(`Number used for key comparison: ${dayIndex}`);
     if (mealPlanSnapshot.exists()) {
         if (dayIndex + 1 === 7) {
             await updateDoc(mealPlanRef, {
@@ -270,7 +262,6 @@ export const getCurrentMealPlanFromDB = async (uid) => {
     const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
     const snapshot = await getDocs(mealPlanQuery);
     const mealPlanObject = mealPlanConverter.fromFirestore(snapshot.docs[0]);
-    console.log(`GetMealPlanFunction: ${mealPlanObject}`);
     return mealPlanObject;
 };
 const getMealPlanHistory = (uid) => {
@@ -280,17 +271,16 @@ const getMealPlanHistory = (uid) => {
     return mealPlanQuery;
 };
 export const checkMealPlanExpiry = async () => {
-    const endDate = await getCurrentMealPlanEndDate(userID());
+    const dateEnd = await getCurrentMealPlanDateEnd(userID());
     const today = Date.today();
-    console.log(`Today: ${today}; End Date: ${endDate}`);
-    if (today >= endDate) {
+    if (today >= dateEnd) {
         console.log('mealPlan expired');
         updateCurrentMealPlanExpiry(userID()).then(() => {
             replaceMealPlan();
         });
         return true;
     }
-    else if (today < endDate) {
+    else if (today < dateEnd) {
         getMealPlanRecipes(userID());
         console.log('mealPlan not expired yet');
         return false;

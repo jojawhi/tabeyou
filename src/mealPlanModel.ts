@@ -22,6 +22,7 @@ import {
 } from '../node_modules/firebase/firestore';
 import { RecipeInterface, recipeConverter, IngredientInterface } from '../src/recipeModel';
 import { userID, getUserShoppingDay } from './userModel';
+import { addGroceryListToDB } from './groceryListModel';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -60,8 +61,8 @@ export const setShoppingDay = () => {
 
 export interface MealPlanInterface {
 	author: string | undefined;
-	startDate: Date | undefined;
-	endDate: Date | undefined;
+	dateStart: Date | undefined;
+	dateEnd: Date | undefined;
 	meals?: {
 		0: RecipeInterface | undefined | null;
 		1: RecipeInterface | undefined | null;
@@ -75,8 +76,8 @@ export interface MealPlanInterface {
 
 export class MealPlan {
 	author: string | undefined;
-	startDate: Date | undefined;
-	endDate: Date | undefined;
+	dateStart: Date | undefined;
+	dateEnd: Date | undefined;
 	expired: boolean;
 	meals: {
 		0: RecipeInterface | undefined | null;
@@ -90,8 +91,8 @@ export class MealPlan {
 
 	constructor(
 		author: string | undefined,
-		startDate: Date | undefined,
-		endDate: Date | undefined,
+		dateStart: Date | undefined,
+		dateEnd: Date | undefined,
 		expired: boolean,
 		meals: {
 			0: RecipeInterface | undefined | null;
@@ -104,8 +105,8 @@ export class MealPlan {
 		}
 	) {
 		(this.author = author),
-			(this.startDate = startDate),
-			(this.endDate = endDate),
+			(this.dateStart = dateStart),
+			(this.dateEnd = dateEnd),
 			(this.expired = expired),
 			(this.meals = meals);
 	}
@@ -115,8 +116,8 @@ const mealPlanConverter = {
 	toFirestore: (mealPlan: MealPlan) => {
 		return {
 			author: mealPlan.author,
-			startDate: mealPlan.startDate,
-			endDate: mealPlan.endDate,
+			dateStart: mealPlan.dateStart,
+			dateEnd: mealPlan.dateEnd,
 			expired: mealPlan.expired,
 			meals: mealPlan.meals,
 		};
@@ -126,8 +127,8 @@ const mealPlanConverter = {
 		if (mealPlan) {
 			return new MealPlan(
 				mealPlan.author,
-				mealPlan.startDate,
-				mealPlan.endDate,
+				mealPlan.dateStart,
+				mealPlan.dateEnd,
 				mealPlan.expired,
 				mealPlan.meals
 			);
@@ -136,7 +137,7 @@ const mealPlanConverter = {
 };
 
 const setStartDate = (mealPlan: MealPlan, day: string) => {
-	let startDate;
+	let dateStart;
 	const today = Date.today().toString('ddd').toLowerCase();
 	const daysArray: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 	const dayFunctionsArray: Date[] = [
@@ -150,23 +151,23 @@ const setStartDate = (mealPlan: MealPlan, day: string) => {
 	];
 
 	if (day === today) {
-		startDate = Date.today();
+		dateStart = Date.today();
 	} else if (day != today) {
 		for (let i = 0; i < daysArray.length; i++) {
 			if (day === daysArray[i]) {
-				startDate = dayFunctionsArray[i];
+				dateStart = dayFunctionsArray[i];
 			}
 		}
 	}
 
-	mealPlan.startDate = startDate;
+	mealPlan.dateStart = dateStart;
 };
 
 // currently working
-const setEndDate = (mealPlan: MealPlan, date: Date | undefined) => {
-	let endDate;
+const setDateEnd = (mealPlan: MealPlan, date: Date | undefined) => {
+	let dateEnd;
 	//the issue was that i forgot to add toLowerCase to the end of the comparison string
-	const startDate = date?.toString('ddd').toLowerCase();
+	const dateStart = date?.toString('ddd').toLowerCase();
 	const daysArray: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 	const dayFunctionsArray: Date[] = [
 		Date.today().next().sun(),
@@ -179,12 +180,12 @@ const setEndDate = (mealPlan: MealPlan, date: Date | undefined) => {
 	];
 
 	for (let i = 0; i < daysArray.length; i++) {
-		if (startDate === daysArray[i]) {
-			endDate = dayFunctionsArray[i];
+		if (dateStart === daysArray[i]) {
+			dateEnd = dayFunctionsArray[i];
 		}
 	}
 
-	mealPlan.endDate = endDate;
+	mealPlan.dateEnd = dateEnd;
 };
 
 //currently working to create meal plan object
@@ -200,8 +201,8 @@ export const createNewMealPlan = async () => {
 	});
 
 	setStartDate(mealPlan, globalShoppingDay);
-	console.log(`New Meal Plan Start Date: ${mealPlan.startDate}`);
-	setEndDate(mealPlan, mealPlan.startDate);
+	console.log(`New Meal Plan Start Date: ${mealPlan.dateStart}`);
+	setDateEnd(mealPlan, mealPlan.dateStart);
 	console.log(mealPlan);
 
 	return mealPlan;
@@ -225,13 +226,13 @@ export const getCurrentMealPlanID = async (uid: string | undefined) => {
 
 	snapshot.forEach((mealPlan) => {
 		mealPlanID += mealPlan.id;
-		console.log(`Current Meal Plan: ${mealPlanID}`);
+		//console.log(`Current Meal Plan: ${mealPlanID}`);
 	});
 
 	return mealPlanID;
 };
 
-export const getCurrentMealPlanEndDate = async (uid: string | undefined) => {
+export const getCurrentMealPlanDateEnd = async (uid: string | undefined) => {
 	const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
 	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
 	const snapshot = await getDocs(mealPlanQuery);
@@ -240,12 +241,12 @@ export const getCurrentMealPlanEndDate = async (uid: string | undefined) => {
 
 	snapshot.forEach((mealPlan) => {
 		//toDate() method required for converting from Firestore Timestamp: https://stackoverflow.com/questions/52247445/how-do-i-convert-a-firestore-date-timestamp-to-a-js-date
-		const mealPlanEndDate = mealPlan.data().endDate.toDate();
-		console.log(`ID: ${mealPlan.id}; Date: ${mealPlanEndDate}`);
-		mealPlanArray.push(mealPlanEndDate);
+		const mealPlanDateEnd = mealPlan.data().dateEnd.toDate();
+		//console.log(`ID: ${mealPlan.id}; Date: ${mealPlanDateEnd}`);
+		mealPlanArray.push(mealPlanDateEnd);
 	});
 
-	console.log(`String parsed to date: ${mealPlanArray[0]}`);
+	//console.log(`String parsed to date: ${mealPlanArray[0]}`);
 
 	return mealPlanArray[0];
 };
@@ -268,7 +269,7 @@ export const getMealPlanRecipes = async (uid: string | undefined) => {
 		}
 	});
 
-	console.log(`Meals: ${recipeArray}`);
+	//console.log(`Meals: ${recipeArray}`);
 
 	return recipeArray as RecipeInterface[];
 };
@@ -277,7 +278,7 @@ const getMealPlanIngredients = async () => {
 	let ingredientArray: IngredientInterface[] = [];
 
 	const mealPlanRecipes = await getMealPlanRecipes(userID()).then((recipeArray) => {
-		console.log(`Recipes: ${recipeArray}`);
+		//console.log(`Recipes: ${recipeArray}`);
 		for (let i = 0; i < recipeArray.length; i++) {
 			//Loop through the recipeArray
 			if (recipeArray[i] != null) {
@@ -312,7 +313,6 @@ export const filterIngredients = async () => {
 				if (seen.has(ingredient.name)) {
 					// If it exists, get it from the map
 					previous = seen.get(ingredient.name);
-					console.log(`Previous: ${previous}`);
 					// and add the ingredients value to the array of values already found
 					previous.push(ingredient['amount']);
 					return false;
@@ -331,7 +331,6 @@ export const filterIngredients = async () => {
 			for (let i = 0; i < ingredientArray.length; i++) {
 				//get the array with the corresponding name key
 				const seenArray: number[] = seen.get(ingredientArray[i].name);
-				console.log(`SeenArray: ${seenArray}`);
 				//sum the numbers in the seenArray and assign the total to the original ingredient's amount
 				ingredientArray[i].amount = seenArray.reduce((previous, current) => {
 					return previous + current;
@@ -352,8 +351,6 @@ export const addRecipeToMealPlan = async (
 	const mealPlanID = await getCurrentMealPlanID(uid);
 	const mealPlanRef = doc(db, `users/${uid}/mealPlans/${mealPlanID}`);
 	const mealPlanSnapshot = await getDoc(mealPlanRef);
-	//const dayIndexWithOffset = (dayIndex + shoppingDayOffset) % daysArray.length;
-	console.log(`Number used for key comparison: ${dayIndex}`);
 
 	if (mealPlanSnapshot.exists()) {
 		if (dayIndex + 1 === 7) {
@@ -408,7 +405,6 @@ export const getCurrentMealPlanFromDB = async (uid: string) => {
 
 	const mealPlanObject = mealPlanConverter.fromFirestore(snapshot.docs[0]);
 
-	console.log(`GetMealPlanFunction: ${mealPlanObject}`);
 	return mealPlanObject as MealPlan;
 };
 
@@ -422,18 +418,18 @@ const getMealPlanHistory = (uid: string) => {
 };
 
 export const checkMealPlanExpiry = async () => {
-	const endDate = await getCurrentMealPlanEndDate(userID());
+	const dateEnd = await getCurrentMealPlanDateEnd(userID());
 	const today: Date = Date.today();
 
-	console.log(`Today: ${today}; End Date: ${endDate}`);
+	//console.log(`Today: ${today}; End Date: ${dateEnd}`);
 
-	if (today >= endDate) {
+	if (today >= dateEnd) {
 		console.log('mealPlan expired');
 		updateCurrentMealPlanExpiry(userID()).then(() => {
 			replaceMealPlan();
 		});
 		return true;
-	} else if (today < endDate) {
+	} else if (today < dateEnd) {
 		getMealPlanRecipes(userID());
 		console.log('mealPlan not expired yet');
 		return false;
@@ -442,21 +438,6 @@ export const checkMealPlanExpiry = async () => {
 		return false;
 	}
 };
-
-// export const compareDates = async () => {
-// 	const endDate = await getCurrentMealPlanEndDate(userID());
-// 	const today: Date = Date.today();
-
-// 	console.log(`Today: ${today}; End Date: ${endDate}`);
-
-// 	if (today >= endDate) {
-// 		console.log('True, expired');
-// 		return true;
-// 	} else {
-// 		console.log('False, still good');
-// 		return false;
-// 	}
-// };
 
 const updateCurrentMealPlanExpiry = async (uid: string | undefined) => {
 	// Needed await on the getID call

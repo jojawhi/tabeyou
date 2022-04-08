@@ -1,8 +1,8 @@
 import { userID } from './userModel';
 import { filterIngredients, getMealPlanRecipes, shoppingDayOffset } from './mealPlanModel';
-import { generatePageSubheading } from './components';
+import { addGroceryListToDB } from './groceryListModel';
+import { generatePageSubheading, generateModalSection } from './components';
 import displayRecipeListModal from './recipeListModal';
-import { generateModalSection } from './components';
 
 const daysArray: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
@@ -115,7 +115,7 @@ const generateMakeGroceryListButton = () => {
 	pageButton.textContent = 'Make Grocery List';
 
 	pageButton.addEventListener('click', () => {
-		filterIngredients();
+		addGroceryListToDB(userID());
 	});
 
 	return pageButton;

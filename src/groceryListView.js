@@ -1,5 +1,6 @@
 import { generateDeleteButton, generateUtilityButton } from './components';
-import { filterIngredients } from './mealPlanModel';
+import { getCurrentGroceryListFromDB } from './groceryListModel';
+import { userID } from './userModel';
 const groceryListPlaceHolder = [
     {
         name: 'apples',
@@ -33,6 +34,9 @@ const generateCheckbox = () => {
     checkbox.classList.add('checkbox');
     const checkboxInput = document.createElement('input');
     checkboxInput.setAttribute('type', 'checkbox');
+    checkboxInput.addEventListener('change', (e) => {
+        console.log(e.target);
+    });
     const checkmark = document.createElement('span');
     checkmark.classList.add('checkmark');
     checkbox.appendChild(checkboxInput);
@@ -108,12 +112,18 @@ const generateGroceryListContainer = (array) => {
     const groceryListContainer = document.createElement('div');
     groceryListContainer.classList.add('grocery-list-container');
     groceryListContainer.setAttribute('id', 'grocery-list-container');
-    array.map((item) => groceryListContainer.appendChild(generateListItems(item)));
+    if (array) {
+        array.map((item) => groceryListContainer.appendChild(generateListItems(item)));
+    }
     groceryListContainer.appendChild(generateAddListItemButton());
     return groceryListContainer;
 };
 const displayGroceryList = async (section) => {
+    const groceryList = await getCurrentGroceryListFromDB(userID());
     section.appendChild(generatePageSubheading(`This week's grocery list`));
-    section.appendChild(generateGroceryListContainer(await filterIngredients()));
+    if (groceryList) {
+        section.appendChild(generateGroceryListContainer(groceryList.listItems));
+        console.log(`Grocery List items from DB: ${groceryList.listItems}`);
+    }
 };
 export default displayGroceryList;

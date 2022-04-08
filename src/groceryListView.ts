@@ -1,6 +1,8 @@
 import { generateDeleteButton, generateUtilityButton } from './components';
+import { getCurrentGroceryListFromDB } from './groceryListModel';
 import { filterIngredients } from './mealPlanModel';
 import { IngredientInterface } from './recipeModel';
+import { userID } from './userModel';
 
 const groceryListPlaceHolder: IngredientInterface[] = [
 	{
@@ -39,6 +41,9 @@ const generateCheckbox = () => {
 
 	const checkboxInput = document.createElement('input');
 	checkboxInput.setAttribute('type', 'checkbox');
+	checkboxInput.addEventListener('change', (e) => {
+		console.log(e.target);
+	});
 
 	const checkmark = document.createElement('span');
 	checkmark.classList.add('checkmark');
@@ -132,7 +137,7 @@ const generateAddListItemButton = () => {
 	return addListItemButton;
 };
 
-const generateGroceryListContainer = (array: IngredientInterface[]) => {
+const generateGroceryListContainer = (array: IngredientInterface[] | null | undefined) => {
 	const groceryListContainer = document.createElement('div');
 	groceryListContainer.classList.add('grocery-list-container');
 	groceryListContainer.setAttribute('id', 'grocery-list-container');
@@ -142,7 +147,9 @@ const generateGroceryListContainer = (array: IngredientInterface[]) => {
 		groceryListContainer.appendChild(generateListItems(array[i]));
 	}
 */
-	array.map((item) => groceryListContainer.appendChild(generateListItems(item)));
+	if (array) {
+		array.map((item) => groceryListContainer.appendChild(generateListItems(item)));
+	}
 
 	groceryListContainer.appendChild(generateAddListItemButton());
 
@@ -152,9 +159,13 @@ const generateGroceryListContainer = (array: IngredientInterface[]) => {
 /*const populateGroceryList = (item: {}) => {};*/
 
 const displayGroceryList = async (section: HTMLElement) => {
+	const groceryList = await getCurrentGroceryListFromDB(userID());
 	section.appendChild(generatePageSubheading(`This week's grocery list`));
 	/*Pass the user-generated recipe ingredients array here after importing*/
-	section.appendChild(generateGroceryListContainer(await filterIngredients()));
+	if (groceryList) {
+		section.appendChild(generateGroceryListContainer(groceryList.listItems));
+		console.log(`Grocery List items from DB: ${groceryList.listItems}`);
+	}
 };
 
 export default displayGroceryList;
@@ -162,7 +173,6 @@ export default displayGroceryList;
 /*
 To-do:
 
-- create "add new item" button
 - create 'completed item' style (crossed through and faded)
 - add JS to apply 'completed item' style when checkbox is checked
 - add JS to clear section div when clicking on a nav link to prevent double loading content
