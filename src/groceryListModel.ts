@@ -17,13 +17,13 @@ import {
 	QuerySnapshot,
 	Timestamp,
 	updateDoc,
+	deleteDoc,
 } from '../node_modules/firebase/firestore';
 import { userID } from './userModel';
 import { IngredientInterface } from './recipeModel';
 import { filterIngredients, getCurrentMealPlanFromDB } from './mealPlanModel';
 import displayGroceryList from './groceryListView';
 import sectionFactory from './section';
-import { generateModalSection } from './components';
 import { generateOverwriteModal } from './overwriteModal';
 
 const firebaseConfig = {
@@ -109,9 +109,27 @@ const generateGroceryListObject = async (uid: string): Promise<GroceryList> => {
 	return groceryList;
 };
 
-export const deleteCurrentGroceryList = (uid: string) => {};
+export const deleteCurrentGroceryList = async (uid: string) => {
+	const groceryListID = await getCurrentGroceryListID(uid);
 
-export const addGroceryListToDB = async (uid: string) => {
+	await deleteDoc(doc(db, `users/${uid}/groceryLists/${groceryListID}`));
+};
+
+export const addGroceryListToDBWithoutCheck = async (uid: string) => {
+	const groceryList = await generateGroceryListObject(uid);
+	const newGroceryListRef = await addDoc(
+		collection(db, `users/${uid}/groceryLists`),
+		groceryListConverter.toFirestore(groceryList)
+	).then(() => {
+		const section = document.getElementById('content-section');
+		if (section) {
+			sectionFactory().clearSection(section);
+			displayGroceryList(section);
+		}
+	});
+};
+
+export const addGroceryListToDBWithCheck = async (uid: string) => {
 	//Check for expiry first
 	const expiryCheck = await checkGroceryListExpiry();
 
@@ -120,17 +138,16 @@ export const addGroceryListToDB = async (uid: string) => {
 		const newGroceryListRef = await addDoc(
 			collection(db, `users/${uid}/groceryLists`),
 			groceryListConverter.toFirestore(groceryList)
-		);
+		).then(() => {
+			const section = document.getElementById('content-section');
+			if (section) {
+				sectionFactory().clearSection(section);
+				displayGroceryList(section);
+			}
+		});
 		console.log(`Grocery List added to DB`);
 	} else {
-		// const groceryList = await generateGroceryListObject(uid);
-		// const newGroceryListRef = await addDoc(
-		// 	collection(db, `users/${uid}/groceryLists`),
-		// 	groceryListConverter.toFirestore(groceryList)
-		// );
-		//choice modal goes here
 		document.body.appendChild(generateOverwriteModal());
-		console.log('Are you sure you want to overwrite current grocery list?');
 	}
 };
 

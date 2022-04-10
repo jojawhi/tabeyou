@@ -62,4 +62,3 @@ export const generateUtilityButton = (buttonText, buttonID) => {
     utilityButton.textContent = buttonText;
     return utilityButton;
 };
-export const generateStrikeThrough = (item) => { };

@@ -1,6 +1,6 @@
 import { userID } from './userModel';
 import { filterIngredients, getMealPlanRecipes, shoppingDayOffset } from './mealPlanModel';
-import { addGroceryListToDB } from './groceryListModel';
+import { addGroceryListToDBWithCheck } from './groceryListModel';
 import { generatePageSubheading, generateModalSection } from './components';
 import displayRecipeListModal from './recipeListModal';
 
@@ -115,7 +115,7 @@ const generateMakeGroceryListButton = () => {
 	pageButton.textContent = 'Make Grocery List';
 
 	pageButton.addEventListener('click', () => {
-		addGroceryListToDB(userID());
+		addGroceryListToDBWithCheck(userID());
 	});
 
 	return pageButton;

@@ -59,7 +59,7 @@ body {
 	width: min(100%, 1000px);
 	margin-inline: auto;
 
-	padding: 1.25rem 0.5rem 1.25rem 0.5rem;
+	padding: 1.25rem 1rem 1.25rem 1rem;
 }
 
 .logo-container {
@@ -340,7 +340,7 @@ button {
 
 	max-width: 100vw;
 
-	padding-inline: 0.5rem;
+	padding-inline: 1rem;
 
 	background-color: var(--background-1);
 	color: var(--font-color-1);
@@ -943,8 +943,28 @@ button {
 	}
 }
 
+/*Utility classes*/
+
+.text-center {
+	text-align: center;
+}
+
+.grid-2-column {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 0.5rem;
+}
+
+.padding-vertical {
+	padding: 1rem 0;
+}
+
+.padding-top {
+	padding-top: 1rem;
+}
+
 /*
 To do:
 - change log-out and settings button menu into a hamburger
 
-*/
+*/ ;

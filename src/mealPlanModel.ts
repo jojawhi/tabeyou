@@ -22,7 +22,6 @@ import {
 } from '../node_modules/firebase/firestore';
 import { RecipeInterface, recipeConverter, IngredientInterface } from '../src/recipeModel';
 import { userID, getUserShoppingDay } from './userModel';
-import { addGroceryListToDB } from './groceryListModel';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',

@@ -1,5 +1,5 @@
 import { initializeApp } from '../node_modules/firebase/app';
-import { getFirestore, collection, getDocs, doc, addDoc, query, where, updateDoc, } from '../node_modules/firebase/firestore';
+import { getFirestore, collection, getDocs, doc, addDoc, query, where, updateDoc, deleteDoc, } from '../node_modules/firebase/firestore';
 import { userID } from './userModel';
 import { filterIngredients, getCurrentMealPlanFromDB } from './mealPlanModel';
 import displayGroceryList from './groceryListView';
@@ -60,17 +60,35 @@ const generateGroceryListObject = async (uid) => {
     });
     return groceryList;
 };
-export const deleteCurrentGroceryList = (uid) => { };
-export const addGroceryListToDB = async (uid) => {
+export const deleteCurrentGroceryList = async (uid) => {
+    const groceryListID = await getCurrentGroceryListID(uid);
+    await deleteDoc(doc(db, `users/${uid}/groceryLists/${groceryListID}`));
+};
+export const addGroceryListToDBWithoutCheck = async (uid) => {
+    const groceryList = await generateGroceryListObject(uid);
+    const newGroceryListRef = await addDoc(collection(db, `users/${uid}/groceryLists`), groceryListConverter.toFirestore(groceryList)).then(() => {
+        const section = document.getElementById('content-section');
+        if (section) {
+            sectionFactory().clearSection(section);
+            displayGroceryList(section);
+        }
+    });
+};
+export const addGroceryListToDBWithCheck = async (uid) => {
     const expiryCheck = await checkGroceryListExpiry();
     if (expiryCheck === true) {
         const groceryList = await generateGroceryListObject(uid);
-        const newGroceryListRef = await addDoc(collection(db, `users/${uid}/groceryLists`), groceryListConverter.toFirestore(groceryList));
+        const newGroceryListRef = await addDoc(collection(db, `users/${uid}/groceryLists`), groceryListConverter.toFirestore(groceryList)).then(() => {
+            const section = document.getElementById('content-section');
+            if (section) {
+                sectionFactory().clearSection(section);
+                displayGroceryList(section);
+            }
+        });
         console.log(`Grocery List added to DB`);
     }
     else {
         document.body.appendChild(generateOverwriteModal());
-        console.log('Are you sure you want to overwrite current grocery list?');
     }
 };
 export const getCurrentGroceryListDateEnd = async (uid) => {
