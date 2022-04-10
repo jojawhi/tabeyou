@@ -23,6 +23,8 @@ import { IngredientInterface } from './recipeModel';
 import { filterIngredients, getCurrentMealPlanFromDB } from './mealPlanModel';
 import displayGroceryList from './groceryListView';
 import sectionFactory from './section';
+import { generateModalSection } from './components';
+import { generateOverwriteModal } from './overwriteModal';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -107,6 +109,8 @@ const generateGroceryListObject = async (uid: string): Promise<GroceryList> => {
 	return groceryList;
 };
 
+export const deleteCurrentGroceryList = (uid: string) => {};
+
 export const addGroceryListToDB = async (uid: string) => {
 	//Check for expiry first
 	const expiryCheck = await checkGroceryListExpiry();
@@ -125,6 +129,7 @@ export const addGroceryListToDB = async (uid: string) => {
 		// 	groceryListConverter.toFirestore(groceryList)
 		// );
 		//choice modal goes here
+		document.body.appendChild(generateOverwriteModal());
 		console.log('Are you sure you want to overwrite current grocery list?');
 	}
 };
@@ -202,9 +207,7 @@ export const getCurrentGroceryListFromDB = async (uid: string) => {
 	return groceryListObject as GroceryList;
 };
 
-//Currently wiping out the list, probably something to do with async functions
-//triggering after the array is filled or with not reading the correct HTMLElement data
-
+//Currently working
 export const updateGroceryListOnInput = async (uid: string) => {
 	const groceryListID = await getCurrentGroceryListID(uid);
 	const groceryListRef = doc(db, `users/${uid}/groceryLists/${groceryListID}`);
@@ -239,23 +242,28 @@ export const updateGroceryListOnInput = async (uid: string) => {
 	});
 
 	/*
-    - get all the grocery list text containers with query selector all, convert them to IngredientInterfaces, push them to array
+    - get all the grocery list text containers with querySelectorAll, convert them to IngredientInterfaces, push them to array
     - get the current grocery list reference from the db
     - update listItems of the current grocery list with ingredientArray
     - re-render display
-
     */
 };
 
 /*
 - when MakeGroceryListButton is clicked on Meal Plan page do the following:
     - check if meal plan is fully populated
-        - if not, throw error
-    - run the filterIngredients function to create a filtered and reduced array of ingredients
-    - async add the ingredientList to the database
-    - assign the same start and end dates as the current meal plan
-    - get the grocery list from the db after it's added
-    - use the retrieved grocery list to populate the display
+        - if not, throw error/modal to let user choose to make grocery list with only partially populated plan (if only making a partial week plan)
+    - if mealPlan is fully populated, check if a grocery list already exists
+        - if true:
+            - show a modal asking if user wants to overwrite the current list
+            - yes button overwrites (deletes old then adds new)
+            - cancel button closes modal, does nothing else
+        -if false:
+            - run the filterIngredients function to create a filtered and reduced array of ingredients
+            - async add the ingredientList to the database
+            - assign the same start and end dates as the current meal plan
+            - get the grocery list from the db after it's added
+            - use the retrieved grocery list to populate the display
 
 
 */

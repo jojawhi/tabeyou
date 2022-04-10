@@ -41,8 +41,14 @@ const generateCheckbox = () => {
 
 	const checkboxInput = document.createElement('input');
 	checkboxInput.setAttribute('type', 'checkbox');
-	checkboxInput.addEventListener('change', (e) => {
-		console.log(e.target);
+	checkboxInput.addEventListener('change', () => {
+		const parent = checkboxInput.parentNode;
+		const sibling = parent?.nextSibling as HTMLElement;
+		if (sibling) {
+			sibling.classList.toggle('completed');
+		}
+
+		console.log(sibling);
 	});
 
 	const checkmark = document.createElement('span');
@@ -118,7 +124,13 @@ const generateListItems = (item: IngredientInterface) => {
 
 	groceryListItem.appendChild(generateCheckbox());
 	groceryListItem.appendChild(listItemInfo);
-	groceryListItem.appendChild(generateDeleteButton());
+
+	const deleteButton = generateDeleteButton();
+	deleteButton.addEventListener('click', () => {
+		updateGroceryListOnInput(userID());
+	});
+
+	groceryListItem.appendChild(deleteButton);
 
 	return groceryListItem;
 };
@@ -181,9 +193,5 @@ export default displayGroceryList;
 
 /*
 To-do:
-
-- create 'completed item' style (crossed through and faded)
-- add JS to apply 'completed item' style when checkbox is checked
-- add JS to clear section div when clicking on a nav link to prevent double loading content
 
 */

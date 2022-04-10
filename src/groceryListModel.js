@@ -4,6 +4,7 @@ import { userID } from './userModel';
 import { filterIngredients, getCurrentMealPlanFromDB } from './mealPlanModel';
 import displayGroceryList from './groceryListView';
 import sectionFactory from './section';
+import { generateOverwriteModal } from './overwriteModal';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -59,6 +60,7 @@ const generateGroceryListObject = async (uid) => {
     });
     return groceryList;
 };
+export const deleteCurrentGroceryList = (uid) => { };
 export const addGroceryListToDB = async (uid) => {
     const expiryCheck = await checkGroceryListExpiry();
     if (expiryCheck === true) {
@@ -67,6 +69,7 @@ export const addGroceryListToDB = async (uid) => {
         console.log(`Grocery List added to DB`);
     }
     else {
+        document.body.appendChild(generateOverwriteModal());
         console.log('Are you sure you want to overwrite current grocery list?');
     }
 };

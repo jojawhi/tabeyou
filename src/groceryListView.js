@@ -34,8 +34,13 @@ const generateCheckbox = () => {
     checkbox.classList.add('checkbox');
     const checkboxInput = document.createElement('input');
     checkboxInput.setAttribute('type', 'checkbox');
-    checkboxInput.addEventListener('change', (e) => {
-        console.log(e.target);
+    checkboxInput.addEventListener('change', () => {
+        const parent = checkboxInput.parentNode;
+        const sibling = parent?.nextSibling;
+        if (sibling) {
+            sibling.classList.toggle('completed');
+        }
+        console.log(sibling);
     });
     const checkmark = document.createElement('span');
     checkmark.classList.add('checkmark');
@@ -97,7 +102,11 @@ const generateListItems = (item) => {
     const listItemInfo = generateListItemText(item.name, item.amount, item.unit);
     groceryListItem.appendChild(generateCheckbox());
     groceryListItem.appendChild(listItemInfo);
-    groceryListItem.appendChild(generateDeleteButton());
+    const deleteButton = generateDeleteButton();
+    deleteButton.addEventListener('click', () => {
+        updateGroceryListOnInput(userID());
+    });
+    groceryListItem.appendChild(deleteButton);
     return groceryListItem;
 };
 const generateAddListItemButton = () => {

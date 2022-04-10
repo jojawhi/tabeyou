@@ -547,6 +547,23 @@ button {
 	transform: rotate(45deg);
 }
 
+/*Completed Item Styles*/
+
+.completed {
+	position: relative;
+	opacity: 0.3;
+}
+
+.completed::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	height: 0.0625rem;
+	width: 100%;
+	margin-inline: auto;
+	background-color: var(--green-1);
+}
+
 .grocery-list-delete-button {
 	font-size: inherit;
 	color: var(--font-color-1);
@@ -928,8 +945,6 @@ button {
 
 /*
 To do:
-- change page container display to flex: row @ screen min-width: 1000px
 - change log-out and settings button menu into a hamburger
-- fix centering of nav buttons on larger screen
 
 */
