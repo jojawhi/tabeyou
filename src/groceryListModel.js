@@ -2,6 +2,8 @@ import { initializeApp } from '../node_modules/firebase/app';
 import { getFirestore, collection, getDocs, doc, addDoc, query, where, updateDoc, } from '../node_modules/firebase/firestore';
 import { userID } from './userModel';
 import { filterIngredients, getCurrentMealPlanFromDB } from './mealPlanModel';
+import displayGroceryList from './groceryListView';
+import sectionFactory from './section';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -92,7 +94,7 @@ export const getCurrentGroceryListID = async (uid) => {
 };
 const updateCurrentGroceryListExpiry = async (uid) => {
     const groceryListID = await getCurrentGroceryListID(uid);
-    const groceryListRef = doc(db, `users/${uid}/mealPlans/${groceryListID}`);
+    const groceryListRef = doc(db, `users/${uid}/groceryLists/${groceryListID}`);
     await updateDoc(groceryListRef, {
         expired: true,
     });
@@ -122,4 +124,30 @@ export const getCurrentGroceryListFromDB = async (uid) => {
     const groceryListObject = groceryListConverter.fromFirestore(snapshot.docs[0]);
     return groceryListObject;
 };
-export const updateGroceryListOnAdd = (uid) => { };
+export const updateGroceryListOnInput = async (uid) => {
+    const groceryListID = await getCurrentGroceryListID(uid);
+    const groceryListRef = doc(db, `users/${uid}/groceryLists/${groceryListID}`);
+    const textContainers = document.getElementsByClassName('grocery-list-text-container');
+    let ingredientArray = [];
+    for (let i = 0; i < textContainers.length; i++) {
+        const name = textContainers[i].children[0];
+        const amount = textContainers[i].children[1];
+        const unit = textContainers[i].children[2];
+        const ingredient = {
+            name: name.value,
+            amount: amount.valueAsNumber,
+            unit: unit.value,
+        };
+        ingredientArray.push(ingredient);
+        console.log(ingredientArray);
+    }
+    await updateDoc(groceryListRef, {
+        listItems: ingredientArray,
+    }).then(() => {
+        const section = document.getElementById('content-section');
+        if (section) {
+            sectionFactory().clearSection(section);
+            displayGroceryList(section);
+        }
+    });
+};

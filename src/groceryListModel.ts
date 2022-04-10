@@ -21,6 +21,8 @@ import {
 import { userID } from './userModel';
 import { IngredientInterface } from './recipeModel';
 import { filterIngredients, getCurrentMealPlanFromDB } from './mealPlanModel';
+import displayGroceryList from './groceryListView';
+import sectionFactory from './section';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -117,6 +119,12 @@ export const addGroceryListToDB = async (uid: string) => {
 		);
 		console.log(`Grocery List added to DB`);
 	} else {
+		// const groceryList = await generateGroceryListObject(uid);
+		// const newGroceryListRef = await addDoc(
+		// 	collection(db, `users/${uid}/groceryLists`),
+		// 	groceryListConverter.toFirestore(groceryList)
+		// );
+		//choice modal goes here
 		console.log('Are you sure you want to overwrite current grocery list?');
 	}
 };
@@ -156,7 +164,7 @@ export const getCurrentGroceryListID = async (uid: string | undefined) => {
 const updateCurrentGroceryListExpiry = async (uid: string | undefined) => {
 	// Needed await on the getID call
 	const groceryListID = await getCurrentGroceryListID(uid);
-	const groceryListRef = doc(db, `users/${uid}/mealPlans/${groceryListID}`);
+	const groceryListRef = doc(db, `users/${uid}/groceryLists/${groceryListID}`);
 
 	await updateDoc(groceryListRef, {
 		expired: true,
@@ -194,7 +202,50 @@ export const getCurrentGroceryListFromDB = async (uid: string) => {
 	return groceryListObject as GroceryList;
 };
 
-export const updateGroceryListOnAdd = (uid: string) => {};
+//Currently wiping out the list, probably something to do with async functions
+//triggering after the array is filled or with not reading the correct HTMLElement data
+
+export const updateGroceryListOnInput = async (uid: string) => {
+	const groceryListID = await getCurrentGroceryListID(uid);
+	const groceryListRef = doc(db, `users/${uid}/groceryLists/${groceryListID}`);
+
+	const textContainers = document.getElementsByClassName('grocery-list-text-container');
+	let ingredientArray = [];
+
+	for (let i = 0; i < textContainers.length; i++) {
+		//Need to coerce the input type to allow access to the value in the object
+		const name = textContainers[i].children[0] as HTMLInputElement;
+		const amount = textContainers[i].children[1] as HTMLInputElement;
+		const unit = textContainers[i].children[2] as HTMLInputElement;
+
+		const ingredient: IngredientInterface = {
+			name: name.value,
+			amount: amount.valueAsNumber,
+			unit: unit.value,
+		};
+
+		ingredientArray.push(ingredient);
+		console.log(ingredientArray);
+	}
+
+	await updateDoc(groceryListRef, {
+		listItems: ingredientArray,
+	}).then(() => {
+		const section = document.getElementById('content-section');
+		if (section) {
+			sectionFactory().clearSection(section);
+			displayGroceryList(section);
+		}
+	});
+
+	/*
+    - get all the grocery list text containers with query selector all, convert them to IngredientInterfaces, push them to array
+    - get the current grocery list reference from the db
+    - update listItems of the current grocery list with ingredientArray
+    - re-render display
+
+    */
+};
 
 /*
 - when MakeGroceryListButton is clicked on Meal Plan page do the following:
@@ -202,9 +253,9 @@ export const updateGroceryListOnAdd = (uid: string) => {};
         - if not, throw error
     - run the filterIngredients function to create a filtered and reduced array of ingredients
     - async add the ingredientList to the database
-    - assign the same start and end dates as the current meal plan?
+    - assign the same start and end dates as the current meal plan
     - get the grocery list from the db after it's added
     - use the retrieved grocery list to populate the display
 
-- add logic for updating grocery list when new item is added from display page
+
 */

@@ -38,17 +38,17 @@ const generateModalIngredientContainers = (ingredient: IngredientInterface) => {
 	const ingredientAmount = document.createElement('input');
 	ingredientAmount.classList.add('ingredient-amount');
 	ingredientAmount.setAttribute('type', 'number');
-	ingredientAmount.valueAsNumber = ingredient.amount;
+	ingredientAmount.valueAsNumber = ingredient.amount as number;
 	ingredientAmount.setAttribute('readonly', 'readonly');
 
 	const ingredientUnit = document.createElement('input');
 	ingredientUnit.classList.add('ingredient-unit');
-	ingredientUnit.value = ingredient.unit;
+	ingredientUnit.value = ingredient.unit as string;
 	ingredientUnit.setAttribute('readonly', 'readonly');
 
 	const ingredientName = document.createElement('input');
 	ingredientName.classList.add('ingredient-name');
-	ingredientName.value = ingredient.name;
+	ingredientName.value = ingredient.name as string;
 	ingredientName.setAttribute('readonly', 'readonly');
 
 	modalIngredientContainer.appendChild(ingredientAmount);

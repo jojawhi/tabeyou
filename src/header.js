@@ -13,15 +13,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const createSettingsButton = () => {
-    const settingsImg = document.createElement('img');
-    settingsImg.setAttribute('src', '../src/images/settings.png');
+    const settingsIcon = document.createElement('i');
+    settingsIcon.classList.add('fa-solid', 'fa-gear');
     const settingsButton = document.createElement('button');
-    settingsButton.classList.add('settings-button', 'header-button');
+    settingsButton.classList.add('utility-button', 'header-button', 'green-hover');
     settingsButton.setAttribute('id', 'settings-button');
+    settingsButton.textContent = ' Settings';
     const settingsButtonContainer = document.createElement('div');
     settingsButtonContainer.classList.add('settings-button-container');
     settingsButtonContainer.appendChild(settingsButton);
-    settingsButton.appendChild(settingsImg);
+    settingsButton.insertBefore(settingsIcon, settingsButton.lastChild);
     return settingsButtonContainer;
 };
 const createLoginButton = () => {
@@ -59,7 +60,7 @@ const createHeaderButtonsContainer = (state) => {
 const createLogo = () => {
     const logo = document.createElement('img');
     logo.classList.add('logo');
-    logo.setAttribute('src', '../src/images/tabeyou-logo1.png');
+    logo.setAttribute('src', 'tabeyou-logo1.png');
     const logoContainer = document.createElement('div');
     logoContainer.classList.add('logo-container');
     logoContainer.appendChild(logo);

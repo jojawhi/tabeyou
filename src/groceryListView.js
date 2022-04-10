@@ -1,5 +1,5 @@
 import { generateDeleteButton, generateUtilityButton } from './components';
-import { getCurrentGroceryListFromDB } from './groceryListModel';
+import { getCurrentGroceryListFromDB, updateGroceryListOnInput } from './groceryListModel';
 import { userID } from './userModel';
 const groceryListPlaceHolder = [
     {
@@ -50,7 +50,9 @@ const generateListItemText = (name, amount, unit) => {
     listItemText.setAttribute('type', 'text');
     listItemText.setAttribute('readonly', 'readonly');
     listItemText.classList.add('grocery-list-text');
-    listItemText.value = name;
+    if (listItemText && name) {
+        listItemText.value = name;
+    }
     listItemText.addEventListener('click', () => {
         listItemText.removeAttribute('readonly');
     });
@@ -61,7 +63,9 @@ const generateListItemText = (name, amount, unit) => {
     listItemAmount.setAttribute('type', 'number');
     listItemAmount.setAttribute('readonly', 'readonly');
     listItemAmount.classList.add('grocery-list-amount');
-    listItemAmount.valueAsNumber = amount;
+    if (listItemAmount && amount) {
+        listItemAmount.valueAsNumber = amount;
+    }
     listItemAmount.addEventListener('click', () => {
         listItemAmount.removeAttribute('readonly');
     });
@@ -72,11 +76,14 @@ const generateListItemText = (name, amount, unit) => {
     listItemUnit.setAttribute('type', 'text');
     listItemUnit.setAttribute('readonly', 'readonly');
     listItemUnit.classList.add('grocery-list-amount');
-    listItemUnit.value = unit;
+    if (listItemUnit && unit) {
+        listItemUnit.value = unit;
+    }
     listItemUnit.addEventListener('click', () => {
         listItemUnit.removeAttribute('readonly');
     });
     listItemUnit.addEventListener('change', () => {
+        updateGroceryListOnInput(userID());
         listItemUnit.setAttribute('readonly', 'readonly');
     });
     groceryListTextContainer.appendChild(listItemText);

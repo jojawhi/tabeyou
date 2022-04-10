@@ -75,9 +75,9 @@ const sampleRecipe: RecipeInterface = {
 */
 
 interface IngredientInterface {
-	name: string;
-	amount: number;
-	unit: string;
+	name: string | null;
+	amount: number | null;
+	unit: string | null;
 }
 
 interface RecipeInterface {
