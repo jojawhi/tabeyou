@@ -1,5 +1,8 @@
-import { RecipeInterface, IngredientInterface } from './recipeModel';
-import { generateCloseButton, generateUtilityButton } from './components';
+import { RecipeInterface, IngredientInterface, deleteRecipeFromDB } from './recipeModel';
+import displayRecipeList from './recipeListView';
+import sectionFactory from './section';
+import { closeModal, generateCloseButton, generateUtilityButton } from './components';
+import { userID } from './userModel';
 
 /*Header*/
 
@@ -140,6 +143,22 @@ const generateButtonsContainer = () => {
 	const deleteRecipeIcon = document.createElement('i');
 	deleteRecipeIcon.classList.add('fa-solid', 'fa-circle-minus', 'button-icon');
 	deleteRecipeButton.insertBefore(deleteRecipeIcon, deleteRecipeButton.firstChild);
+	deleteRecipeButton.addEventListener('click', () => {
+		const modal = document.getElementById('recipe-modal');
+		if (modal) {
+			const header = modal.children[1];
+			const heading = header.children[1].textContent;
+			console.log(`Heading: ${heading}`);
+			deleteRecipeFromDB(userID(), heading).then(() => {
+				closeModal('recipe-modal');
+				const section = document.getElementById('content-section');
+				if (section) {
+					sectionFactory().clearSection(section);
+					displayRecipeList(section);
+				}
+			});
+		}
+	});
 
 	recipeModalButtonsContainer.appendChild(addToMealPlanButton);
 	recipeModalButtonsContainer.appendChild(editRecipeButton);
@@ -173,8 +192,6 @@ export default displayRecipeModal;
 /*
 To do:
 - figure out how to accept uploaded images
-- figure out how to make the ingredients and the instructions display on a slider/carousel/separate pages
-- add delete recipe button to recipeModal
 - add edit/save function to recipeModal
 	- Refactor recipeModal to be a readonly form?
 	- edit button onclick
@@ -185,7 +202,5 @@ To do:
 		- update recipeModal display?
 
 - add 'add to meal plan' button
-
-- set max height on recipeModal with scroll overflow
 
 */

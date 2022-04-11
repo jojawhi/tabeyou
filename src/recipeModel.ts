@@ -2,9 +2,13 @@ import { initializeApp } from '../node_modules/firebase/app';
 import {
 	getFirestore,
 	collection,
+	doc,
 	getDocs,
 	addDoc,
+	deleteDoc,
 	DocumentSnapshot,
+	query,
+	where,
 	QuerySnapshot,
 } from '../node_modules/firebase/firestore';
 import { userID } from './userModel';
@@ -24,55 +28,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 //const auth = getAuth(app);
 const db = getFirestore(app);
-/*
-const docRef = doc(db, 'users', 'jojawhi');
-const docSnap = await getDoc(docRef);
-
-//These two document and collection retrievals work
-
-if (docSnap.exists()) {
-	console.log('Document data:', docSnap.data());
-} else {
-	console.log('No such document!');
-}
-
-const querySnapshot = await getDocs(collection(db, 'users/jojawhi/recipes'));
-querySnapshot.forEach((doc) => {
-	console.log(doc.id, ' => ', doc.data());
-});
-*/
-
-/*
-const sampleRecipe: RecipeInterface = {
-	name: `Roy Choi's Aglio e Olio`,
-	ingredientList: [
-		{ name: 'parmesan cheese', amount: 0.5, unit: 'C' },
-		{ name: 'lemon', amount: 1, unit: 'pc' },
-		{ name: 'parsley', amount: 1, unit: 'bunch' },
-		{ name: 'garlic', amount: 10, unit: 'cloves' },
-		{ name: 'olive oil', amount: 1, unit: 'C' },
-		{ name: 'spaghetti', amount: 450, unit: 'g' },
-		{ name: 'chili flakes', amount: 1, unit: 'tbsp' },
-		{ name: 'salt', amount: 1, unit: 'tbsp' },
-	],
-	instructions: [
-		`Bring a pot of water to a boil, and add 1-2 tsp of salt and 1 tbsp of olive oil.`,
-		`Wash and de-stem the parsley. Chop the parsley with a rough chiffonade.`,
-		`Peel garlic and slice into thin discs.`,
-		`Add the spaghetti to the boiling water and cook until al dente or to desired doneness (~10 minutes).`,
-		`Drain the pasta and set aside, saving about 1 cup of the pasta water and also setting this aside.`,
-		`In a heavy-bottomed skillet over medium heat, add about ½ cup of olive oil (or enough to coat the bottom of the pan and cover all the garlic).`,
-		`Add garlic to the pan and cook until fragrant and just browning, about 3 minutes.`,
-		`Add chili flakes and all but 2-3 tbsps of the chopped parsley to the pan and cook for another 30 seconds or so.`,
-		`Add the cooked pasta and stir it into the oil and garlic. Then, add the saved cup of pasta water.`,
-		`Allow everything to heat and incorporate, then remove from the heat.`,
-		`Add 1-2 tbsp of butter to the pasta and the juice of a lemon and stir.`,
-		`Use a large fork to twist the spaghetti onto your plates.`,
-		`Top with some of the garlicky oil from the pan, grated parmesan cheese, and some of the leftover chopped parsley.`,
-		`Serve immediately.`,
-	],
-};
-*/
 
 interface IngredientInterface {
 	name: string | null;
@@ -141,13 +96,34 @@ export const makeDatabaseRecipeArray = (snapshot: QuerySnapshot) => {
 	return recipesArray;
 };
 
-const addRecipeToDB = async (user: string | undefined, recipe: Recipe) => {
+const addRecipeToDB = async (uid: string | undefined, recipe: Recipe) => {
 	const newRecipeRef = await addDoc(
-		collection(db, `users/${user}/recipes`),
+		collection(db, `users/${uid}/recipes`),
 		recipeConverter.toFirestore(recipe)
 	);
 
-	console.log(`Recipe ID: ${newRecipeRef.id} written to User: ${user}`);
+	console.log(`Recipe ID: ${newRecipeRef.id} written to User: ${uid}`);
+};
+
+export const deleteRecipeFromDB = async (uid: string, recipeName: string | null) => {
+	const recipeID = await getRecipeIDByName(uid, recipeName);
+	console.log(`ID to be deleted: ${recipeID}`);
+	await deleteDoc(doc(db, `users/${uid}/recipes/${recipeID}`));
+};
+
+const getRecipeIDByName = async (uid: string, recipeName: string | null) => {
+	const recipesRef = collection(db, `users/${uid}/recipes`);
+	const recipesQuery = query(recipesRef, where('name', '==', recipeName));
+	const snapshot = await getDocs(recipesQuery);
+
+	let recipeID: string = '';
+
+	snapshot.forEach((doc) => {
+		recipeID += doc.id;
+		console.log(`Recipe ID: ${recipeID}`);
+	});
+
+	return recipeID;
 };
 
 const makeRecipeObject = (
@@ -226,54 +202,9 @@ export const getFormData = (formID: string) => {
 export { RecipeInterface, IngredientInterface };
 
 /*
-const recipeFactory = (name: string): {} => {
-	let recipeName: string = name;
-	let ingredients: IngredientInterface[] = [];
-	let instructions: [] = [];
-
-	const generateIngredientList = (ingredient: {}): {}[] => {
-		let ingredientsList: {}[] = [];
-		ingredientsList.push(ingredient);
-		return ingredientsList;
-	};
-
-	const getInstructionsFromInput = (instruction: string): string[] => {
-		let instructionsArray = [];
-
-		instructionsArray.push(instruction);
-
-		return instructionsArray;
-	};
-
-
-	return { getInstructionsFromInput };
-};
-*/
-
-/*
-const ingredientFactory = () => {
-	const getIngredientFromInput = () => {
-		const amount: number = document.getElementById('amount-input').value;
-		const unitSelect = document.getElementById('unit-select');
-		const unit = unitSelect.options[unitSelect.selectedIndex].value;
-		const name: string = document.getElementById('name-input').value;
-
-		return { name, amount, unit };
-	};
-};
-*/
-
-/*
-const instructionFactory = () => {
-
-}
-*/
-
-/*
 To do:
 
-- figure out how to get recipeArray from stored user info
-- make newRecipeModal
+- add validation for addRecipe (required fields, check for duplicate names)
 - add servings function or field for increasing amounts
 
 */

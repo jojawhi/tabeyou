@@ -153,12 +153,6 @@ const generateSubmitRecipeButton = () => {
 	submitRecipeButton.setAttribute('type', 'submit');
 	submitRecipeButton.textContent = 'Save Recipe';
 
-	/*
-	submitRecipeButton.addEventListener('click', () => {
-		//function to add recipe to db
-	});
-    */
-
 	return submitRecipeButton;
 };
 

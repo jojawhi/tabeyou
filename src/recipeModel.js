@@ -1,5 +1,5 @@
 import { initializeApp } from '../node_modules/firebase/app';
-import { getFirestore, collection, getDocs, addDoc, } from '../node_modules/firebase/firestore';
+import { getFirestore, collection, doc, getDocs, addDoc, deleteDoc, query, where, } from '../node_modules/firebase/firestore';
 import { userID } from './userModel';
 import sectionFactory from './section';
 import displayRecipeList from './recipeListView';
@@ -55,9 +55,25 @@ export const makeDatabaseRecipeArray = (snapshot) => {
     console.log(recipesArray);
     return recipesArray;
 };
-const addRecipeToDB = async (user, recipe) => {
-    const newRecipeRef = await addDoc(collection(db, `users/${user}/recipes`), recipeConverter.toFirestore(recipe));
-    console.log(`Recipe ID: ${newRecipeRef.id} written to User: ${user}`);
+const addRecipeToDB = async (uid, recipe) => {
+    const newRecipeRef = await addDoc(collection(db, `users/${uid}/recipes`), recipeConverter.toFirestore(recipe));
+    console.log(`Recipe ID: ${newRecipeRef.id} written to User: ${uid}`);
+};
+export const deleteRecipeFromDB = async (uid, recipeName) => {
+    const recipeID = await getRecipeIDByName(uid, recipeName);
+    console.log(`ID to be deleted: ${recipeID}`);
+    await deleteDoc(doc(db, `users/${uid}/recipes/${recipeID}`));
+};
+const getRecipeIDByName = async (uid, recipeName) => {
+    const recipesRef = collection(db, `users/${uid}/recipes`);
+    const recipesQuery = query(recipesRef, where('name', '==', recipeName));
+    const snapshot = await getDocs(recipesQuery);
+    let recipeID = '';
+    snapshot.forEach((doc) => {
+        recipeID += doc.id;
+        console.log(`Recipe ID: ${recipeID}`);
+    });
+    return recipeID;
 };
 const makeRecipeObject = (recipeName, ingredientList, instructions) => {
     const recipeObject = new Recipe(recipeName, ingredientList, instructions);
