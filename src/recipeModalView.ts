@@ -83,9 +83,12 @@ const generateModalInstructionContainers = (instruction: string, index: number) 
 	instructionNumeral.classList.add('instruction-numeral');
 	instructionNumeral.textContent = (index + 1).toString();
 
-	const instructionText = document.createElement('p');
+	const instructionText = document.createElement('textarea');
 	instructionText.classList.add('instruction-text');
-	instructionText.textContent = instruction;
+	instructionText.value = instruction as string;
+	instructionText.setAttribute('readonly', 'readonly');
+	instructionText.setAttribute('wrap', 'soft');
+	instructionText.setAttribute('rows', '3');
 
 	modalInstructionContainer.appendChild(instructionNumeral);
 	modalInstructionContainer.appendChild(instructionText);
@@ -121,6 +124,7 @@ const generateButtonsContainer = () => {
 
 	const addToMealPlanButton = generateUtilityButton('Meal Plan', 'add-to-mp-button');
 	addToMealPlanButton.classList.add('green-hover');
+	addToMealPlanButton.setAttribute('disabled', 'disabled');
 	const addToMealPlanIcon = document.createElement('i');
 	addToMealPlanIcon.classList.add('fa-solid', 'fa-circle-plus', 'button-icon');
 	addToMealPlanButton.insertBefore(addToMealPlanIcon, addToMealPlanButton.firstChild);

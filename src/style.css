@@ -457,7 +457,8 @@ button {
 }
 
 .grocery-list-text-container input,
-.recipe-ingredient-container input {
+.recipe-ingredient-container input,
+.recipe-instruction-container textarea {
 	font-size: var(--step--1);
 	color: var(--font-color-1);
 	background-color: transparent;
@@ -681,7 +682,7 @@ button {
 }
 
 .recipe-modal-close-button {
-	position: absolute;
+	position: fixed;
 	top: 0.25rem;
 	right: 0.25rem;
 	display: flex;
@@ -732,6 +733,10 @@ button {
 }
 
 .instruction-text {
+	height: min-content;
+	width: 100%;
+	resize: none;
+	font-family: var(--font-2);
 	font-size: var(--step--2);
 }
 

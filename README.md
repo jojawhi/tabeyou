@@ -46,6 +46,8 @@ Meal Plans:
 
 Recipes:
 
+-   Unit conversion
+-   1/2, double, triple, etc. recipe amounts
 -   Image upload for recipe displays
 -   Import recipe from a picture (text recognition)
 -   Public repo of shared recipes
