@@ -3,6 +3,7 @@ import displayRecipeList from './recipeListView';
 import sectionFactory from './section';
 import { closeModal, generateCloseButton, generateUtilityButton } from './components';
 import { userID } from './userModel';
+import { generateConfirmDeleteModal } from './confirmDeleteModal';
 
 /*Header*/
 
@@ -144,20 +145,21 @@ const generateButtonsContainer = () => {
 	deleteRecipeIcon.classList.add('fa-solid', 'fa-circle-minus', 'button-icon');
 	deleteRecipeButton.insertBefore(deleteRecipeIcon, deleteRecipeButton.firstChild);
 	deleteRecipeButton.addEventListener('click', () => {
-		const modal = document.getElementById('recipe-modal');
-		if (modal) {
-			const header = modal.children[1];
-			const heading = header.children[1].textContent;
-			console.log(`Heading: ${heading}`);
-			deleteRecipeFromDB(userID(), heading).then(() => {
-				closeModal('recipe-modal');
-				const section = document.getElementById('content-section');
-				if (section) {
-					sectionFactory().clearSection(section);
-					displayRecipeList(section);
-				}
-			});
-		}
+		document.body.appendChild(generateConfirmDeleteModal());
+		// const modal = document.getElementById('recipe-modal');
+		// if (modal) {
+		// 	const header = modal.children[1];
+		// 	const heading = header.children[1].textContent;
+		// 	console.log(`Heading: ${heading}`);
+		// 	deleteRecipeFromDB(userID(), heading).then(() => {
+		// 		closeModal('recipe-modal');
+		// 		const section = document.getElementById('content-section');
+		// 		if (section) {
+		// 			sectionFactory().clearSection(section);
+		// 			displayRecipeList(section);
+		// 		}
+		// 	});
+		// }
 	});
 
 	recipeModalButtonsContainer.appendChild(addToMealPlanButton);
@@ -201,6 +203,6 @@ To do:
 		- run an updateRecipe function to update database
 		- update recipeModal display?
 
-- add 'add to meal plan' button
+- add functionality to 'add to meal plan' button
 
 */

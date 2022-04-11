@@ -3,7 +3,7 @@ import { deleteCurrentGroceryList, addGroceryListToDBWithoutCheck } from './groc
 import { userID } from './userModel';
 
 export const generateOverwriteModal = () => {
-	const modal = generateModalSection('overwrite-grocery-modal', 'Whoops!');
+	const modal = generateModalSection('overwrite-grocery-modal', 'Wait!');
 	modal.classList.add('text-center');
 
 	const contentContainer = document.createElement('div');

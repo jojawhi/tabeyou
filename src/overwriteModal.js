@@ -2,7 +2,7 @@ import { generateModalSection, generatePageButton, closeModal } from './componen
 import { deleteCurrentGroceryList, addGroceryListToDBWithoutCheck } from './groceryListModel';
 import { userID } from './userModel';
 export const generateOverwriteModal = () => {
-    const modal = generateModalSection('overwrite-grocery-modal', 'Whoops!');
+    const modal = generateModalSection('overwrite-grocery-modal', 'Wait!');
     modal.classList.add('text-center');
     const contentContainer = document.createElement('div');
     contentContainer.classList.add('padding-vertical');
