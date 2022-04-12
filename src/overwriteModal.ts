@@ -1,5 +1,6 @@
 import { generateModalSection, generatePageButton, closeModal } from './components';
 import { deleteCurrentGroceryList, addGroceryListToDBWithoutCheck } from './groceryListModel';
+import { filterIngredients } from './mealPlanModel';
 import { userID } from './userModel';
 
 export const generateOverwriteModal = () => {
@@ -18,7 +19,7 @@ export const generateOverwriteModal = () => {
 	const yesButton = generatePageButton('Yes', 'overwrite-yes-button');
 	yesButton.addEventListener('click', () => {
 		deleteCurrentGroceryList(userID()).then(() => {
-			addGroceryListToDBWithoutCheck(userID());
+			addGroceryListToDBWithoutCheck(userID(), filterIngredients());
 		});
 		closeModal('overwrite-grocery-modal');
 	});

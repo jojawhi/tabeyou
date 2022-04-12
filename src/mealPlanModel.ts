@@ -21,6 +21,7 @@ import {
 	updateDoc,
 } from '../node_modules/firebase/firestore';
 import { RecipeInterface, recipeConverter, IngredientInterface } from '../src/recipeModel';
+import { addGroceryListToDBWithoutCheck } from './groceryListModel';
 import { userID, getUserShoppingDay } from './userModel';
 
 const firebaseConfig = {
@@ -434,6 +435,8 @@ export const checkMealPlanExpiry = async () => {
 		return false;
 	} else {
 		console.log('Could not read meal plan expiry');
+		replaceMealPlan();
+		addGroceryListToDBWithoutCheck(userID(), getMealPlanIngredients());
 		return false;
 	}
 };

@@ -63,3 +63,4 @@ Grocery Lists:
 ## Known Bugs
 
 -   Instructions area displaying in recipe modal even if no instructions entered
+-   Cannot generate grocery list for new user after signing up

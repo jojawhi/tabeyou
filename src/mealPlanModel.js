@@ -2,6 +2,7 @@ require('../node_modules/datejs/index');
 import { initializeApp } from '../node_modules/firebase/app';
 import { getFirestore, collection, getDocs, doc, addDoc, getDoc, query, where, updateDoc, } from '../node_modules/firebase/firestore';
 import { recipeConverter } from '../src/recipeModel';
+import { addGroceryListToDBWithoutCheck } from './groceryListModel';
 import { userID, getUserShoppingDay } from './userModel';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -287,6 +288,8 @@ export const checkMealPlanExpiry = async () => {
     }
     else {
         console.log('Could not read meal plan expiry');
+        replaceMealPlan();
+        addGroceryListToDBWithoutCheck(userID(), getMealPlanIngredients());
         return false;
     }
 };

@@ -115,7 +115,7 @@ const generateMakeGroceryListButton = () => {
 	pageButton.textContent = 'Make Grocery List';
 
 	pageButton.addEventListener('click', () => {
-		addGroceryListToDBWithCheck(userID());
+		addGroceryListToDBWithCheck(userID(), filterIngredients());
 	});
 
 	return pageButton;

@@ -93,7 +93,10 @@ const groceryListConverter = {
 };
 
 //Currently working
-const generateGroceryListObject = async (uid: string): Promise<GroceryList> => {
+const generateGroceryListObject = async (
+	uid: string,
+	array: Promise<IngredientInterface[]> | IngredientInterface[]
+): Promise<GroceryList> => {
 	let groceryList = new GroceryList(uid, null, null, false, null);
 
 	const mealPlan = await getCurrentMealPlanFromDB(uid)
@@ -104,7 +107,7 @@ const generateGroceryListObject = async (uid: string): Promise<GroceryList> => {
 			return groceryList;
 		})
 		.then(async (groceryList) => {
-			groceryList.listItems = await filterIngredients();
+			groceryList.listItems = await array;
 		});
 	return groceryList;
 };
@@ -115,8 +118,11 @@ export const deleteCurrentGroceryList = async (uid: string) => {
 	await deleteDoc(doc(db, `users/${uid}/groceryLists/${groceryListID}`));
 };
 
-export const addGroceryListToDBWithoutCheck = async (uid: string) => {
-	const groceryList = await generateGroceryListObject(uid);
+export const addGroceryListToDBWithoutCheck = async (
+	uid: string,
+	array: Promise<IngredientInterface[]> | IngredientInterface[]
+) => {
+	const groceryList = await generateGroceryListObject(uid, array);
 	const newGroceryListRef = await addDoc(
 		collection(db, `users/${uid}/groceryLists`),
 		groceryListConverter.toFirestore(groceryList)
@@ -129,12 +135,15 @@ export const addGroceryListToDBWithoutCheck = async (uid: string) => {
 	});
 };
 
-export const addGroceryListToDBWithCheck = async (uid: string) => {
+export const addGroceryListToDBWithCheck = async (
+	uid: string,
+	array: Promise<IngredientInterface[]> | IngredientInterface[]
+) => {
 	//Check for expiry first
 	const expiryCheck = await checkGroceryListExpiry();
 
 	if (expiryCheck === true) {
-		const groceryList = await generateGroceryListObject(uid);
+		const groceryList = await generateGroceryListObject(uid, array);
 		const newGroceryListRef = await addDoc(
 			collection(db, `users/${uid}/groceryLists`),
 			groceryListConverter.toFirestore(groceryList)
