@@ -23,8 +23,7 @@ const generateFeaturesContent = () => {
     featuresContentContainer.classList.add('hero-content');
     const pageSubheading = document.createElement('h3');
     pageSubheading.classList.add('page-subheading');
-    pageSubheading.textContent =
-        'Tabeyou (tah-bay-yo) generates a grocery list from custom meal plans you can easily build from saved recipes, helping you save money and cook delicious meals';
+    pageSubheading.textContent = 'Landing page content coming soon!';
     featuresContentContainer.appendChild(pageSubheading);
     return featuresContentContainer;
 };

@@ -16,9 +16,8 @@ const createSettingsButton = () => {
     const settingsIcon = document.createElement('i');
     settingsIcon.classList.add('fa-solid', 'fa-gear');
     const settingsButton = document.createElement('button');
-    settingsButton.classList.add('utility-button', 'header-button', 'green-hover');
+    settingsButton.classList.add('header-button', 'green-hover');
     settingsButton.setAttribute('id', 'settings-button');
-    settingsButton.textContent = ' Settings';
     const settingsButtonContainer = document.createElement('div');
     settingsButtonContainer.classList.add('settings-button-container');
     settingsButtonContainer.appendChild(settingsButton);

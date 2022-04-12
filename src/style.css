@@ -105,8 +105,10 @@ button {
 	display: flex;
 }
 
-.settings-button {
+#settings-button {
+	font-size: var(--step-1);
 	background-color: transparent;
+	transition: all 300ms;
 }
 
 /*Login UI*/
@@ -759,16 +761,6 @@ button {
 	font-size: var(--step-1);
 }
 
-.utility-button {
-	font-size: var(--step--1);
-	color: var(--font-color-1);
-	transition: all 300ms;
-}
-
-.green-hover:hover {
-	color: var(--green-1);
-}
-
 /*Scrollbars*/
 
 /*Firefox*/
@@ -950,6 +942,20 @@ button {
 
 /*Utility classes*/
 
+.utility-button {
+	font-size: var(--step--1);
+	color: var(--font-color-1);
+	transition: all 300ms;
+}
+
+.green-hover:hover {
+	color: var(--green-2);
+}
+
+.red-hover:hover {
+	color: var(--red-1);
+}
+
 .text-center {
 	text-align: center;
 }
@@ -970,6 +976,6 @@ button {
 
 /*
 To do:
-- change log-out and settings button menu into a hamburger
 
-*/ ;
+
+*/
