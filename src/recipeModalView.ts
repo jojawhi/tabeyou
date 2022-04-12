@@ -146,20 +146,6 @@ const generateButtonsContainer = () => {
 	deleteRecipeButton.insertBefore(deleteRecipeIcon, deleteRecipeButton.firstChild);
 	deleteRecipeButton.addEventListener('click', () => {
 		document.body.appendChild(generateConfirmDeleteModal());
-		// const modal = document.getElementById('recipe-modal');
-		// if (modal) {
-		// 	const header = modal.children[1];
-		// 	const heading = header.children[1].textContent;
-		// 	console.log(`Heading: ${heading}`);
-		// 	deleteRecipeFromDB(userID(), heading).then(() => {
-		// 		closeModal('recipe-modal');
-		// 		const section = document.getElementById('content-section');
-		// 		if (section) {
-		// 			sectionFactory().clearSection(section);
-		// 			displayRecipeList(section);
-		// 		}
-		// 	});
-		// }
 	});
 
 	recipeModalButtonsContainer.appendChild(addToMealPlanButton);

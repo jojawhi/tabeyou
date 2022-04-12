@@ -36,22 +36,26 @@ interface IngredientInterface {
 }
 
 interface RecipeInterface {
+	author: string;
 	name: string;
 	ingredientList: IngredientInterface[];
 	instructions?: string[];
 }
 
 class Recipe {
+	author: string;
 	name: string;
 	ingredientList: IngredientInterface[];
 	instructions?: string[];
 
 	constructor(
+		author: string,
 		name: string,
 		ingredientList: IngredientInterface[],
 		instructions: string[] | undefined
 	) {
-		(this.name = name),
+		(this.author = author),
+			(this.name = name),
 			(this.ingredientList = ingredientList),
 			(this.instructions = instructions);
 	}
@@ -60,6 +64,7 @@ class Recipe {
 export const recipeConverter = {
 	toFirestore: (recipe: Recipe) => {
 		return {
+			author: recipe.author,
 			name: recipe.name,
 			ingredientList: recipe.ingredientList,
 			instructions: recipe.instructions,
@@ -68,7 +73,12 @@ export const recipeConverter = {
 	fromFirestore: (snapshot: DocumentSnapshot) => {
 		const recipe = snapshot.data();
 		if (recipe) {
-			return new Recipe(recipe.name, recipe.ingredientList, recipe.instructions);
+			return new Recipe(
+				recipe.author,
+				recipe.name,
+				recipe.ingredientList,
+				recipe.instructions
+			);
 		}
 	},
 };
@@ -127,11 +137,12 @@ const getRecipeIDByName = async (uid: string, recipeName: string | null) => {
 };
 
 const makeRecipeObject = (
+	author: string,
 	recipeName: string,
 	ingredientList: IngredientInterface[],
 	instructions: string[]
 ) => {
-	const recipeObject = new Recipe(recipeName, ingredientList, instructions);
+	const recipeObject = new Recipe(author, recipeName, ingredientList, instructions);
 
 	return recipeObject;
 };
@@ -181,6 +192,7 @@ export const getFormData = (formID: string) => {
 		addRecipeToDB(
 			userID(),
 			makeRecipeObject(
+				userID(),
 				recipeName,
 				makeIngredientListFromFormData(
 					ingredientNamesArray,

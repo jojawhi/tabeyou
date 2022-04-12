@@ -30,10 +30,9 @@ The app uses Firebase to implement user authentication and Cloud Firestore's NoS
 ## Features in development
 
 -   Landing page, complete with feature descriptions and information about how to use the app effectively and the benefits of the prescribed process
--   UI redesign for full responsiveness
--   Crossed off styles for grocery list
 -   Meal plan and grocery list history storage
 -   Add recipe to meal plan from recipe page
+-
 -   Light/Dark mode
 -   Populate current week's meal plan from meal plan history (if wanting to directly replicate a particularly successful/tasty week)
 -   Search and sort recipes
@@ -50,9 +49,9 @@ Recipes:
 -   1/2, double, triple, etc. recipe amounts
 -   Image upload for recipe displays
 -   Import recipe from a picture (text recognition)
--   Public repo of shared recipes
+-   Public repo of shared recipes and adding public recipe to personal recipe book
 -   Export recipe to PDF
--   Create a "Recipe Book" PDF
+-   Create a "Recipe Book" PDF (all recipes)
 
 Grocery Lists:
 
@@ -62,3 +61,5 @@ Grocery Lists:
 -   Ingredient recommendations based on common user behaviour
 
 ## Known Bugs
+
+-   Instructions area displaying in recipe modal even if no instructions entered

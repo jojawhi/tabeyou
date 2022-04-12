@@ -15,11 +15,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 class Recipe {
+    author;
     name;
     ingredientList;
     instructions;
-    constructor(name, ingredientList, instructions) {
-        (this.name = name),
+    constructor(author, name, ingredientList, instructions) {
+        (this.author = author),
+            (this.name = name),
             (this.ingredientList = ingredientList),
             (this.instructions = instructions);
     }
@@ -27,6 +29,7 @@ class Recipe {
 export const recipeConverter = {
     toFirestore: (recipe) => {
         return {
+            author: recipe.author,
             name: recipe.name,
             ingredientList: recipe.ingredientList,
             instructions: recipe.instructions,
@@ -35,7 +38,7 @@ export const recipeConverter = {
     fromFirestore: (snapshot) => {
         const recipe = snapshot.data();
         if (recipe) {
-            return new Recipe(recipe.name, recipe.ingredientList, recipe.instructions);
+            return new Recipe(recipe.author, recipe.name, recipe.ingredientList, recipe.instructions);
         }
     },
 };
@@ -75,8 +78,8 @@ const getRecipeIDByName = async (uid, recipeName) => {
     });
     return recipeID;
 };
-const makeRecipeObject = (recipeName, ingredientList, instructions) => {
-    const recipeObject = new Recipe(recipeName, ingredientList, instructions);
+const makeRecipeObject = (author, recipeName, ingredientList, instructions) => {
+    const recipeObject = new Recipe(author, recipeName, ingredientList, instructions);
     return recipeObject;
 };
 const makeIngredientObject = (ingredientName, ingredientAmount, ingredientUnit) => {
@@ -104,7 +107,7 @@ export const getFormData = (formID) => {
         const ingredientAmountsArray = formData.getAll('ingredient-amount-input');
         const ingredientUnitsArray = formData.getAll('ingredient-unit-input');
         const instructionsArray = formData.getAll('instruction-input');
-        addRecipeToDB(userID(), makeRecipeObject(recipeName, makeIngredientListFromFormData(ingredientNamesArray, ingredientAmountsArray.map((item) => Number(item)), ingredientUnitsArray), instructionsArray)).then(() => {
+        addRecipeToDB(userID(), makeRecipeObject(userID(), recipeName, makeIngredientListFromFormData(ingredientNamesArray, ingredientAmountsArray.map((item) => Number(item)), ingredientUnitsArray), instructionsArray)).then(() => {
             const section = document.getElementById('content-section');
             if (section) {
                 sectionFactory().clearSection(section);
