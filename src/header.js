@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signOut } from 'firebase/auth';
+import { displaySettingsModal } from './settingsModal';
 import generateLoginModal from './loginModal';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
@@ -12,19 +13,22 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const createSettingsButton = () => {
+const generateSettingsButton = () => {
     const settingsIcon = document.createElement('i');
     settingsIcon.classList.add('fa-solid', 'fa-gear');
     const settingsButton = document.createElement('button');
     settingsButton.classList.add('header-button', 'green-hover');
     settingsButton.setAttribute('id', 'settings-button');
+    settingsButton.addEventListener('click', () => {
+        displaySettingsModal();
+    });
     const settingsButtonContainer = document.createElement('div');
     settingsButtonContainer.classList.add('settings-button-container');
     settingsButtonContainer.appendChild(settingsButton);
     settingsButton.insertBefore(settingsIcon, settingsButton.lastChild);
     return settingsButtonContainer;
 };
-const createLoginButton = () => {
+const generateLoginButton = () => {
     const loginButton = document.createElement('button');
     loginButton.classList.add('button', 'header-button');
     loginButton.setAttribute('id', 'login-button');
@@ -34,7 +38,7 @@ const createLoginButton = () => {
     });
     return loginButton;
 };
-const createLogoutButton = () => {
+const generateLogoutButton = () => {
     const logoutButton = document.createElement('button');
     logoutButton.classList.add('button', 'header-button');
     logoutButton.setAttribute('id', 'logout-button');
@@ -44,19 +48,19 @@ const createLogoutButton = () => {
     });
     return logoutButton;
 };
-const createHeaderButtonsContainer = (state) => {
+const generateHeaderButtonsContainer = (state) => {
     const headerButtonsContainer = document.createElement('div');
     headerButtonsContainer.classList.add('header-buttons-container');
-    headerButtonsContainer.appendChild(createSettingsButton());
+    headerButtonsContainer.appendChild(generateSettingsButton());
     if (state === true) {
-        headerButtonsContainer.appendChild(createLogoutButton());
+        headerButtonsContainer.appendChild(generateLogoutButton());
     }
     else {
-        headerButtonsContainer.appendChild(createLoginButton());
+        headerButtonsContainer.appendChild(generateLoginButton());
     }
     return headerButtonsContainer;
 };
-const createLogo = () => {
+const generateLogo = () => {
     const logo = document.createElement('img');
     logo.classList.add('logo');
     logo.setAttribute('src', 'tabeyou-logo1.png');
@@ -65,17 +69,17 @@ const createLogo = () => {
     logoContainer.appendChild(logo);
     return logoContainer;
 };
-const createHeaderContentContainer = (state) => {
+const generateHeaderContentContainer = (state) => {
     const headerContentContainer = document.createElement('div');
     headerContentContainer.classList.add('header-content-container');
-    headerContentContainer.appendChild(createLogo());
-    headerContentContainer.appendChild(createHeaderButtonsContainer(state));
+    headerContentContainer.appendChild(generateLogo());
+    headerContentContainer.appendChild(generateHeaderButtonsContainer(state));
     return headerContentContainer;
 };
-const createHeader = (state) => {
+const generateHeader = (state) => {
     const header = document.createElement('div');
     header.classList.add('header');
-    header.appendChild(createHeaderContentContainer(state));
+    header.appendChild(generateHeaderContentContainer(state));
     return header;
 };
-export default createHeader;
+export default generateHeader;

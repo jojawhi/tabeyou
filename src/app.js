@@ -4,9 +4,11 @@ import { setShoppingDay, checkMealPlanExpiry, } from './mealPlanModel';
 import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';
-import createHeader from './header';
+import generateHeader from './header';
 import createFooter from './footer';
 import generateLandingPage from './landing';
+import displayMealPlan from './mealPlanView';
+import { generateSettingsModal } from './settingsModal';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -44,16 +46,18 @@ const createPageContainer = () => {
 };
 const displayLandingPage = (state) => {
     document.body.innerHTML = '';
-    document.body.appendChild(createHeader(state));
+    document.body.appendChild(generateHeader(state));
     generateLandingPage();
     document.body.appendChild(createFooter());
 };
 const displayMainUserPage = (state) => {
     document.body.innerHTML = '';
-    document.body.appendChild(createHeader(state));
+    document.body.appendChild(generateHeader(state));
     const pageContainer = document.body.appendChild(createPageContainer());
     document.body.appendChild(createFooter());
     pageContainer.appendChild(createNav());
     const section = sectionFactory().createSection();
     pageContainer.appendChild(section);
+    displayMealPlan(section);
+    generateSettingsModal();
 };

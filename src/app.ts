@@ -11,10 +11,11 @@ import {
 import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';
-import createHeader from './header';
+import generateHeader from './header';
 import createFooter from './footer';
 import generateLandingPage from './landing';
 import displayMealPlan from './mealPlanView';
+import { generateSettingsModal } from './settingsModal';
 
 // import { getUserDocByID } from './userModel';
 
@@ -69,19 +70,21 @@ const createPageContainer = () => {
 
 const displayLandingPage = (state: boolean) => {
 	document.body.innerHTML = '';
-	document.body.appendChild(createHeader(state));
+	document.body.appendChild(generateHeader(state));
 	generateLandingPage();
 	document.body.appendChild(createFooter());
 };
 
 const displayMainUserPage = (state: boolean) => {
 	document.body.innerHTML = '';
-	document.body.appendChild(createHeader(state));
+	document.body.appendChild(generateHeader(state));
 	const pageContainer: HTMLElement = document.body.appendChild(createPageContainer());
 	document.body.appendChild(createFooter());
 	pageContainer.appendChild(createNav());
 	const section: HTMLElement = sectionFactory().createSection();
 	pageContainer.appendChild(section);
+	displayMealPlan(section);
+	generateSettingsModal();
 };
 
 /*
