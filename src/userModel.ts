@@ -20,6 +20,7 @@ import {
 	getDocs,
 	doc,
 	setDoc,
+	updateDoc,
 	query,
 	QuerySnapshot,
 	where,
@@ -66,7 +67,6 @@ const userConverter = {
 const checkForCurrentUser = () => {
 	const auth = getAuth(app);
 	if (auth.currentUser) {
-		console.log('Current User check successful.');
 		return true;
 	} else {
 		console.log('No current user');
@@ -120,6 +120,39 @@ export const getUserDocByID = async (uid: string) => {
 		console.log('UID already in use.');
 	} else {
 		console.log('UID is available');
+	}
+};
+
+export const getUserDarkModeSetting = async (uid: string | undefined): Promise<boolean> => {
+	if (uid) {
+		const userRef = doc(db, 'users', uid);
+		const userSnapshot = await getDoc(userRef);
+		if (userSnapshot.exists()) {
+			const darkMode: boolean = userSnapshot.data().settings.darkMode;
+			console.log(`User: ${uid}'s Dark Mode setting is ${darkMode}`);
+			return darkMode;
+		} else {
+			console.log('Could not find user.');
+			return false;
+		}
+	} else {
+		console.log('Could not get dark mode setting: no uid');
+		return false;
+	}
+};
+
+//Working to update user setting in db on checkbox input
+export const updateDarkModeSetting = async (uid: string | undefined, state: boolean) => {
+	const userRef = doc(db, `users/${uid}`);
+
+	if (state == true) {
+		await updateDoc(userRef, {
+			'settings.darkMode': true,
+		});
+	} else if (state === false) {
+		await updateDoc(userRef, {
+			'settings.darkMode': false,
+		});
 	}
 };
 

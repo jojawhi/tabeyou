@@ -417,6 +417,7 @@ const getMealPlanHistory = (uid: string) => {
 	return mealPlanQuery;
 };
 
+//Refactor to return simple boolean
 export const checkMealPlanExpiry = async () => {
 	const dateEnd = await getCurrentMealPlanDateEnd(userID());
 	const today: Date = Date.today();

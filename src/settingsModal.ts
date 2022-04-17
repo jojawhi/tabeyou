@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getDoc } from 'firebase/firestore';
-import { userID } from './userModel';
+import { setDarkMode, setLightMode } from './app';
+import { updateDarkModeSetting, getUserDarkModeSetting, userID } from './userModel';
 
 const generateShoppingDaySelect = () => {
 	const select = document.createElement('select');
@@ -45,19 +46,43 @@ const generateShoppingDayContainer = () => {
 	return shoppingDayContainer;
 };
 
-const generateDarkModeToggle = () => {
+const generateDarkModeToggle = async () => {
 	const darkModeSwitch = document.createElement('label');
 	darkModeSwitch.classList.add('switch');
 
 	const darkModeInput = document.createElement('input');
 	darkModeInput.setAttribute('type', 'checkbox');
 
+	const darkModeSetting = await getUserDarkModeSetting(userID());
+	if (darkModeSetting === true) {
+		darkModeInput.setAttribute('checked', 'checked');
+	} else {
+		darkModeInput.removeAttribute('checked');
+	}
+
 	const darkModeSlider = document.createElement('span');
 	darkModeSlider.classList.add('slider', 'slider-on');
 
+	//Stack Overflow for the require syntax: https://stackoverflow.com/questions/65145609/webpack-how-to-import-css-dynamically
 	darkModeInput.addEventListener('change', () => {
-		darkModeSlider.classList.toggle('slider-on');
-		//on input, update user doc darkMode boolean value
+		if (darkModeInput.checked === false) {
+			updateDarkModeSetting(userID(), false).then(() => {
+				setLightMode();
+				// delete require.cache[require.resolve('../styles/dark.css')];
+				// require('../styles/light.css');
+				console.log(`Set to light mode`);
+				//window.location = window.location;
+			});
+		} else {
+			updateDarkModeSetting(userID(), true).then(() => {
+				// delete require.cache[require.resolve('../styles/light.css')];
+				// require('../styles/dark.css');
+				setDarkMode();
+				console.log(`Set to dark mode`);
+				//switching to light mode works, but not back to dark mode with reloading
+				//window.location = window.location;
+			});
+		}
 	});
 
 	darkModeSwitch.appendChild(darkModeInput);
@@ -66,7 +91,7 @@ const generateDarkModeToggle = () => {
 	return darkModeSwitch;
 };
 
-const generateDarkModeContainer = () => {
+const generateDarkModeContainer = async () => {
 	const darkModeContainer = document.createElement('div');
 	darkModeContainer.classList.add('setting-item-container');
 
@@ -74,19 +99,19 @@ const generateDarkModeContainer = () => {
 	darkModeLabel.textContent = 'Dark Mode:';
 
 	darkModeContainer.appendChild(darkModeLabel);
-	darkModeContainer.appendChild(generateDarkModeToggle());
+	darkModeContainer.appendChild(await generateDarkModeToggle());
 
 	return darkModeContainer;
 };
 
-export const generateSettingsModal = () => {
+export const generateSettingsModal = async () => {
 	const pageContainer = document.getElementById('page-container');
 
 	const settingsModal = document.createElement('div');
 	settingsModal.setAttribute('id', 'settings-modal');
 	settingsModal.classList.add('slide-out-view');
 
-	settingsModal.appendChild(generateDarkModeContainer());
+	settingsModal.appendChild(await generateDarkModeContainer());
 	settingsModal.appendChild(generateShoppingDayContainer());
 
 	if (pageContainer) {

@@ -1,3 +1,5 @@
+import { setDarkMode, setLightMode } from './app';
+import { updateDarkModeSetting, getUserDarkModeSetting, userID } from './userModel';
 const generateShoppingDaySelect = () => {
     const select = document.createElement('select');
     select.setAttribute('name', 'shopping-days');
@@ -31,35 +33,53 @@ const generateShoppingDayContainer = () => {
     shoppingDayContainer.appendChild(generateShoppingDaySelect());
     return shoppingDayContainer;
 };
-const generateDarkModeToggle = () => {
+const generateDarkModeToggle = async () => {
     const darkModeSwitch = document.createElement('label');
     darkModeSwitch.classList.add('switch');
     const darkModeInput = document.createElement('input');
     darkModeInput.setAttribute('type', 'checkbox');
+    const darkModeSetting = await getUserDarkModeSetting(userID());
+    if (darkModeSetting === true) {
+        darkModeInput.setAttribute('checked', 'checked');
+    }
+    else {
+        darkModeInput.removeAttribute('checked');
+    }
     const darkModeSlider = document.createElement('span');
     darkModeSlider.classList.add('slider', 'slider-on');
     darkModeInput.addEventListener('change', () => {
-        darkModeSlider.classList.toggle('slider-on');
+        if (darkModeInput.checked === false) {
+            updateDarkModeSetting(userID(), false).then(() => {
+                setLightMode();
+                console.log(`Set to light mode`);
+            });
+        }
+        else {
+            updateDarkModeSetting(userID(), true).then(() => {
+                setDarkMode();
+                console.log(`Set to dark mode`);
+            });
+        }
     });
     darkModeSwitch.appendChild(darkModeInput);
     darkModeSwitch.appendChild(darkModeSlider);
     return darkModeSwitch;
 };
-const generateDarkModeContainer = () => {
+const generateDarkModeContainer = async () => {
     const darkModeContainer = document.createElement('div');
     darkModeContainer.classList.add('setting-item-container');
     const darkModeLabel = document.createElement('label');
     darkModeLabel.textContent = 'Dark Mode:';
     darkModeContainer.appendChild(darkModeLabel);
-    darkModeContainer.appendChild(generateDarkModeToggle());
+    darkModeContainer.appendChild(await generateDarkModeToggle());
     return darkModeContainer;
 };
-export const generateSettingsModal = () => {
+export const generateSettingsModal = async () => {
     const pageContainer = document.getElementById('page-container');
     const settingsModal = document.createElement('div');
     settingsModal.setAttribute('id', 'settings-modal');
     settingsModal.classList.add('slide-out-view');
-    settingsModal.appendChild(generateDarkModeContainer());
+    settingsModal.appendChild(await generateDarkModeContainer());
     settingsModal.appendChild(generateShoppingDayContainer());
     if (pageContainer) {
         pageContainer.appendChild(settingsModal);

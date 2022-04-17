@@ -1,6 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
-import { userID } from './userModel';
+import { userID, getUserDarkModeSetting } from './userModel';
 import { getRecipesFromDB } from './recipeModel';
 import {
 	setShoppingDay,
@@ -8,7 +8,6 @@ import {
 	checkMealPlanExpiry,
 	replaceMealPlan,
 } from './mealPlanModel';
-import './style.css';
 import createNav from './navView';
 import sectionFactory from './section';
 import generateHeader from './header';
@@ -16,8 +15,7 @@ import createFooter from './footer';
 import generateLandingPage from './landing';
 import displayMealPlan from './mealPlanView';
 import { generateSettingsModal } from './settingsModal';
-
-// import { getUserDocByID } from './userModel';
+import '../styles/styles.css';
 
 // tsc --watch filename to watch for file changes
 
@@ -40,6 +38,44 @@ let loggedIn: boolean = false;
 /* Global state variable declaring the active user, will be used for making data read/write calls */
 let activeUser: string | null = null;
 
+/*Global state variable declaring dark mode status*/
+let darkMode: boolean = false;
+
+//CSS switching solution: https://lukelowrey.com/css-variable-theme-switcher/
+export const setLightMode = () => {
+	document.body.setAttribute('data-theme', 'light');
+	console.log(`From setLightMode: Set to light mode`);
+};
+
+export const setDarkMode = () => {
+	document.body.setAttribute('data-theme', 'dark');
+	console.log(`From setDarkMode: Set to dark mode`);
+};
+
+export const setTheme = async () => {
+	const userDarkModeSetting: boolean | void = await getUserDarkModeSetting(userID()).then(
+		(darkModeSetting: boolean) => {
+			if (darkModeSetting === true) {
+				setDarkMode();
+				darkMode = darkModeSetting;
+				console.log(`User setting from setTheme: ${darkModeSetting}`);
+				// darkMode = userDarkModeSetting;
+				// if (darkMode === true) {
+				// 	setDarkMode();
+				// } else if (darkMode === false) {
+				// 	setLightMode();
+				// }
+			} else if (darkModeSetting === false) {
+				setLightMode();
+				darkMode = darkModeSetting;
+				console.log(`From setTheme: Set to light mode`);
+			} else {
+				setDarkMode();
+			}
+		}
+	);
+};
+
 /*Firebase observer function that detects when auth state changes, configured to update loggedIn and user state and re-render the page*/
 onAuthStateChanged(auth, (user) => {
 	if (user != null) {
@@ -47,14 +83,14 @@ onAuthStateChanged(auth, (user) => {
 		activeUser = user.uid;
 		console.log(`${activeUser} logged in!`);
 		setShoppingDay();
-
-		//set dark or light mode
-		//checkMealPlanExpiry();
+		//Dark mode switch not currently working
+		setTheme();
 		checkMealPlanExpiry();
 		displayMainUserPage(loggedIn);
 	} else {
 		loggedIn = false;
 		activeUser = null;
+		setDarkMode();
 		console.log(`Logged in = ${loggedIn}; Active User = ${activeUser}`);
 		displayLandingPage(loggedIn);
 	}

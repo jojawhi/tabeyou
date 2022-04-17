@@ -1,6 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, } from '../node_modules/firebase/auth';
-import { getFirestore, collection, getDoc, doc, setDoc, } from '../node_modules/firebase/firestore';
+import { getFirestore, collection, getDoc, doc, setDoc, updateDoc, } from '../node_modules/firebase/firestore';
 const firebaseConfig = {
     apiKey: 'AIzaSyDNq2cEXRimi9k5nFMh7RkKCMrcvvHfYEc',
     authDomain: 'tabeyou-e0c1f.firebaseapp.com',
@@ -15,7 +15,6 @@ const db = getFirestore(app);
 const checkForCurrentUser = () => {
     const auth = getAuth(app);
     if (auth.currentUser) {
-        console.log('Current User check successful.');
         return true;
     }
     else {
@@ -68,6 +67,38 @@ export const getUserDocByID = async (uid) => {
     }
     else {
         console.log('UID is available');
+    }
+};
+export const getUserDarkModeSetting = async (uid) => {
+    if (uid) {
+        const userRef = doc(db, 'users', uid);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+            const darkMode = userSnapshot.data().settings.darkMode;
+            console.log(`User: ${uid}'s Dark Mode setting is ${darkMode}`);
+            return darkMode;
+        }
+        else {
+            console.log('Could not find user.');
+            return false;
+        }
+    }
+    else {
+        console.log('Could not get dark mode setting: no uid');
+        return false;
+    }
+};
+export const updateDarkModeSetting = async (uid, state) => {
+    const userRef = doc(db, `users/${uid}`);
+    if (state == true) {
+        await updateDoc(userRef, {
+            'settings.darkMode': true,
+        });
+    }
+    else if (state === false) {
+        await updateDoc(userRef, {
+            'settings.darkMode': false,
+        });
     }
 };
 export const addUserToDB = async (uid, email, password) => {
