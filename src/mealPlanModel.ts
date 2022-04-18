@@ -421,6 +421,7 @@ const getMealPlanHistory = (uid: string) => {
 export const checkMealPlanExpiry = async () => {
 	const dateEnd = await getCurrentMealPlanDateEnd(userID());
 	const today: Date = Date.today();
+	//add user variable here or user parameter
 
 	//console.log(`Today: ${today}; End Date: ${dateEnd}`);
 
@@ -435,6 +436,8 @@ export const checkMealPlanExpiry = async () => {
 		console.log('mealPlan not expired yet');
 		return false;
 	} else {
+		//add a new condition here for if the user variable is null or undefined
+		//make it await the user variable result and then run the below functions
 		console.log('Could not read meal plan expiry');
 		replaceMealPlan();
 		addGroceryListToDBWithoutCheck(userID(), getMealPlanIngredients());
@@ -472,14 +475,6 @@ export const replaceMealPlan = () => {
 		- addMealPlanToDB
 		- use new meal plan to update mealPlanDisplay
 
-
-- figure out how to populate display with current mealPlan meals
-	- get mealPlan
-- re-render display when new mealPlan is added
-
-
-
-- shopping day will appear as first day in the week
 - add styles to highlight current day?
 
 
