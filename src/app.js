@@ -1,6 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
-import { userID, getUserDarkModeSetting } from './userModel';
+import { userID, getUserDarkModeSetting, getUserDocByID } from './userModel';
 import { setShoppingDay, checkMealPlanExpiry, } from './mealPlanModel';
 import createNav from './navView';
 import sectionFactory from './section';
@@ -23,7 +23,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 let loggedIn = false;
 let activeUser = null;
-let darkMode = false;
 export const setLightMode = () => {
     document.body.setAttribute('data-theme', 'light');
     console.log(`From setLightMode: Set to light mode`);
@@ -36,12 +35,10 @@ export const setTheme = async () => {
     const userDarkModeSetting = await getUserDarkModeSetting(userID()).then((darkModeSetting) => {
         if (darkModeSetting === true) {
             setDarkMode();
-            darkMode = darkModeSetting;
             console.log(`User setting from setTheme: ${darkModeSetting}`);
         }
         else if (darkModeSetting === false) {
             setLightMode();
-            darkMode = darkModeSetting;
             console.log(`From setTheme: Set to light mode`);
         }
         else {
@@ -54,9 +51,16 @@ onAuthStateChanged(auth, (user) => {
         loggedIn = true;
         activeUser = user.uid;
         console.log(`${activeUser} logged in!`);
-        setShoppingDay();
-        setTheme();
-        checkMealPlanExpiry();
+        const userExists = getUserDocByID(userID()).then((userExists) => {
+            if (userExists === true) {
+                setShoppingDay();
+                setTheme();
+                checkMealPlanExpiry();
+            }
+            else {
+                console.log('From Auth: User does not exist yet.');
+            }
+        });
         displayMainUserPage(loggedIn);
     }
     else {

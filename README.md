@@ -29,6 +29,7 @@ The app uses Firebase to implement user authentication and Cloud Firestore's NoS
 
 ## Features in development
 
+-   Change shopping day setting
 -   Email verification
 -   Form validation and user error feedback
 -   Full landing page, complete with feature descriptions and information about how to use the app effectively and the benefits of the prescribed process
@@ -65,4 +66,7 @@ Grocery Lists:
 
 -   Instructions area displaying in recipe modal even if no instructions entered
 -   2 new meal plans are being generated and written to the database when a new user signs up or a weekly rollover occurs. This also prevents a new weekly meal plan from displaying because the database query depends on there being only one mealPlan with 'expired: false' as a condition.
-    -   The cause for new user signup seems to be that the create meal plan function is running before the new user is added to the database, causing the function to not be able to read the expiry of the new meal plan in the database, which it reads as meaning the previous meal plan has expired and it's time to make a new one. The new plan function runs twice before the new user is added to the database.
+
+    -   The cause seems to be due to the onAuthStateChanged listener from the firebase API firing twice. Apparently this is a known bug as per this Stack Overflow question: https://stackoverflow.com/questions/37673616/firebase-android-onauthstatechanged-called-twice
+
+    I will be adding a flag to deal with the issue.

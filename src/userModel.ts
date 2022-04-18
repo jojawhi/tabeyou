@@ -117,9 +117,11 @@ export const getUserDocByID = async (uid: string) => {
 	const userSnapshot = await getDoc(userRef);
 
 	if (userSnapshot.exists()) {
-		console.log('UID already in use.');
+		console.log('User found in Firestore');
+		return true;
 	} else {
-		console.log('UID is available');
+		console.log('User not found in Firestore');
+		return false;
 	}
 };
 

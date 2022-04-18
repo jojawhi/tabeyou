@@ -68,19 +68,12 @@ const generateDarkModeToggle = async () => {
 		if (darkModeInput.checked === false) {
 			updateDarkModeSetting(userID(), false).then(() => {
 				setLightMode();
-				// delete require.cache[require.resolve('../styles/dark.css')];
-				// require('../styles/light.css');
 				console.log(`Set to light mode`);
-				//window.location = window.location;
 			});
 		} else {
 			updateDarkModeSetting(userID(), true).then(() => {
-				// delete require.cache[require.resolve('../styles/light.css')];
-				// require('../styles/dark.css');
 				setDarkMode();
 				console.log(`Set to dark mode`);
-				//switching to light mode works, but not back to dark mode with reloading
-				//window.location = window.location;
 			});
 		}
 	});

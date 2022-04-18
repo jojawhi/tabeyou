@@ -136,7 +136,7 @@ const mealPlanConverter = {
 	},
 };
 
-const setStartDate = (mealPlan: MealPlan, day: string) => {
+const setDateStart = (mealPlan: MealPlan, day: string) => {
 	let dateStart;
 	const today = Date.today().toString('ddd').toLowerCase();
 	const daysArray: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -166,7 +166,7 @@ const setStartDate = (mealPlan: MealPlan, day: string) => {
 // currently working
 const setDateEnd = (mealPlan: MealPlan, date: Date | undefined) => {
 	let dateEnd;
-	//the issue was that i forgot to add toLowerCase to the end of the comparison string
+	//the issue was that I forgot to add toLowerCase to the end of the comparison string
 	const dateStart = date?.toString('ddd').toLowerCase();
 	const daysArray: string[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 	const dayFunctionsArray: Date[] = [
@@ -200,7 +200,7 @@ export const createNewMealPlan = async () => {
 		6: null,
 	});
 
-	setStartDate(mealPlan, globalShoppingDay);
+	setDateStart(mealPlan, globalShoppingDay);
 	console.log(`New Meal Plan Start Date: ${mealPlan.dateStart}`);
 	setDateEnd(mealPlan, mealPlan.dateStart);
 	console.log(mealPlan);

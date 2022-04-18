@@ -1,6 +1,6 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
-import { userID, getUserDarkModeSetting } from './userModel';
+import { userID, getUserDarkModeSetting, getUserDocByID } from './userModel';
 import { getRecipesFromDB } from './recipeModel';
 import {
 	setShoppingDay,
@@ -39,7 +39,7 @@ let loggedIn: boolean = false;
 let activeUser: string | null = null;
 
 /*Global state variable declaring dark mode status*/
-let darkMode: boolean = false;
+//let darkMode: boolean = false;
 
 //CSS switching solution: https://lukelowrey.com/css-variable-theme-switcher/
 export const setLightMode = () => {
@@ -57,17 +57,11 @@ export const setTheme = async () => {
 		(darkModeSetting: boolean) => {
 			if (darkModeSetting === true) {
 				setDarkMode();
-				darkMode = darkModeSetting;
+				//darkMode = darkModeSetting;
 				console.log(`User setting from setTheme: ${darkModeSetting}`);
-				// darkMode = userDarkModeSetting;
-				// if (darkMode === true) {
-				// 	setDarkMode();
-				// } else if (darkMode === false) {
-				// 	setLightMode();
-				// }
 			} else if (darkModeSetting === false) {
 				setLightMode();
-				darkMode = darkModeSetting;
+				//darkMode = darkModeSetting;
 				console.log(`From setTheme: Set to light mode`);
 			} else {
 				setDarkMode();
@@ -82,10 +76,15 @@ onAuthStateChanged(auth, (user) => {
 		loggedIn = true;
 		activeUser = user.uid;
 		console.log(`${activeUser} logged in!`);
-		setShoppingDay();
-		//Dark mode switch not currently working
-		setTheme();
-		checkMealPlanExpiry();
+		const userExists = getUserDocByID(userID()).then((userExists) => {
+			if (userExists === true) {
+				setShoppingDay();
+				setTheme();
+				checkMealPlanExpiry();
+			} else {
+				console.log('From Auth: User does not exist yet.');
+			}
+		});
 		displayMainUserPage(loggedIn);
 	} else {
 		loggedIn = false;
@@ -127,11 +126,4 @@ const displayMainUserPage = (state: boolean) => {
 
 To-do:
 
-*/
-
-// getUserByID('whijo');
-// checkForUserByEmail('asuka.endo@gmail.com');
-
-/*
-makeUser('whijo', 'whijo.whnan@gmail.com', 'testpass');
 */

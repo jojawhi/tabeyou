@@ -63,7 +63,7 @@ const mealPlanConverter = {
         }
     },
 };
-const setStartDate = (mealPlan, day) => {
+const setDateStart = (mealPlan, day) => {
     let dateStart;
     const today = Date.today().toString('ddd').toLowerCase();
     const daysArray = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -118,7 +118,7 @@ export const createNewMealPlan = async () => {
         5: null,
         6: null,
     });
-    setStartDate(mealPlan, globalShoppingDay);
+    setDateStart(mealPlan, globalShoppingDay);
     console.log(`New Meal Plan Start Date: ${mealPlan.dateStart}`);
     setDateEnd(mealPlan, mealPlan.dateStart);
     console.log(mealPlan);

@@ -63,10 +63,12 @@ export const getUserDocByID = async (uid) => {
     const userRef = doc(db, 'users', uid);
     const userSnapshot = await getDoc(userRef);
     if (userSnapshot.exists()) {
-        console.log('UID already in use.');
+        console.log('User found in Firestore');
+        return true;
     }
     else {
-        console.log('UID is available');
+        console.log('User not found in Firestore');
+        return false;
     }
 };
 export const getUserDarkModeSetting = async (uid) => {
