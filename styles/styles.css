@@ -127,6 +127,7 @@ button {
 .login-ui-container {
 	position: absolute;
 	align-self: center;
+	justify-self: center;
 	top: 50%;
 	display: flex;
 	flex-direction: column;
@@ -245,7 +246,7 @@ button {
 	padding: 0.25rem;
 	border-top: 1px solid var(--font-color-1);
 	background-color: var(--background-1);
-	z-index: 2;
+	z-index: 1;
 }
 
 .nav-container a {
@@ -649,6 +650,7 @@ button {
 	margin-left: 0.5rem;
 	font-family: inherit;
 	font-size: var(--step--2);
+	color: var(--font-color-1);
 	border: none;
 	outline: none;
 	background-color: var(--background-1);
@@ -659,11 +661,13 @@ button {
 .recipe-modal {
 	position: absolute;
 	align-self: center;
+	justify-self: center;
 	top: 50%;
 	display: flex;
 	flex-direction: column;
 	max-height: 70vh;
 	width: min(100%, 20rem);
+	margin-inline: auto;
 	padding: 1rem;
 	font-size: var(--step--1);
 	color: var(--font-color-1);
@@ -672,6 +676,7 @@ button {
 	background-color: var(--background-1);
 	transform: translateY(-50%);
 	overflow-y: scroll;
+	z-index: 2;
 }
 
 .recipe-header-container {
@@ -1036,18 +1041,8 @@ input:checked + .slider::before {
 		margin-right: 0.75rem;
 	}
 
-	.arrow {
-		display: block;
-		margin-left: 1rem;
-		transition: all 0.5s;
-	}
-
 	.content-section {
 		flex: 1 1 80%;
-		/*
-		height: min(70vh, 1000px);
-		padding: 0.625rem 1rem 40vh 1rem;
-		*/
 		background-color: var(--background-1);
 		border-left: solid 2px var(--green-1);
 		color: var(--font-color-1);
