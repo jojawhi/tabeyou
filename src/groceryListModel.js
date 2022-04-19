@@ -50,7 +50,7 @@ const groceryListConverter = {
     },
 };
 const generateGroceryListObject = async (uid, array) => {
-    let groceryList = new GroceryList(uid, null, null, false, null);
+    const groceryList = new GroceryList(uid, null, null, false, null);
     const mealPlan = await getCurrentMealPlanFromDB(uid)
         .then((mealPlan) => {
         groceryList.dateStart = mealPlan.dateStart;
@@ -87,7 +87,7 @@ export const addGroceryListToDBWithCheck = async (uid, array) => {
                 displayGroceryList(section);
             }
         });
-        console.log(`Grocery List added to DB`);
+        console.log('Grocery List added to DB');
     }
     else {
         document.body.appendChild(generateOverwriteModal());
@@ -97,7 +97,7 @@ export const getCurrentGroceryListDateEnd = async (uid) => {
     const groceryListRef = collection(db, `users/${uid}/groceryLists`);
     const groceryListQuery = query(groceryListRef, where('expired', '==', false));
     const snapshot = await getDocs(groceryListQuery);
-    let groceryListArray = [];
+    const groceryListArray = [];
     snapshot.forEach((groceryList) => {
         const groceryListDateEnd = groceryList.data().dateEnd.toDate();
         groceryListArray.push(groceryListDateEnd);
@@ -164,7 +164,7 @@ export const updateGroceryListOnInput = async (uid) => {
     const groceryListID = await getCurrentGroceryListID(uid);
     const groceryListRef = doc(db, `users/${uid}/groceryLists/${groceryListID}`);
     const textContainers = document.getElementsByClassName('grocery-list-text-container');
-    let ingredientArray = [];
+    const ingredientArray = [];
     for (let i = 0; i < textContainers.length; i++) {
         const name = textContainers[i].children[0];
         const amount = textContainers[i].children[1];

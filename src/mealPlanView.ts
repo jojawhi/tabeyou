@@ -83,13 +83,13 @@ const generateMealPlanContainer = async (offset: number) => {
 		// This works because i gives an index reference: https://stackoverflow.com/questions/30574147/how-to-find-the-index-of-a-missing-value-in-an-array
 		for (let i = 0; i < mealPlanArray.length; i++) {
 			if (mealPlanArray[i] === null) {
-				let pointer = (i + offset) % mealPlanArray.length;
+				const pointer = (i + offset) % mealPlanArray.length;
 				const dayIndexString = pointer.toString();
 				mealPlanContainer.appendChild(
 					generateHeaderCellContainer(dayIndexString, pointer, null)
 				);
 			} else if (mealPlanArray[i] != null) {
-				let pointer = (i + offset) % mealPlanArray.length;
+				const pointer = (i + offset) % mealPlanArray.length;
 				const dayIndexString = pointer.toString();
 				// object['stringProperty'] with '' was what i was missing to access the property values
 				const recipeName: string = mealPlanArray[i]['name'];

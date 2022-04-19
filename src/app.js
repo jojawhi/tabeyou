@@ -24,11 +24,11 @@ let loggedIn = false;
 let activeUser = null;
 export const setLightMode = () => {
     document.body.setAttribute('data-theme', 'light');
-    console.log(`From setLightMode: Set to light mode`);
+    console.log('From setLightMode: Set to light mode');
 };
 export const setDarkMode = () => {
     document.body.setAttribute('data-theme', 'dark');
-    console.log(`From setDarkMode: Set to dark mode`);
+    console.log('From setDarkMode: Set to dark mode');
 };
 export const setTheme = async () => {
     const userDarkModeSetting = await getUserDarkModeSetting(userID()).then((darkModeSetting) => {
@@ -38,14 +38,13 @@ export const setTheme = async () => {
         }
         else if (darkModeSetting === false) {
             setLightMode();
-            console.log(`From setTheme: Set to light mode`);
+            console.log('From setTheme: Set to light mode');
         }
         else {
             setDarkMode();
         }
     });
 };
-let authFlag = false;
 onAuthStateChanged(auth, (user) => {
     if (user != null) {
         loggedIn = true;

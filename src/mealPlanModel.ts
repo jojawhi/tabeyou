@@ -3,26 +3,18 @@ require('../node_modules/datejs/index');
 import { initializeApp } from '../node_modules/firebase/app';
 import {
 	getFirestore,
-	arrayUnion,
-	arrayRemove,
 	collection,
 	getDocs,
 	doc,
 	addDoc,
-	setDoc,
 	getDoc,
-	CollectionReference,
 	DocumentSnapshot,
-	QueryDocumentSnapshot,
 	query,
 	where,
-	QuerySnapshot,
-	Timestamp,
 	updateDoc,
 	deleteDoc,
 } from '../node_modules/firebase/firestore';
 import { RecipeInterface, recipeConverter, IngredientInterface } from '../src/recipeModel';
-import { addGroceryListToDBWithoutCheck } from './groceryListModel';
 import { userID, getUserShoppingDay } from './userModel';
 
 const firebaseConfig = {
@@ -223,7 +215,7 @@ export const getCurrentMealPlanID = async (uid: string | undefined) => {
 	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
 	const snapshot = await getDocs(mealPlanQuery);
 
-	let mealPlanID: string = '';
+	let mealPlanID = '';
 
 	snapshot.forEach((mealPlan) => {
 		mealPlanID += mealPlan.id;
@@ -238,7 +230,7 @@ export const checkForMealPlanDuplicates = async (uid: string | undefined) => {
 	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
 	const snapshot = await getDocs(mealPlanQuery);
 
-	let mealPlanArray: string[] = [];
+	const mealPlanArray: string[] = [];
 
 	snapshot.forEach((mealPlan) => {
 		mealPlanArray.push(mealPlan.id);
@@ -255,7 +247,7 @@ export const getCurrentMealPlanDateEnd = async (uid: string | undefined) => {
 	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
 	const snapshot = await getDocs(mealPlanQuery);
 
-	let mealPlanArray: any[] = [];
+	const mealPlanArray: Date[] = [];
 
 	snapshot.forEach((mealPlan) => {
 		//toDate() method required for converting from Firestore Timestamp: https://stackoverflow.com/questions/52247445/how-do-i-convert-a-firestore-date-timestamp-to-a-js-date
@@ -275,7 +267,7 @@ export const getMealPlanRecipes = async (uid: string | undefined) => {
 	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
 	const snapshot = await getDocs(mealPlanQuery);
 
-	let recipeArray: any[] = [];
+	let recipeArray: (RecipeInterface | null | undefined)[] = [];
 
 	snapshot.forEach((mealPlan) => {
 		const mealPlanObject = mealPlanConverter.fromFirestore(mealPlan);
@@ -319,7 +311,7 @@ const getMealPlanIngredients = async () => {
 };
 
 export const filterIngredients = async () => {
-	let seen = new Map();
+	const seen = new Map();
 	let filteredArray: IngredientInterface[] = [];
 
 	const ingredientsPromise = await getMealPlanIngredients()
@@ -442,7 +434,7 @@ export const addRecipeToMealPlan = async (
 		}
 		*/
 	} else {
-		console.log(`Could not access document`);
+		console.log('Could not access document');
 	}
 };
 

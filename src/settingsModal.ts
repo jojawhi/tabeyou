@@ -68,12 +68,12 @@ const generateDarkModeToggle = async () => {
 		if (darkModeInput.checked === false) {
 			updateDarkModeSetting(userID(), false).then(() => {
 				setLightMode();
-				console.log(`Set to light mode`);
+				console.log('Set to light mode');
 			});
 		} else {
 			updateDarkModeSetting(userID(), true).then(() => {
 				setDarkMode();
-				console.log(`Set to dark mode`);
+				console.log('Set to dark mode');
 			});
 		}
 	});

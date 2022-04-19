@@ -99,7 +99,7 @@ const generateGroceryListObject = async (
 	uid: string,
 	array: Promise<IngredientInterface[]> | IngredientInterface[]
 ): Promise<GroceryList> => {
-	let groceryList = new GroceryList(uid, null, null, false, null);
+	const groceryList = new GroceryList(uid, null, null, false, null);
 
 	const mealPlan = await getCurrentMealPlanFromDB(uid)
 		.then((mealPlan) => {
@@ -156,7 +156,7 @@ export const addGroceryListToDBWithCheck = async (
 				displayGroceryList(section);
 			}
 		});
-		console.log(`Grocery List added to DB`);
+		console.log('Grocery List added to DB');
 	} else {
 		document.body.appendChild(generateOverwriteModal());
 	}
@@ -167,7 +167,7 @@ export const getCurrentGroceryListDateEnd = async (uid: string) => {
 	const groceryListQuery = query(groceryListRef, where('expired', '==', false));
 	const snapshot = await getDocs(groceryListQuery);
 
-	let groceryListArray: any[] = [];
+	const groceryListArray: any[] = [];
 
 	snapshot.forEach((groceryList) => {
 		//toDate() method required for converting from Firestore Timestamp: https://stackoverflow.com/questions/52247445/how-do-i-convert-a-firestore-date-timestamp-to-a-js-date
@@ -184,7 +184,7 @@ export const getCurrentGroceryListID = async (uid: string | undefined) => {
 	const groceryListQuery = query(groceryListRef, where('expired', '==', false));
 	const snapshot = await getDocs(groceryListQuery);
 
-	let groceryListID: string = '';
+	let groceryListID = '';
 
 	snapshot.forEach((groceryList) => {
 		groceryListID += groceryList.id;
@@ -254,7 +254,7 @@ export const updateGroceryListOnInput = async (uid: string) => {
 	const groceryListRef = doc(db, `users/${uid}/groceryLists/${groceryListID}`);
 
 	const textContainers = document.getElementsByClassName('grocery-list-text-container');
-	let ingredientArray = [];
+	const ingredientArray = [];
 
 	for (let i = 0; i < textContainers.length; i++) {
 		//Need to coerce the input type to allow access to the value in the object

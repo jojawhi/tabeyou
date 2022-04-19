@@ -101,7 +101,7 @@ const generateSignUpButtonContainer = () => {
 
 	const signUpText = document.createElement('p');
 	signUpText.classList.add('signup-text');
-	signUpText.textContent = `Don't have an account yet?`;
+	signUpText.textContent = "Don't have an account yet?";
 
 	signUpButtonContainer.appendChild(signUpText);
 	signUpButtonContainer.appendChild(generateSignUpButton());

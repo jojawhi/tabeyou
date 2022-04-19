@@ -141,7 +141,7 @@ export const checkForMealPlanDuplicates = async (uid) => {
     const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
     const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
     const snapshot = await getDocs(mealPlanQuery);
-    let mealPlanArray = [];
+    const mealPlanArray = [];
     snapshot.forEach((mealPlan) => {
         mealPlanArray.push(mealPlan.id);
         console.log(`Duplicate Check: ${mealPlanArray}`);
@@ -154,7 +154,7 @@ export const getCurrentMealPlanDateEnd = async (uid) => {
     const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
     const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
     const snapshot = await getDocs(mealPlanQuery);
-    let mealPlanArray = [];
+    const mealPlanArray = [];
     snapshot.forEach((mealPlan) => {
         const mealPlanDateEnd = mealPlan.data().dateEnd.toDate();
         mealPlanArray.push(mealPlanDateEnd);
@@ -198,7 +198,7 @@ const getMealPlanIngredients = async () => {
     return ingredientArray;
 };
 export const filterIngredients = async () => {
-    let seen = new Map();
+    const seen = new Map();
     let filteredArray = [];
     const ingredientsPromise = await getMealPlanIngredients()
         .then((ingredientArray) => {
@@ -267,7 +267,7 @@ export const addRecipeToMealPlan = async (uid, dayIndex, recipe) => {
         }
     }
     else {
-        console.log(`Could not access document`);
+        console.log('Could not access document');
     }
 };
 export const getCurrentMealPlanFromDB = async (uid) => {

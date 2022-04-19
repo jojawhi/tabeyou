@@ -1,13 +1,12 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
-import { userID, getUserDarkModeSetting, getUserDocByID } from './userModel';
-import { setShoppingDay, replaceMealPlan, checkForMealPlanDuplicates } from './mealPlanModel';
+import { userID, getUserDarkModeSetting } from './userModel';
+import { setShoppingDay, replaceMealPlan } from './mealPlanModel';
 import createNav from './navView';
 import sectionFactory from './section';
 import generateHeader from './header';
 import createFooter from './footer';
 import generateLandingPage from './landing';
-import displayMealPlan from './mealPlanView';
 import { generateSettingsModal } from './settingsModal';
 import '../styles/styles.css';
 
@@ -27,7 +26,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /*Global state attribute passed to page generating functions to determine which page elements to render*/
-let loggedIn: boolean = false;
+let loggedIn = false;
 
 /* Global state variable declaring the active user, will be used for making data read/write calls */
 let activeUser: string | null = null;
@@ -35,12 +34,12 @@ let activeUser: string | null = null;
 //CSS switching solution: https://lukelowrey.com/css-variable-theme-switcher/
 export const setLightMode = () => {
 	document.body.setAttribute('data-theme', 'light');
-	console.log(`From setLightMode: Set to light mode`);
+	console.log('From setLightMode: Set to light mode');
 };
 
 export const setDarkMode = () => {
 	document.body.setAttribute('data-theme', 'dark');
-	console.log(`From setDarkMode: Set to dark mode`);
+	console.log('From setDarkMode: Set to dark mode');
 };
 
 export const setTheme = async () => {
@@ -51,15 +50,13 @@ export const setTheme = async () => {
 				console.log(`User setting from setTheme: ${darkModeSetting}`);
 			} else if (darkModeSetting === false) {
 				setLightMode();
-				console.log(`From setTheme: Set to light mode`);
+				console.log('From setTheme: Set to light mode');
 			} else {
 				setDarkMode();
 			}
 		}
 	);
 };
-
-let authFlag: boolean = false;
 
 /*Firebase observer function that detects when auth state changes, configured to update loggedIn and user state and re-render the page*/
 onAuthStateChanged(auth, (user) => {

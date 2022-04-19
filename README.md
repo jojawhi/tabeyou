@@ -31,7 +31,7 @@ The app uses Firebase to implement user authentication and Cloud Firestore's NoS
 
 -   Change shopping day setting
 -   Email verification
--   Form validation and user error feedback
+-   Form validation and UI user error feedback
 -   Full landing page, complete with feature descriptions and information about how to use the app effectively and the benefits of the prescribed process
 -   Meal plan and grocery list history storage
 -   Add recipe to meal plan from recipe page

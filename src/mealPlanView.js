@@ -50,12 +50,12 @@ const generateMealPlanContainer = async (offset) => {
     const mealPlanRecipes = await getMealPlanRecipes(userID()).then((mealPlanArray) => {
         for (let i = 0; i < mealPlanArray.length; i++) {
             if (mealPlanArray[i] === null) {
-                let pointer = (i + offset) % mealPlanArray.length;
+                const pointer = (i + offset) % mealPlanArray.length;
                 const dayIndexString = pointer.toString();
                 mealPlanContainer.appendChild(generateHeaderCellContainer(dayIndexString, pointer, null));
             }
             else if (mealPlanArray[i] != null) {
-                let pointer = (i + offset) % mealPlanArray.length;
+                const pointer = (i + offset) % mealPlanArray.length;
                 const dayIndexString = pointer.toString();
                 const recipeName = mealPlanArray[i]['name'];
                 mealPlanContainer.appendChild(generateHeaderCellContainer(dayIndexString, pointer, recipeName));
