@@ -139,6 +139,7 @@ button {
 	border-radius: 20px;
 	background-color: var(--background-1);
 	transform: translateY(-50%);
+	z-index: 2;
 }
 
 .form-container {
