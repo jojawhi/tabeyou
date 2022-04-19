@@ -41,9 +41,11 @@ const groceryListConverter = {
         };
     },
     fromFirestore: (snapshot) => {
-        const groceryList = snapshot.data();
-        if (groceryList) {
-            return new GroceryList(groceryList.author, groceryList.dateStart, groceryList.dateEnd, groceryList.expired, groceryList.listItems);
+        if (snapshot) {
+            const groceryList = snapshot.data();
+            if (groceryList) {
+                return new GroceryList(groceryList.author, groceryList.dateStart, groceryList.dateEnd, groceryList.expired, groceryList.listItems);
+            }
         }
     },
 };
@@ -142,7 +144,20 @@ export const getCurrentGroceryListFromDB = async (uid) => {
     const groceryListsRef = collection(db, `users/${uid}/groceryLists`);
     const groceryListsQuery = query(groceryListsRef, where('expired', '==', false));
     const snapshot = await getDocs(groceryListsQuery);
-    const groceryListObject = groceryListConverter.fromFirestore(snapshot.docs[0]);
+    let groceryListObject;
+    if (snapshot.docs[0]) {
+        groceryListObject = groceryListConverter.fromFirestore(snapshot.docs[0]);
+    }
+    else {
+        groceryListObject = new GroceryList(userID(), null, null, false, [
+            {
+                name: 'Make a meal plan first',
+                amount: 1,
+                unit: 'pc',
+            },
+        ]);
+        addGroceryListToDBWithoutCheck(userID(), groceryListObject.listItems);
+    }
     return groceryListObject;
 };
 export const updateGroceryListOnInput = async (uid) => {

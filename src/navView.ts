@@ -2,6 +2,7 @@ import sectionFactory from './section';
 import displayGroceryList from './groceryListView';
 import displayRecipeList from './recipeListView';
 import displayMealPlan from './mealPlanView';
+import { replaceMealPlan } from './mealPlanModel';
 
 const generateMealPlansButton = () => {
 	const mealPlansButton = document.createElement('button');

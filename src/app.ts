@@ -1,13 +1,7 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
 import { userID, getUserDarkModeSetting, getUserDocByID } from './userModel';
-import { getRecipesFromDB } from './recipeModel';
-import {
-	setShoppingDay,
-	setShoppingDayOffset,
-	checkMealPlanExpiry,
-	replaceMealPlan,
-} from './mealPlanModel';
+import { setShoppingDay, replaceMealPlan, checkForMealPlanDuplicates } from './mealPlanModel';
 import createNav from './navView';
 import sectionFactory from './section';
 import generateHeader from './header';
@@ -38,9 +32,6 @@ let loggedIn: boolean = false;
 /* Global state variable declaring the active user, will be used for making data read/write calls */
 let activeUser: string | null = null;
 
-/*Global state variable declaring dark mode status*/
-//let darkMode: boolean = false;
-
 //CSS switching solution: https://lukelowrey.com/css-variable-theme-switcher/
 export const setLightMode = () => {
 	document.body.setAttribute('data-theme', 'light');
@@ -57,11 +48,9 @@ export const setTheme = async () => {
 		(darkModeSetting: boolean) => {
 			if (darkModeSetting === true) {
 				setDarkMode();
-				//darkMode = darkModeSetting;
 				console.log(`User setting from setTheme: ${darkModeSetting}`);
 			} else if (darkModeSetting === false) {
 				setLightMode();
-				//darkMode = darkModeSetting;
 				console.log(`From setTheme: Set to light mode`);
 			} else {
 				setDarkMode();
@@ -70,30 +59,49 @@ export const setTheme = async () => {
 	);
 };
 
+let authFlag: boolean = false;
+
 /*Firebase observer function that detects when auth state changes, configured to update loggedIn and user state and re-render the page*/
 onAuthStateChanged(auth, (user) => {
 	if (user != null) {
 		loggedIn = true;
 		activeUser = user.uid;
 		console.log(`${activeUser} logged in!`);
-		const userExists = getUserDocByID(userID()).then((userExists) => {
-			if (userExists === true) {
-				setShoppingDay();
-				setTheme();
-				checkMealPlanExpiry();
-			} else {
-				console.log('From Auth: User does not exist yet.');
-			}
-		});
-		displayMainUserPage(loggedIn);
-	} else {
+		userSetup(loggedIn);
+		render(loggedIn);
+		// const userExists = getUserDocByID(userID()).then((userExists) => {
+		// 	if (userExists === true) {
+		// 	} else {
+		// 		console.log('From Auth: User does not exist yet.');
+		// 	}
+		// });
+	} else if (user == null) {
 		loggedIn = false;
 		activeUser = null;
-		setDarkMode();
 		console.log(`Logged in = ${loggedIn}; Active User = ${activeUser}`);
-		displayLandingPage(loggedIn);
+		render(loggedIn);
 	}
 });
+
+export const userSetup = (auth: boolean) => {
+	if (auth) {
+		setShoppingDay();
+		setTheme();
+		replaceMealPlan();
+	} else {
+		console.log('userSetup: authFlag is false');
+	}
+};
+
+const render = (auth: boolean) => {
+	if (auth) {
+		displayMainUserPage(auth);
+	} else {
+		setDarkMode();
+		displayLandingPage(auth);
+		console.log('render: No auth');
+	}
+};
 
 const createPageContainer = () => {
 	const pageContainer = document.createElement('div');
@@ -118,7 +126,6 @@ const displayMainUserPage = (state: boolean) => {
 	pageContainer.appendChild(createNav());
 	const section: HTMLElement = sectionFactory().createSection();
 	pageContainer.appendChild(section);
-	displayMealPlan(section);
 	generateSettingsModal();
 };
 

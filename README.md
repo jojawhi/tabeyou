@@ -67,6 +67,6 @@ Grocery Lists:
 -   Instructions area displaying in recipe modal even if no instructions entered
 -   2 new meal plans are being generated and written to the database when a new user signs up or a weekly rollover occurs. This also prevents a new weekly meal plan from displaying because the database query depends on there being only one mealPlan with 'expired: false' as a condition.
 
-    -   The cause seems to be due to the onAuthStateChanged listener from the firebase API firing twice. Apparently this is a known bug as per this Stack Overflow question: https://stackoverflow.com/questions/37673616/firebase-android-onauthstatechanged-called-twice
+    -   The cause seems to be due to the onAuthStateChanged listener from the firebase API firing twice. Apparently this is a known Firebase bug as per this Stack Overflow question: https://stackoverflow.com/questions/37673616/firebase-android-onauthstatechanged-called-twice
 
     I will be adding a flag to deal with the issue.

@@ -1,13 +1,12 @@
 import { initializeApp } from '../node_modules/firebase/app';
 import { getAuth, onAuthStateChanged } from '../node_modules/firebase/auth';
-import { userID, getUserDarkModeSetting, getUserDocByID } from './userModel';
-import { setShoppingDay, checkMealPlanExpiry, } from './mealPlanModel';
+import { userID, getUserDarkModeSetting } from './userModel';
+import { setShoppingDay, replaceMealPlan } from './mealPlanModel';
 import createNav from './navView';
 import sectionFactory from './section';
 import generateHeader from './header';
 import createFooter from './footer';
 import generateLandingPage from './landing';
-import displayMealPlan from './mealPlanView';
 import { generateSettingsModal } from './settingsModal';
 import '../styles/styles.css';
 const firebaseConfig = {
@@ -46,31 +45,42 @@ export const setTheme = async () => {
         }
     });
 };
+let authFlag = false;
 onAuthStateChanged(auth, (user) => {
     if (user != null) {
         loggedIn = true;
         activeUser = user.uid;
         console.log(`${activeUser} logged in!`);
-        const userExists = getUserDocByID(userID()).then((userExists) => {
-            if (userExists === true) {
-                setShoppingDay();
-                setTheme();
-                checkMealPlanExpiry();
-            }
-            else {
-                console.log('From Auth: User does not exist yet.');
-            }
-        });
-        displayMainUserPage(loggedIn);
+        userSetup(loggedIn);
+        render(loggedIn);
     }
-    else {
+    else if (user == null) {
         loggedIn = false;
         activeUser = null;
-        setDarkMode();
         console.log(`Logged in = ${loggedIn}; Active User = ${activeUser}`);
-        displayLandingPage(loggedIn);
+        render(loggedIn);
     }
 });
+export const userSetup = (auth) => {
+    if (auth) {
+        setShoppingDay();
+        setTheme();
+        replaceMealPlan();
+    }
+    else {
+        console.log('userSetup: authFlag is false');
+    }
+};
+const render = (auth) => {
+    if (auth) {
+        displayMainUserPage(auth);
+    }
+    else {
+        setDarkMode();
+        displayLandingPage(auth);
+        console.log('render: No auth');
+    }
+};
 const createPageContainer = () => {
     const pageContainer = document.createElement('div');
     pageContainer.classList.add('page-container');
@@ -91,6 +101,5 @@ const displayMainUserPage = (state) => {
     pageContainer.appendChild(createNav());
     const section = sectionFactory().createSection();
     pageContainer.appendChild(section);
-    displayMealPlan(section);
     generateSettingsModal();
 };

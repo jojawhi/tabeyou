@@ -1,8 +1,9 @@
 import { userID } from './userModel';
-import { filterIngredients, getMealPlanRecipes, shoppingDayOffset } from './mealPlanModel';
+import { filterIngredients, getMealPlanRecipes, shoppingDayOffset, } from './mealPlanModel';
 import { addGroceryListToDBWithCheck } from './groceryListModel';
 import { generatePageSubheading, generateModalSection } from './components';
 import displayRecipeListModal from './recipeListModal';
+import { checkForMealPlanDuplicates } from './mealPlanModel';
 const daysArray = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 const generateMealPlanHeader = (day) => {
     const header = document.createElement('div');
@@ -74,6 +75,7 @@ const generateMakeGroceryListButton = () => {
     return pageButton;
 };
 const displayMealPlan = async (section) => {
+    checkForMealPlanDuplicates(userID());
     section.appendChild(generatePageSubheading(`This week's meal plan`));
     section.appendChild(await generateMealPlanContainer(shoppingDayOffset));
     section.appendChild(generateMakeGroceryListButton());

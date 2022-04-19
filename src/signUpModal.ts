@@ -1,3 +1,4 @@
+import { userSetup } from './app';
 import { closeModal, generateCloseButton } from './components';
 import { createNewUser, signIn } from './userModel';
 

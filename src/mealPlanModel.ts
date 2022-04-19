@@ -19,6 +19,7 @@ import {
 	QuerySnapshot,
 	Timestamp,
 	updateDoc,
+	deleteDoc,
 } from '../node_modules/firebase/firestore';
 import { RecipeInterface, recipeConverter, IngredientInterface } from '../src/recipeModel';
 import { addGroceryListToDBWithoutCheck } from './groceryListModel';
@@ -232,6 +233,23 @@ export const getCurrentMealPlanID = async (uid: string | undefined) => {
 	return mealPlanID;
 };
 
+export const checkForMealPlanDuplicates = async (uid: string | undefined) => {
+	const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
+	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
+	const snapshot = await getDocs(mealPlanQuery);
+
+	let mealPlanArray: string[] = [];
+
+	snapshot.forEach((mealPlan) => {
+		mealPlanArray.push(mealPlan.id);
+		console.log(`Duplicate Check: ${mealPlanArray}`);
+	});
+
+	if (mealPlanArray.length > 1) {
+		await deleteDoc(doc(db, `users/${uid}/mealPlans/${mealPlanArray[1]}`));
+	}
+};
+
 export const getCurrentMealPlanDateEnd = async (uid: string | undefined) => {
 	const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
 	const mealPlanQuery = query(mealPlansRef, where('expired', '==', false));
@@ -353,35 +371,65 @@ export const addRecipeToMealPlan = async (
 	const mealPlanSnapshot = await getDoc(mealPlanRef);
 
 	if (mealPlanSnapshot.exists()) {
-		if (dayIndex + 1 === 7) {
+		if (dayIndex === shoppingDayOffset) {
 			await updateDoc(mealPlanRef, {
 				'meals.0': recipeConverter.toFirestore(recipe),
 			});
-		} else if (dayIndex + 1 === 1) {
+		} else if (dayIndex - shoppingDayOffset === 1 || dayIndex - shoppingDayOffset === -6) {
 			await updateDoc(mealPlanRef, {
 				'meals.1': recipeConverter.toFirestore(recipe),
 			});
-		} else if (dayIndex + 1 === 2) {
+		} else if (dayIndex - shoppingDayOffset === 2 || dayIndex - shoppingDayOffset === -5) {
 			await updateDoc(mealPlanRef, {
 				'meals.2': recipeConverter.toFirestore(recipe),
 			});
-		} else if (dayIndex + 1 === 3) {
+		} else if (dayIndex - shoppingDayOffset === 3 || dayIndex - shoppingDayOffset === -4) {
 			await updateDoc(mealPlanRef, {
 				'meals.3': recipeConverter.toFirestore(recipe),
 			});
-		} else if (dayIndex + 1 === 4) {
+		} else if (dayIndex - shoppingDayOffset === 4 || dayIndex - shoppingDayOffset === -3) {
 			await updateDoc(mealPlanRef, {
 				'meals.4': recipeConverter.toFirestore(recipe),
 			});
-		} else if (dayIndex + 1 === 5) {
+		} else if (dayIndex - shoppingDayOffset === 5 || dayIndex - shoppingDayOffset === -2) {
 			await updateDoc(mealPlanRef, {
 				'meals.5': recipeConverter.toFirestore(recipe),
 			});
-		} else if (dayIndex + 1 === 6) {
+		} else if (dayIndex - shoppingDayOffset === 6 || dayIndex - shoppingDayOffset === -1) {
 			await updateDoc(mealPlanRef, {
 				'meals.6': recipeConverter.toFirestore(recipe),
 			});
 		}
+
+		// if (dayIndex + 1 === 7) {
+		// 	await updateDoc(mealPlanRef, {
+		// 		'meals.0': recipeConverter.toFirestore(recipe),
+		// 	});
+		// } else if (dayIndex + 1 === 1) {
+		// 	await updateDoc(mealPlanRef, {
+		// 		'meals.1': recipeConverter.toFirestore(recipe),
+		// 	});
+		// } else if (dayIndex + 1 === 2) {
+		// 	await updateDoc(mealPlanRef, {
+		// 		'meals.2': recipeConverter.toFirestore(recipe),
+		// 	});
+		// } else if (dayIndex + 1 === 3) {
+		// 	await updateDoc(mealPlanRef, {
+		// 		'meals.3': recipeConverter.toFirestore(recipe),
+		// 	});
+		// } else if (dayIndex + 1 === 4) {
+		// 	await updateDoc(mealPlanRef, {
+		// 		'meals.4': recipeConverter.toFirestore(recipe),
+		// 	});
+		// } else if (dayIndex + 1 === 5) {
+		// 	await updateDoc(mealPlanRef, {
+		// 		'meals.5': recipeConverter.toFirestore(recipe),
+		// 	});
+		// } else if (dayIndex + 1 === 6) {
+		// 	await updateDoc(mealPlanRef, {
+		// 		'meals.6': recipeConverter.toFirestore(recipe),
+		// 	});
+		// }
 
 		/*
 		const keysArray = Object.keys(mealPlanSnapshot.data().meals);
@@ -427,20 +475,23 @@ export const checkMealPlanExpiry = async () => {
 
 	if (today >= dateEnd) {
 		console.log('mealPlan expired');
-		updateCurrentMealPlanExpiry(userID()).then(() => {
-			replaceMealPlan();
-		});
+		// updateCurrentMealPlanExpiry(userID()).then(() => {
+		// 	replaceMealPlan();
+		// });
 		return true;
 	} else if (today < dateEnd) {
-		getMealPlanRecipes(userID());
+		// getMealPlanRecipes(userID());
 		console.log('mealPlan not expired yet');
 		return false;
-	} else {
+	} else if (dateEnd === undefined) {
 		//add a new condition here for if the user variable is null or undefined
 		//make it await the user variable result and then run the below functions
 		console.log('Could not read meal plan expiry');
-		replaceMealPlan();
-		addGroceryListToDBWithoutCheck(userID(), getMealPlanIngredients());
+		const newMealPlan = createNewMealPlan().then((mealPlan) => {
+			addMealPlanToDB(userID(), mealPlan);
+		});
+		// replaceMealPlan();
+		// addGroceryListToDBWithoutCheck(userID(), getMealPlanIngredients());
 		return false;
 	}
 };
@@ -455,10 +506,18 @@ const updateCurrentMealPlanExpiry = async (uid: string | undefined) => {
 	});
 };
 
-export const replaceMealPlan = () => {
-	const newMealPlan = createNewMealPlan().then((mealPlan) => {
-		addMealPlanToDB(userID(), mealPlan);
-	});
+export const replaceMealPlan = async () => {
+	const mealPlanExpired = await checkMealPlanExpiry();
+
+	if (mealPlanExpired === true) {
+		updateCurrentMealPlanExpiry(userID()).then(() => {
+			const newMealPlan = createNewMealPlan().then((mealPlan) => {
+				addMealPlanToDB(userID(), mealPlan);
+			});
+		});
+	} else {
+		console.log('replaceMealPlan: Meal plan not expired yet.');
+	}
 
 	//update display after running this
 };

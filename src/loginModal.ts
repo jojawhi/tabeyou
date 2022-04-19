@@ -1,6 +1,7 @@
 import generateSignUpModal from './signUpModal';
 import { signIn } from './userModel';
 import { generateCloseButton, closeModal } from './components';
+import { userSetup } from './app';
 
 const generateLoginHeading = () => {
 	const loginHeading = document.createElement('h2');
